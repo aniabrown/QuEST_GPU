@@ -7,6 +7,10 @@
  * the correct function or combination of functions to use from those included here.  
  */
 
+void createMultiQubitCPU(MultiQubit *multiQubit, int numQubits, QUESTEnv env);
+
+void destroyMultiQubitCPU(MultiQubit *multiQubit, QUESTEnv env);
+
 void rotateQubitLocal (MultiQubit multiQubit, const int rotQubit, Complex alpha, Complex beta);
 
 void rotateQubitDistributed (MultiQubit multiQubit, const int rotQubit,

@@ -21,7 +21,7 @@ static int extractBit (const int locationOfBitFromRight, const long long int the
  * @param[in] numQubits number of qubits in the system
  * @param[in] env object representing the execution environment (local, multinode etc)
  */
-void createMultiQubit(MultiQubit *multiQubit, int numQubits, QUESTEnv env)
+void createMultiQubitCPU(MultiQubit *multiQubit, int numQubits, QUESTEnv env)
 {
 	long long int numAmps = 1L << numQubits;
 	long long int numAmpsPerRank = numAmps/env.numRanks;
@@ -57,7 +57,7 @@ void createMultiQubit(MultiQubit *multiQubit, int numQubits, QUESTEnv env)
  * @param[in,out] multiQubit object to be deallocated
  * @param[in] env object representing the execution environment (local, multinode etc)
  */
-void destroyMultiQubit(MultiQubit multiQubit, QUESTEnv env){
+void destroyMultiQubitCPU(MultiQubit multiQubit, QUESTEnv env){
 	free(multiQubit.stateVec.real);
 	free(multiQubit.stateVec.imag);
 	if (env.numRanks>1){

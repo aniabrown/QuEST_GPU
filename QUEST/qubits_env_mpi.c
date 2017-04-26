@@ -15,6 +15,16 @@ static void getRotAngle(int chunkIsUpper, Complex *rot1, Complex *rot2, Complex 
 static int getChunkPairId(int chunkIsUpper, int chunkId, long long int chunkSize, int rotQubit);
 static int halfMatrixBlockFitsInChunk(long long int chunkSize, int rotQubit);
 
+void createMultiQubit(MultiQubit *multiQubit, int numQubits, QUESTEnv env)
+{
+        createMultiQubitCPU(multiQubit, numQubits, env);
+} 
+
+void destroyMultiQubit(MultiQubit *multiQubit, QUESTEnv env)
+{
+        destroyMultiQubitCPU(multiQubit, numQubits);
+}
+
 void initQUESTEnv(QUESTEnv *env){
         // init MPI environment
         int rank, numRanks, initialized;

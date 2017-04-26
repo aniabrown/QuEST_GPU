@@ -51,11 +51,6 @@ typedef struct QUESTEnv
 
 
 // QUEST library functions whose implementation is independent of environment (local, MPI)
-
-void createMultiQubit(MultiQubit *multiQubit, int numQubits, QUESTEnv env);
-
-void destroyMultiQubit(MultiQubit multiQubit, QUESTEnv env);
-
 void reportState(MultiQubit multiQubit);
 
 void reportMultiQubitParams(MultiQubit multiQubit);
@@ -70,6 +65,11 @@ void controlPhaseGate (MultiQubit multiQubit, const int idQubit1, const int idQu
 
 
 // QUEST library functions whose implementation depends on environment (local, MPI)
+
+void createMultiQubit(MultiQubit *multiQubit, int numQubits, QUESTEnv env);
+
+void destroyMultiQubit(MultiQubit multiQubit, QUESTEnv env);
+
 
 /** Initialize QUEST environment. If something needs to be done to set up the execution environment, such as 
  * initializing MPI when running in distributed mode, it is handled here
