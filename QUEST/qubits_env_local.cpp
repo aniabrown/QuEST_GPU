@@ -8,6 +8,20 @@ An implementation of the API in qubits.h for a local (non-MPI) environment.
 # include "qubits.h"
 # include "qubits_internal.h"
 
+void createMultiQubit(MultiQubit *multiQubit, int numQubits, QUESTEnv env)
+{
+	createMultiQubitCPU(multiQubit, numQubits, env);
+}
+
+void destroyMultiQubit(MultiQubit multiQubit, QUESTEnv env)
+{
+	destroyMultiQubitCPU(multiQubit, env);
+}
+
+void initStateVec(MultiQubit *multiQubit){
+	initStateVecCPU(multiQubit);
+}
+
 void initQUESTEnv(QUESTEnv *env){
         // init MPI environment
 	env->rank=0;

@@ -9,7 +9,9 @@
 
 void createMultiQubitCPU(MultiQubit *multiQubit, int numQubits, QUESTEnv env);
 
-void destroyMultiQubitCPU(MultiQubit *multiQubit, QUESTEnv env);
+void destroyMultiQubitCPU(MultiQubit multiQubit, QUESTEnv env);
+
+void initStateVecCPU(MultiQubit *multiQubit);
 
 void rotateQubitLocal (MultiQubit multiQubit, const int rotQubit, Complex alpha, Complex beta);
 

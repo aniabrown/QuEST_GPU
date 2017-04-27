@@ -26,22 +26,22 @@ void createMultiQubitCPU(MultiQubit *multiQubit, int numQubits, QUESTEnv env)
 	long long int numAmps = 1L << numQubits;
 	long long int numAmpsPerRank = numAmps/env.numRanks;
 
-        multiQubit->stateVec.real = malloc(numAmpsPerRank * sizeof(multiQubit->stateVec.real));
-        multiQubit->stateVec.imag = malloc(numAmpsPerRank * sizeof(multiQubit->stateVec.imag));
+        multiQubit->stateVec.real = (double*) malloc(numAmpsPerRank * sizeof(multiQubit->stateVec.real));
+        multiQubit->stateVec.imag = (double*) malloc(numAmpsPerRank * sizeof(multiQubit->stateVec.imag));
 	if (env.numRanks>1){
-		multiQubit->pairStateVec.real = malloc(numAmpsPerRank * sizeof(multiQubit->pairStateVec.real));
-		multiQubit->pairStateVec.imag = malloc(numAmpsPerRank * sizeof(multiQubit->pairStateVec.imag));
+		multiQubit->pairStateVec.real = (double*) malloc(numAmpsPerRank * sizeof(multiQubit->pairStateVec.real));
+		multiQubit->pairStateVec.imag = (double*) malloc(numAmpsPerRank * sizeof(multiQubit->pairStateVec.imag));
 	}
 
         if ( (!(multiQubit->stateVec.real) || !(multiQubit->stateVec.imag))
 		 && numAmpsPerRank ) {
-                printf("Could not allocate memory!");
+                printf("Could not allocate memory!\n");
                 exit (EXIT_FAILURE);
         }
 
 	if ( env.numRanks>1 && (!(multiQubit->pairStateVec.real) || !(multiQubit->pairStateVec.imag))
 		 && numAmpsPerRank ) {
-                printf("Could not allocate memory!");
+                printf("Could not allocate memory!\n");
                 exit (EXIT_FAILURE);
 	}
 
@@ -119,7 +119,7 @@ void reportMultiQubitParams(MultiQubit multiQubit){
  * Initialise the state vector of probability amplitudes for a set of qubits to the zero state: |000...00>
  * @param[in,out] multiQubit object representing the set of qubits to be initialised
  */
-void initStateVec (MultiQubit *multiQubit)
+void initStateVecCPU(MultiQubit *multiQubit)
 {
 	long long int stateVecSize;
 	long long int index;

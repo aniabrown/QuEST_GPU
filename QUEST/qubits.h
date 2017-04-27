@@ -29,6 +29,8 @@ typedef struct MultiQubit
 	ComplexArray stateVec; 
 	//! Temporary storage for a chunk of the state vector received from another process in the MPI version
 	ComplexArray pairStateVec;
+	//! Storage for probability amplitudes for the multi qubit state on GPU 
+	ComplexArray deviceStateVec;
 	//! Number of qubits in the state
 	int numQubits;
 	//! Number of probability amplitudes held in stateVec by this process
@@ -55,13 +57,10 @@ void reportState(MultiQubit multiQubit);
 
 void reportMultiQubitParams(MultiQubit multiQubit);
 
-void initStateVec(MultiQubit *multiQubit);
-
 void quadCPhaseGate (MultiQubit multiQubit, const int idQubit1, const int idQubit2, 
 	const int idQubit3, const int idQubit4);
 
 void controlPhaseGate (MultiQubit multiQubit, const int idQubit1, const int idQubit2);
-
 
 
 // QUEST library functions whose implementation depends on environment (local, MPI)
@@ -70,6 +69,7 @@ void createMultiQubit(MultiQubit *multiQubit, int numQubits, QUESTEnv env);
 
 void destroyMultiQubit(MultiQubit multiQubit, QUESTEnv env);
 
+void initStateVec(MultiQubit *multiQubit);
 
 /** Initialize QUEST environment. If something needs to be done to set up the execution environment, such as 
  * initializing MPI when running in distributed mode, it is handled here

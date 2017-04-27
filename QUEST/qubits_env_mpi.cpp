@@ -20,9 +20,13 @@ void createMultiQubit(MultiQubit *multiQubit, int numQubits, QUESTEnv env)
         createMultiQubitCPU(multiQubit, numQubits, env);
 } 
 
-void destroyMultiQubit(MultiQubit *multiQubit, QUESTEnv env)
+void destroyMultiQubit(MultiQubit multiQubit, QUESTEnv env)
 {
         destroyMultiQubitCPU(multiQubit, numQubits);
+}
+
+void initStateVec(MultiQubit *multiQubit){
+        initStateVecCPU(multiQubit); 
 }
 
 void initQUESTEnv(QUESTEnv *env){
