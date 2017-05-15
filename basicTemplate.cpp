@@ -1,4 +1,4 @@
-/** @file 
+/* @file 
  * Basic template for using the QUEST library. In general, leave the initialisation
  * and cleanup sections as they are and edit the rotations, measurement and phase gate
  * sections.
@@ -19,7 +19,7 @@
 //! Max number of qubits in the system
 # define maxNumQubits   40
 //! 1: print end qubit state to file, 0: don't print
-# define REPORT_STATE 0
+# define REPORT_STATE 1
 
 
 //--------------------------------------------------------------
@@ -118,13 +118,23 @@ int main (int narg, char** varg) {
 	if (REPORT_STATE){
 		reportState(multiQubit);
         }
-/*
+
 	//
 	// ===== perform a measurement
 	//
 	int measureQubit;
 	double qProbability;
+	measureQubit=0;
+        qProbability = findProbabilityOfZero(multiQubit, measureQubit);
+        if (env.rank==0) printf("Probability of 0 for qubit %d = %.14f\n", measureQubit, qProbability);
 
+	qProbability = measureInZero(multiQubit, 0);
+        if (env.rank==0) printf("Probability of 0 for qubit %d = %.14f. Then set q0 to 0\n", 0, qProbability);
+
+        qProbability = findProbabilityOfZero(multiQubit, measureQubit);
+        if (env.rank==0) printf("Probability of 0 for qubit %d = %.14f\n", measureQubit, qProbability);
+
+/*
 	// Do measurement on rotated qubits
 	if (env.rank==0) printf("\nPerforming single qubit measurement\n");
         for (measureQubit=0; measureQubit<numQubits; measureQubit++) {

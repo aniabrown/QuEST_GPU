@@ -31,6 +31,8 @@ typedef struct MultiQubit
 	ComplexArray pairStateVec;
 	//! Storage for probability amplitudes for the multi qubit state on GPU 
 	ComplexArray deviceStateVec;
+	//! Storage for reduction of probabilities on GPU
+	double *firstLevelReduction, *secondLevelReduction;
 	//! Number of qubits in the state
 	int numQubits;
 	//! Number of probability amplitudes held in stateVec by this process

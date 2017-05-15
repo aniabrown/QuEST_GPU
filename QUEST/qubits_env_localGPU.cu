@@ -8,11 +8,16 @@ An implementation of the API in qubits.h for a local (non-MPI) environment.
 # include "qubits.h"
 # include "qubits_internal.h"
 
+# define REDUCE_SHARED_SIZE 256
+
 void createMultiQubit(MultiQubit *multiQubit, int numQubits, QUESTEnv env)
 {
 	createMultiQubitCPU(multiQubit, numQubits, env);
 	cudaMalloc(&(multiQubit->deviceStateVec.real), multiQubit->numAmps*sizeof(multiQubit->deviceStateVec.real));
 	cudaMalloc(&(multiQubit->deviceStateVec.imag), multiQubit->numAmps*sizeof(multiQubit->deviceStateVec.imag));
+	cudaMalloc(&(multiQubit->firstLevelReduction), ceil(multiQubit->numAmps/(double)REDUCE_SHARED_SIZE)*sizeof(double));
+	cudaMalloc(&(multiQubit->secondLevelReduction), ceil(multiQubit->numAmps/(double)(REDUCE_SHARED_SIZE*REDUCE_SHARED_SIZE))*
+		sizeof(double));
 
         if (!(multiQubit->deviceStateVec.real) || !(multiQubit->deviceStateVec.imag)){
                 printf("Could not allocate memory on GPU!\n");
@@ -196,24 +201,180 @@ void rotateQubit(MultiQubit multiQubit, const int rotQubit, Complex alpha, Compl
 
         threadsPerCUDABlock = 128;
         CUDABlocks = ceil((double)(multiQubit.numAmps>>1)/threadsPerCUDABlock);
-        //printf("cuda blocks: %d\n", CUDABlocks);
 
         rotateQubitKernel<<<CUDABlocks, threadsPerCUDABlock>>>(multiQubit, rotQubit, alpha, beta);
+}
+
+__device__ __host__ unsigned int log2Int( unsigned int x )
+{
+        unsigned int ans = 0 ;
+        while( x>>=1 ) ans++;
+        return ans ;
+}
+
+__device__ void reduceBlock(double *arrayIn, double *reducedArray, int length){
+        int i, l, r;
+        int threadMax, maxDepth;
+        threadMax = length/2;
+	maxDepth = log2Int(length/2);
+
+        for (i=0; i<maxDepth+1; i++){
+                if (threadIdx.x<threadMax){
+                        l = threadIdx.x;
+                        r = l + threadMax;
+                        arrayIn[l] = arrayIn[r] + arrayIn[l];
+                }
+                threadMax = threadMax >> 1;
+                __syncthreads(); // optimise -- use warp shuffle instead
+        }
+
+        if (threadIdx.x==0) reducedArray[blockIdx.x] = arrayIn[0];
+}
+
+__global__ void copySharedReduceBlock(double*arrayIn, double *reducedArray, int length){
+	extern __shared__ double tempReductionArray[];
+	int blockOffset = blockIdx.x*blockDim.x;
+	tempReductionArray[threadIdx.x*2] = arrayIn[blockOffset + threadIdx.x*2];
+	tempReductionArray[threadIdx.x*2+1] = arrayIn[blockOffset + threadIdx.x*2+1];
+	__syncthreads();
+	reduceBlock(tempReductionArray, reducedArray, length);
+}
+
+__global__ void findProbabilityOfZeroKernel(MultiQubit multiQubit,
+                const int measureQubit, double *reducedArray)
+{
+        // ----- sizes
+        long long int sizeBlock,                                           // size of blocks
+        sizeHalfBlock;                                       // size of blocks halved
+        // ----- indices
+        long long int thisBlock,                                           // current block
+             index;                                               // current index for first half block
+        // ----- temp variables
+        long long int thisTask;                                   // task based approach for expose loop with small granularity
+        long long int numTasks=multiQubit.numAmps>>1;
+        // (good for shared memory parallelism)
+
+	extern __shared__ double tempReductionArray[];
+
+        // ---------------------------------------------------------------- //
+        //            tests                                                 //
+        // ---------------------------------------------------------------- //
+
+        // ---------------------------------------------------------------- //
+        //            dimensions                                            //
+        // ---------------------------------------------------------------- //
+        sizeHalfBlock = 1LL << (measureQubit);                       // number of state vector elements to sum,
+        // and then the number to skip
+        sizeBlock     = 2LL * sizeHalfBlock;                           // size of blocks (pairs of measure and skip entries)
+
+        // ---------------------------------------------------------------- //
+        //            find probability                                      //
+        // ---------------------------------------------------------------- //
+
+        //
+        // --- task-based shared-memory parallel implementation
+        //
+
+        double *stateVecReal = multiQubit.deviceStateVec.real;
+        double *stateVecImag = multiQubit.deviceStateVec.imag;
+
+	thisTask = blockIdx.x*blockDim.x + threadIdx.x;
+	if (thisTask>=numTasks) return;
+
+	thisBlock = thisTask / sizeHalfBlock;
+	index     = thisBlock*sizeBlock + thisTask%sizeHalfBlock;
+	double realVal, imagVal;
+	realVal = stateVecReal[index];
+	imagVal = stateVecImag[index]; 	
+	tempReductionArray[threadIdx.x] = realVal*realVal + imagVal*imagVal;
+	__syncthreads();
+
+	if (threadIdx.x<blockDim.x/2){
+		reduceBlock(tempReductionArray, reducedArray, blockDim.x);
+	}
 }
 
 double findProbabilityOfZero(MultiQubit multiQubit,
                 const int measureQubit)
 {
+	int numReductionLevels = 1;
+	int threadsPerCUDABlock, CUDABlocks, sharedMemSize;
+        threadsPerCUDABlock = REDUCE_SHARED_SIZE;
+        CUDABlocks = ceil((double)(multiQubit.numAmps>>1)/threadsPerCUDABlock);
+	sharedMemSize = threadsPerCUDABlock*sizeof(double);
+        findProbabilityOfZeroKernel<<<CUDABlocks, threadsPerCUDABlock, sharedMemSize>>>(multiQubit, measureQubit, 
+		multiQubit.firstLevelReduction);
+
+	cudaDeviceSynchronize();	
+/*
+	threadsPerCUDABlock = CUDABlocks;
+	CUDABlocks = 1;
+	copySharedReduceBlock<<<threadsPerCUDABlock, CUDABlocks, sharedMemSize>>>(multiQubit.firstLevelReduction, 
+		multiQubit.secondLevelReduction, threadsPerCUDABlock); 
 	double stateProb=0;
-	stateProb = findProbabilityOfZeroLocal(multiQubit, measureQubit);
+        cudaMemcpy(&stateProb, multiQubit.secondLevelReduction, sizeof(double), cudaMemcpyDeviceToHost);
+*/
+	double stateProb=0;
+        cudaMemcpy(&stateProb, multiQubit.firstLevelReduction, sizeof(double), cudaMemcpyDeviceToHost);
 	return stateProb;
 }
 
-double measureInZero(MultiQubit multiQubit, const int measureQubit)
+__global__ void measureInZeroKernel(MultiQubit multiQubit, int measureQubit, double totalProbability)
 {
+        // ----- sizes
+        long long int sizeBlock,                                           // size of blocks
+        sizeHalfBlock;                                       // size of blocks halved
+        // ----- indices
+        long long int thisBlock,                                           // current block
+             index;                                               // current index for first half block
+        // ----- measured probability
+        double   renorm;                                    // probability (returned) value
+        // ----- temp variables
+        long long int thisTask;                                   // task based approach for expose loop with small granularity
+        // (good for shared memory parallelism)
+        long long int numTasks=multiQubit.numAmps>>1;
+
+        // ---------------------------------------------------------------- //
+        //            tests                                                 //
+        // ---------------------------------------------------------------- //
+        // ---------------------------------------------------------------- //
+        //            dimensions                                            //
+        // ---------------------------------------------------------------- //
+        sizeHalfBlock = 1LL << (measureQubit);                       // number of state vector elements to sum,
+        // and then the number to skip
+        sizeBlock     = 2LL * sizeHalfBlock;                           // size of blocks (pairs of measure and skip entries)
+
+        // ---------------------------------------------------------------- //
+        //            find probability                                      //
+        // ---------------------------------------------------------------- //
+
+        //
+        // --- task-based shared-memory parallel implementation
+        //
+        renorm=1/sqrt(totalProbability);
+        double *stateVecReal = multiQubit.deviceStateVec.real;
+        double *stateVecImag = multiQubit.deviceStateVec.imag;
+
+	thisTask = blockIdx.x*blockDim.x + threadIdx.x;
+	if (thisTask>=numTasks) return;
+	thisBlock = thisTask / sizeHalfBlock;
+	index     = thisBlock*sizeBlock + thisTask%sizeHalfBlock;
+	stateVecReal[index]=stateVecReal[index]*renorm;
+	stateVecImag[index]=stateVecImag[index]*renorm;
+
+	stateVecReal[index+sizeHalfBlock]=0;
+	stateVecImag[index+sizeHalfBlock]=0;
+}
+
+double measureInZero(MultiQubit multiQubit, const int measureQubit)
+{        
         double stateProb;
 	stateProb = findProbabilityOfZero(multiQubit, measureQubit);
-        measureInZeroLocal(multiQubit, measureQubit, stateProb);
+
+	int threadsPerCUDABlock, CUDABlocks;
+        threadsPerCUDABlock = 128;
+        CUDABlocks = ceil((double)(multiQubit.numAmps>>1)/threadsPerCUDABlock);
+        measureInZeroKernel<<<CUDABlocks, threadsPerCUDABlock>>>(multiQubit, measureQubit, stateProb);
         return stateProb;
 }
 
