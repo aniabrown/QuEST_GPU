@@ -19,7 +19,7 @@
 //! Max number of qubits in the system
 # define maxNumQubits   40
 //! 1: print end qubit state to file, 0: don't print
-# define REPORT_STATE 1
+# define REPORT_STATE 0
 
 
 //--------------------------------------------------------------
@@ -167,7 +167,6 @@ int main (int narg, char** varg) {
 	totalProbability = calcTotalProbability(multiQubit);
         if (env.rank==0) printf("VERIFICATION: total probability=%.14f\n", totalProbability);
 	
-	// TO BE IMPLEMENTED
 */
 	//
 	// ======== CLEANUP

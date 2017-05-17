@@ -40,8 +40,8 @@ ifneq ($(USE_MPI), 0)
 else
 	ifneq ($(USE_GPU), 0)
 		CC	   = nvcc
-		CFLAGS	   = -dc -g -G
-		CLFLAGS	   = -O2 -arch=compute_30 -code=sm_30 -lineinfo -g -G
+		CFLAGS	   = -dc
+		CLFLAGS	   = -O2 -arch=compute_30 -code=sm_30 -lineinfo
 		CFLAGS_OMP = -Xcompiler -fopenmp 
 	else ifeq ($(COMPILER), GNU)
 		# GCC compilers

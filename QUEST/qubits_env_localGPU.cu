@@ -8,7 +8,7 @@ An implementation of the API in qubits.h for a local (non-MPI) environment.
 # include "qubits.h"
 # include "qubits_internal.h"
 
-# define REDUCE_SHARED_SIZE 256
+# define REDUCE_SHARED_SIZE 512
 
 void createMultiQubit(MultiQubit *multiQubit, int numQubits, QUESTEnv env)
 {
@@ -233,7 +233,7 @@ __device__ void reduceBlock(double *arrayIn, double *reducedArray, int length){
 
 __global__ void copySharedReduceBlock(double*arrayIn, double *reducedArray, int length){
 	extern __shared__ double tempReductionArray[];
-	int blockOffset = blockIdx.x*blockDim.x;
+	int blockOffset = blockIdx.x*length;
 	tempReductionArray[threadIdx.x*2] = arrayIn[blockOffset + threadIdx.x*2];
 	tempReductionArray[threadIdx.x*2+1] = arrayIn[blockOffset + threadIdx.x*2+1];
 	__syncthreads();
@@ -294,28 +294,58 @@ __global__ void findProbabilityOfZeroKernel(MultiQubit multiQubit,
 	}
 }
 
+int getNumReductionLevels(int numValuesToReduce, int numReducedPerLevel){
+	int levels=0;
+	while (numValuesToReduce){
+		numValuesToReduce = numValuesToReduce/numReducedPerLevel;
+		levels++;
+	}
+	return levels;
+}
+
+void swapDouble(double **a, double **b){
+        double *temp;
+        temp = *a;
+        *a = *b;
+        *b = temp;
+}
+
 double findProbabilityOfZero(MultiQubit multiQubit,
                 const int measureQubit)
 {
-	int numReductionLevels = 1;
-	int threadsPerCUDABlock, CUDABlocks, sharedMemSize;
-        threadsPerCUDABlock = REDUCE_SHARED_SIZE;
-        CUDABlocks = ceil((double)(multiQubit.numAmps>>1)/threadsPerCUDABlock);
-	sharedMemSize = threadsPerCUDABlock*sizeof(double);
-        findProbabilityOfZeroKernel<<<CUDABlocks, threadsPerCUDABlock, sharedMemSize>>>(multiQubit, measureQubit, 
-		multiQubit.firstLevelReduction);
+	int numValuesToReduce = multiQubit.numAmps>>1;
+	int valuesPerCUDABlock, numCUDABlocks, sharedMemSize;
+	double stateProb=0;
+	int firstTime=1;
+	int maxReducedPerLevel = REDUCE_SHARED_SIZE;
 
-	cudaDeviceSynchronize();	
-/*
-	threadsPerCUDABlock = CUDABlocks;
-	CUDABlocks = 1;
-	copySharedReduceBlock<<<threadsPerCUDABlock, CUDABlocks, sharedMemSize>>>(multiQubit.firstLevelReduction, 
-		multiQubit.secondLevelReduction, threadsPerCUDABlock); 
-	double stateProb=0;
-        cudaMemcpy(&stateProb, multiQubit.secondLevelReduction, sizeof(double), cudaMemcpyDeviceToHost);
-*/
-	double stateProb=0;
-        cudaMemcpy(&stateProb, multiQubit.firstLevelReduction, sizeof(double), cudaMemcpyDeviceToHost);
+	while(numValuesToReduce>1){	
+		if (numValuesToReduce<maxReducedPerLevel){
+			// Need less than one CUDA block to reduce values
+			valuesPerCUDABlock = numValuesToReduce;
+			numCUDABlocks = 1;
+		} else {
+			// Use full CUDA blocks, with block size constrained by shared mem usage
+			valuesPerCUDABlock = maxReducedPerLevel;
+			numCUDABlocks = ceil((double)numValuesToReduce/valuesPerCUDABlock);
+		}
+		sharedMemSize = valuesPerCUDABlock*sizeof(double);
+
+		if (firstTime){
+			findProbabilityOfZeroKernel<<<numCUDABlocks, valuesPerCUDABlock, sharedMemSize>>>(
+				multiQubit, measureQubit, multiQubit.firstLevelReduction);
+			firstTime=0;
+		} else {
+			cudaDeviceSynchronize();	
+			copySharedReduceBlock<<<numCUDABlocks, valuesPerCUDABlock/2, sharedMemSize>>>(
+				multiQubit.firstLevelReduction, 
+				multiQubit.secondLevelReduction, valuesPerCUDABlock); 
+			cudaDeviceSynchronize();	
+			swapDouble(&(multiQubit.firstLevelReduction), &(multiQubit.secondLevelReduction));
+		}
+		numValuesToReduce = numValuesToReduce/maxReducedPerLevel;
+	}
+	cudaMemcpy(&stateProb, multiQubit.firstLevelReduction, sizeof(double), cudaMemcpyDeviceToHost);
 	return stateProb;
 }
 
