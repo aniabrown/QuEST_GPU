@@ -17,6 +17,12 @@ USE_MPI=0
 USE_GPU=1
 QUEST_DIR = QUEST
 
+ifeq ($(USE_MPI), 1) 
+	ifeq ($(USE_GPU), 1)
+		$(error " *** error: MPI not enabled for GPU")
+	endif
+endif
+
 #
 # --- compiler
 #
@@ -47,7 +53,7 @@ else
 		# GCC compilers
 		CC         = gcc
 		CFLAGS	   = -c
-		CLFLAGS     = -O2 -std=c99 -mavx -Wall
+		CLFLAGS     = -O2 -std=c99 -mavx -Wall -g -G
 		CFLAGS_OMP = -fopenmp
 	else ifeq ($(COMPILER), INTEL)
 		# Intel compilers

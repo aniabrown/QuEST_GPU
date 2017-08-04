@@ -502,7 +502,7 @@ For each state, if both input qubits are equal to zero, multiply the amplitude o
 @param[in] idQubit1, idQubit2 specified qubits                 
 */
 
-void controlPhaseGate (MultiQubit multiQubit, const int idQubit1, const int idQubit2)
+void controlPhaseGateCPU(MultiQubit multiQubit, const int idQubit1, const int idQubit2)
 {
 	long long int index;
 	long long int stateVecSize;
@@ -546,7 +546,7 @@ For each state, if all four input qubits are equal to zero, multiply the amplitu
 @param[in,out] multiQubit object representing the set of qubits
 @param[in] idQubit1, idQubit2, idQubit3, idQubit4 specified qubits                 
 */
-void quadCPhaseGate (MultiQubit multiQubit, const int idQubit1, const int idQubit2, 
+void quadCPhaseGateCPU(MultiQubit multiQubit, const int idQubit1, const int idQubit2, 
 		const int idQubit3, const int idQubit4)
 {
 	long long int index;

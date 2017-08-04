@@ -134,25 +134,22 @@ int main (int narg, char** varg) {
         qProbability = findProbabilityOfZero(multiQubit, measureQubit);
         if (env.rank==0) printf("Probability of 0 for qubit %d = %.14f\n", measureQubit, qProbability);
 
-/*
-	// Do measurement on rotated qubits
-	if (env.rank==0) printf("\nPerforming single qubit measurement\n");
-        for (measureQubit=0; measureQubit<numQubits; measureQubit++) {
-                qProbability = findProbabilityOfZero(multiQubit, measureQubit);
-                if (env.rank==0) printf("Probability of 0 for qubit %d = %.14f\n", measureQubit, qProbability);
-        }
-	if (env.rank==0) printf("Measuring probability of qubit 0 to be in state 0 and then setting that qubit to 0\n");
-	qProbability = measureInZero(multiQubit, 0);
-        if (env.rank==0) printf("Probability of 0 for qubit %d = %.14f\n", 0, qProbability);
 
-	if (env.rank==0) printf("Performing single qubit measurement\n");
-	// Do measurement on state |0000..0>
-        for (measureQubit=0; measureQubit<numQubits; measureQubit++) {
-                qProbability = findProbabilityOfZero(multiQubit, measureQubit);
-                if (env.rank==0) printf("Probability of 0 for qubit %d = %.14f\n", measureQubit, qProbability);
-        }
-	totalProbability = calcTotalProbability(multiQubit);
+	// filter out qubits
+        qProbability = probOfFilterOut111(multiQubit, 0, 1, 2);
+        if (env.rank==0) printf("Probability that !(q0=1 & q1=1 & q2=1) = %.14f\n", qProbability);
+        totalProbability = calcTotalProbability(multiQubit);
         if (env.rank==0) printf("VERIFICATION: total probability=%.14f\n", totalProbability);
+        qProbability = filterOut111(multiQubit, 1, 2, 3);
+        if (env.rank==0) printf("Probability that !(q1=1 & q2=1 & q3=1) = %.14f. Also filter out those states\n", qProbability);
+        totalProbability = calcTotalProbability(multiQubit);
+        if (env.rank==0) printf("VERIFICATION: total probability=%.14f\n", totalProbability);
+
+        qProbability = probOfFilterOut111(multiQubit, 1, 2, 3);
+        if (env.rank==0) printf("Probability that !(q1=1 & q2=1 & q3=1) = %.14f\n", qProbability);
+        totalProbability = calcTotalProbability(multiQubit);
+        if (env.rank==0) printf("VERIFICATION: total probability=%.14f\n", totalProbability);
+
 
 	//
 	// ===== two qubit phase gate
@@ -167,7 +164,6 @@ int main (int narg, char** varg) {
 	totalProbability = calcTotalProbability(multiQubit);
         if (env.rank==0) printf("VERIFICATION: total probability=%.14f\n", totalProbability);
 	
-*/
 	//
 	// ======== CLEANUP
 	//
