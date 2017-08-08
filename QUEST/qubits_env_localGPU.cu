@@ -106,11 +106,29 @@ void copyStateFromGPU(MultiQubit multiQubit)
 	printf("Finished copying data from GPU\n");
 }
 
+void __global__ initStateVecKernel(long long int stateVecSize, double *stateVecReal, double *stateVecImag){
+        long long int index;
+
+        // initialise the state to |0000..0000>
+	index = blockIdx.x*blockDim.x + threadIdx.x;
+	if (index>=stateVecSize) return;
+	stateVecReal[index] = 0.0;
+	stateVecImag[index] = 0.0;
+
+        if (index==0){
+                // zero state |0000..0000> has probability 1
+                stateVecReal[0] = 1.0;
+                stateVecImag[0] = 0.0;
+        }
+}
 
 void initStateVec(MultiQubit *multiQubit)
 {
-	initStateVecCPU(multiQubit);
-	copyStateToGPU(*multiQubit);
+        int threadsPerCUDABlock, CUDABlocks;
+        threadsPerCUDABlock = 128;
+        CUDABlocks = ceil((double)(multiQubit->numAmps)/threadsPerCUDABlock);
+        initStateVecKernel<<<CUDABlocks, threadsPerCUDABlock>>>(multiQubit->numAmps, multiQubit->deviceStateVec.real, 
+		multiQubit->deviceStateVec.imag);
 }
 
 double calcTotalProbability(MultiQubit multiQubit){
