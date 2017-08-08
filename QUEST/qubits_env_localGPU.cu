@@ -18,8 +18,8 @@ static __device__ int extractBit (int locationOfBitFromRight, long long int theE
 void createMultiQubit(MultiQubit *multiQubit, int numQubits, QUESTEnv env)
 {
 	createMultiQubitCPU(multiQubit, numQubits, env);
-	cudaMalloc(&(multiQubit->deviceStateVec.real), multiQubit->numAmps*sizeof(multiQubit->deviceStateVec.real));
-	cudaMalloc(&(multiQubit->deviceStateVec.imag), multiQubit->numAmps*sizeof(multiQubit->deviceStateVec.imag));
+	cudaMalloc(&(multiQubit->deviceStateVec.real), multiQubit->numAmps*sizeof(*(multiQubit->deviceStateVec.real)));
+	cudaMalloc(&(multiQubit->deviceStateVec.imag), multiQubit->numAmps*sizeof(*(multiQubit->deviceStateVec.imag)));
 	cudaMalloc(&(multiQubit->firstLevelReduction), ceil(multiQubit->numAmps/(double)REDUCE_SHARED_SIZE)*sizeof(double));
 	cudaMalloc(&(multiQubit->secondLevelReduction), ceil(multiQubit->numAmps/(double)(REDUCE_SHARED_SIZE*REDUCE_SHARED_SIZE))*
 		sizeof(double));
@@ -89,9 +89,9 @@ void copyStateToGPU(MultiQubit multiQubit)
 {
 	printf("Copying data to GPU\n");
         cudaMemcpy(multiQubit.deviceStateVec.real, multiQubit.stateVec.real, 
-			multiQubit.numAmps*sizeof(multiQubit.deviceStateVec.real), cudaMemcpyHostToDevice);
+			multiQubit.numAmps*sizeof(*(multiQubit.deviceStateVec.real)), cudaMemcpyHostToDevice);
         cudaMemcpy(multiQubit.deviceStateVec.imag, multiQubit.stateVec.imag, 
-			multiQubit.numAmps*sizeof(multiQubit.deviceStateVec.imag), cudaMemcpyHostToDevice);
+			multiQubit.numAmps*sizeof(*(multiQubit.deviceStateVec.imag)), cudaMemcpyHostToDevice);
 	printf("Finished copying data to GPU\n");
 }
 
@@ -100,9 +100,9 @@ void copyStateFromGPU(MultiQubit multiQubit)
 	cudaDeviceSynchronize();
 	printf("Copying data from GPU\n");
         cudaMemcpy(multiQubit.stateVec.real, multiQubit.deviceStateVec.real, 
-			multiQubit.numAmps*sizeof(multiQubit.deviceStateVec.real), cudaMemcpyDeviceToHost);
+			multiQubit.numAmps*sizeof(*(multiQubit.deviceStateVec.real)), cudaMemcpyDeviceToHost);
         cudaMemcpy(multiQubit.stateVec.imag, multiQubit.deviceStateVec.imag, 
-			multiQubit.numAmps*sizeof(multiQubit.deviceStateVec.imag), cudaMemcpyDeviceToHost);
+			multiQubit.numAmps*sizeof(*(multiQubit.deviceStateVec.imag)), cudaMemcpyDeviceToHost);
 	printf("Finished copying data from GPU\n");
 }
 
@@ -321,10 +321,6 @@ __global__ void findProbabilityOfZeroKernel(MultiQubit multiQubit,
         // (good for shared memory parallelism)
 
 	extern __shared__ double tempReductionArray[];
-
-        // ---------------------------------------------------------------- //
-        //            tests                                                 //
-        // ---------------------------------------------------------------- //
 
         // ---------------------------------------------------------------- //
         //            dimensions                                            //

@@ -11,7 +11,7 @@
 # COMPILER options: GNU, INTEL
 COMPILER = INTEL
 EXE = demo
-MY_FILE_NAME = basicTemplate
+MY_FILE_NAME = 3sat
 USE_MPI=0
 # Do not use MPI and GPU at the same time
 USE_GPU=1
