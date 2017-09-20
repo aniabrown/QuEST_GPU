@@ -1,7 +1,10 @@
 # ifndef QUBITS
 # define QUBITS
+
+# include "precision.h"
+
 /** @file
- * The QUEST library API and objects. 
+ * The QuEST library API and objects. 
 */
 
 /** Represents an array of complex numbers grouped into an array of real components and an array of coressponding complex components.
@@ -47,15 +50,17 @@ typedef struct MultiQubit
 /** Information about the environment the program is running in.
 In practice, this holds info about MPI ranks and helps to hide MPI initialization code
 */
-typedef struct QUESTEnv
+typedef struct QuESTEnv
 {
 	int rank;
 	int numRanks;
-} QUESTEnv;
+} QuESTEnv;
 
 
-// QUEST library functions whose implementation is independent of environment (local, MPI)
+// QuEST library functions whose implementation is independent of environment (local, MPI)
 void reportState(MultiQubit multiQubit);
+
+void reportStateToScreen(MultiQubit multiQubit, QuESTEnv env, int reportRank);
 
 void reportMultiQubitParams(MultiQubit multiQubit);
 
@@ -65,35 +70,47 @@ void quadCPhaseGate (MultiQubit multiQubit, const int idQubit1, const int idQubi
 void controlPhaseGate (MultiQubit multiQubit, const int idQubit1, const int idQubit2);
 
 
-// QUEST library functions whose implementation depends on environment (local, MPI)
+// QuEST library functions whose implementation depends on environment (local, MPI)
 
-void createMultiQubit(MultiQubit *multiQubit, int numQubits, QUESTEnv env);
+void createMultiQubit(MultiQubit *multiQubit, int numQubits, QuESTEnv env);
 
-void destroyMultiQubit(MultiQubit multiQubit, QUESTEnv env);
+void destroyMultiQubit(MultiQubit multiQubit, QuESTEnv env);
 
-void initStateVec(MultiQubit *multiQubit);
+void initStateZero(MultiQubit *multiQubit);
 
-/** Initialize QUEST environment. If something needs to be done to set up the execution environment, such as 
+void initStatePlus(MultiQubit *multiQubit);
+
+void initStateDebug(MultiQubit *multiQubit);
+
+void initStateOfSingleQubit(MultiQubit *multiQubit, int qubitId, int outcome);
+
+void initializeStateFromSingleFile(MultiQubit *multiQubit, char filename[200], QuESTEnv env);
+
+int compareStates(MultiQubit mq1, MultiQubit mq2, REAL precision);
+
+/** Initialize QuEST environment. If something needs to be done to set up the execution environment, such as 
  * initializing MPI when running in distributed mode, it is handled here
  * @param[in,out] env object representing the execution environment. A single instance is used for each program
  */
-void initQUESTEnv(QUESTEnv *env);
+void initQuESTEnv(QuESTEnv *env);
 
-/** Close QUEST environment. If something needs to be done to clean up the execution environment, such as 
+/** Close QuEST environment. If something needs to be done to clean up the execution environment, such as 
  * finalizing MPI when running in distributed mode, it is handled here
  * @param[in] env object representing the execution environment. A single instance is used for each program
  */
-void closeQUESTEnv(QUESTEnv env);
+void closeQuESTEnv(QuESTEnv env);
 
 /** Guarantees that all code up to the given point has been executed on all nodes. 
  * @param[in] env object representing the execution environment. A single instance is used for each program
  */
-void syncQUESTEnv(QUESTEnv env);
+void syncQuESTEnv(QuESTEnv env);
 
-/** Report information about the QUEST environment
+int syncQuESTSuccess(QuESTEnv env, int successCode);
+
+/** Report information about the QuEST environment
  * @param[in] env object representing the execution environment. A single instance is used for each program
  */
-void reportQUESTEnv(QUESTEnv env);
+void reportQuESTEnv(QuESTEnv env);
 
 /** Calculate the probability of being in any state by taking the norm of the entire state vector. 
  * Should be equal to 1.
@@ -126,6 +143,11 @@ of a specified qubit being in the zero state.
 @return probability of qubit measureQubit being zero
 */
 double findProbabilityOfZero(MultiQubit multiQubit, const int measureQubit);
+
+REAL findProbabilityOfOutcome(MultiQubit multiQubit, const int measureQubit, int outcome);
+
+
+double measureInState(MultiQubit multiQubit, const int measureQubit, int outcome);
 
 /** Update the state vector to be consistent with measuring measureQubit=0.
 Measure in Zero performs an irreversible change to the state vector: it updates the vector according

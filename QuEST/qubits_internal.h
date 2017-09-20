@@ -7,9 +7,9 @@
  * the correct function or combination of functions to use from those included here.  
  */
 
-void createMultiQubitCPU(MultiQubit *multiQubit, int numQubits, QUESTEnv env);
+void createMultiQubitCPU(MultiQubit *multiQubit, int numQubits, QuESTEnv env);
 
-void destroyMultiQubitCPU(MultiQubit multiQubit, QUESTEnv env);
+void destroyMultiQubitCPU(MultiQubit multiQubit, QuESTEnv env);
 
 void initStateVecCPU(MultiQubit *multiQubit);
 

@@ -6,14 +6,15 @@ An implementation of the API in qubits.h for a local (non-MPI) environment.
 # include <stdio.h>
 # include <omp.h>
 # include "qubits.h"
+# include "precision.h"
 # include "qubits_internal.h"
 
-void createMultiQubit(MultiQubit *multiQubit, int numQubits, QUESTEnv env)
+void createMultiQubit(MultiQubit *multiQubit, int numQubits, QuESTEnv env)
 {
 	createMultiQubitCPU(multiQubit, numQubits, env);
 }
 
-void destroyMultiQubit(MultiQubit multiQubit, QUESTEnv env)
+void destroyMultiQubit(MultiQubit multiQubit, QuESTEnv env)
 {
 	destroyMultiQubitCPU(multiQubit, env);
 }
@@ -22,21 +23,21 @@ void initStateVec(MultiQubit *multiQubit){
 	initStateVecCPU(multiQubit);
 }
 
-void initQUESTEnv(QUESTEnv *env){
+void initQuESTEnv(QuESTEnv *env){
         // init MPI environment
 	env->rank=0;
 	env->numRanks=1;
 }
 
-void syncQUESTEnv(QUESTEnv env){
+void syncQuESTEnv(QuESTEnv env){
 	// MPI Barrier goes here in MPI version. 
 } 
 
-void closeQUESTEnv(QUESTEnv env){
+void closeQuESTEnv(QuESTEnv env){
 	// MPI finalize goes here in MPI version. Call this function anyway for consistency
 }
 
-void reportQUESTEnv(QUESTEnv env){
+void reportQuESTEnv(QuESTEnv env){
 	printf("EXECUTION ENVIRONMENT:\n");
 	printf("Running locally on one node\n");
 	printf("Number of ranks is %d\n", env.numRanks);

@@ -5,17 +5,20 @@ An implementation of the API in qubits.h for a local (non-MPI) environment.
 # include <stdlib.h>
 # include <stdio.h>
 # include <omp.h>
+# include <math.h>
 # include "qubits.h"
+# include "precision.h"
 # include "qubits_internal.h"
 
 # define REDUCE_SHARED_SIZE 512
+# define DEBUG 0
 
 static __device__ int extractBit (int locationOfBitFromRight, long long int theEncodedNumber)
 {
         return (theEncodedNumber & ( 1LL << locationOfBitFromRight )) >> locationOfBitFromRight;
 }
 
-void createMultiQubit(MultiQubit *multiQubit, int numQubits, QUESTEnv env)
+void createMultiQubit(MultiQubit *multiQubit, int numQubits, QuESTEnv env)
 {
 	createMultiQubitCPU(multiQubit, numQubits, env);
 	cudaMalloc(&(multiQubit->deviceStateVec.real), multiQubit->numAmps*sizeof(*(multiQubit->deviceStateVec.real)));
@@ -31,7 +34,7 @@ void createMultiQubit(MultiQubit *multiQubit, int numQubits, QUESTEnv env)
 
 }
 
-void destroyMultiQubit(MultiQubit multiQubit, QUESTEnv env)
+void destroyMultiQubit(MultiQubit multiQubit, QuESTEnv env)
 {
 	destroyMultiQubitCPU(multiQubit, env);
 	cudaFree(multiQubit.deviceStateVec.real);
@@ -55,7 +58,7 @@ int GPUExists(void){
 	else return 0;
 }
 
-void initQUESTEnv(QUESTEnv *env){
+void initQuESTEnv(QuESTEnv *env){
         // init MPI environment
 	if (!GPUExists()){
 		printf("Trying to run GPU code with no GPU available\n");
@@ -65,15 +68,19 @@ void initQUESTEnv(QUESTEnv *env){
 	env->numRanks=1;
 }
 
-void syncQUESTEnv(QUESTEnv env){
+void syncQuESTEnv(QuESTEnv env){
 	cudaDeviceSynchronize();
 } 
 
-void closeQUESTEnv(QUESTEnv env){
+int syncQuESTSuccess(QuESTEnv env, int successCode){
+	return successCode;
+}
+
+void closeQuESTEnv(QuESTEnv env){
 	// MPI finalize goes here in MPI version. Call this function anyway for consistency
 }
 
-void reportQUESTEnv(QUESTEnv env){
+void reportQuESTEnv(QuESTEnv env){
 	printf("EXECUTION ENVIRONMENT:\n");
 	printf("Running locally on one node with GPU\n");
 	printf("Number of ranks is %d\n", env.numRanks);
@@ -87,26 +94,54 @@ void reportQUESTEnv(QUESTEnv env){
 
 void copyStateToGPU(MultiQubit multiQubit)
 {
-	printf("Copying data to GPU\n");
+	if (DEBUG) printf("Copying data to GPU\n");
         cudaMemcpy(multiQubit.deviceStateVec.real, multiQubit.stateVec.real, 
 			multiQubit.numAmps*sizeof(*(multiQubit.deviceStateVec.real)), cudaMemcpyHostToDevice);
         cudaMemcpy(multiQubit.deviceStateVec.imag, multiQubit.stateVec.imag, 
 			multiQubit.numAmps*sizeof(*(multiQubit.deviceStateVec.imag)), cudaMemcpyHostToDevice);
-	printf("Finished copying data to GPU\n");
+	if (DEBUG) printf("Finished copying data to GPU\n");
 }
 
 void copyStateFromGPU(MultiQubit multiQubit)
 {
 	cudaDeviceSynchronize();
-	printf("Copying data from GPU\n");
+	if (DEBUG) printf("Copying data from GPU\n");
         cudaMemcpy(multiQubit.stateVec.real, multiQubit.deviceStateVec.real, 
 			multiQubit.numAmps*sizeof(*(multiQubit.deviceStateVec.real)), cudaMemcpyDeviceToHost);
         cudaMemcpy(multiQubit.stateVec.imag, multiQubit.deviceStateVec.imag, 
 			multiQubit.numAmps*sizeof(*(multiQubit.deviceStateVec.imag)), cudaMemcpyDeviceToHost);
-	printf("Finished copying data from GPU\n");
+	if (DEBUG) printf("Finished copying data from GPU\n");
 }
 
-void __global__ initStateVecKernel(long long int stateVecSize, double *stateVecReal, double *stateVecImag){
+/** Print the current state vector of probability amplitudes for a set of qubits to standard out. 
+For debugging purposes. Each rank should print output serially. Only print output for systems <= 5 qubits
+*/
+void reportStateToScreen(MultiQubit multiQubit, QuESTEnv env, int reportRank){
+        long long int index;
+        int rank;
+        copyStateFromGPU(multiQubit); 
+        if (multiQubit.numQubits<=5){
+                for (rank=0; rank<multiQubit.numChunks; rank++){
+                        if (multiQubit.chunkId==rank){
+                                if (reportRank) {
+                                        printf("Reporting state from rank %d [\n", multiQubit.chunkId);
+                                        //printf("\trank, index, real, imag\n");
+                                        printf("real, imag\n");
+                                } else if (rank==0) {
+                                        printf("Reporting state [\n");
+                                        printf("real, imag\n");
+                                }
+
+                                for(index=0; index<multiQubit.numAmps; index++){
+                                        printf(REAL_STRING_FORMAT ", " REAL_STRING_FORMAT "\n", multiQubit.stateVec.real[index], multiQubit.stateVec.imag[index]);
+                                }
+                                if (reportRank || rank==multiQubit.numChunks-1) printf("]\n");
+                        }
+                        syncQuESTEnv(env);
+                }
+        }
+}
+void __global__ initStateZeroKernel(long long int stateVecSize, double *stateVecReal, double *stateVecImag){
         long long int index;
 
         // initialise the state to |0000..0000>
@@ -122,14 +157,130 @@ void __global__ initStateVecKernel(long long int stateVecSize, double *stateVecR
         }
 }
 
-void initStateVec(MultiQubit *multiQubit)
+void initStateZero(MultiQubit *multiQubit)
 {
         int threadsPerCUDABlock, CUDABlocks;
         threadsPerCUDABlock = 128;
         CUDABlocks = ceil((double)(multiQubit->numAmps)/threadsPerCUDABlock);
-        initStateVecKernel<<<CUDABlocks, threadsPerCUDABlock>>>(multiQubit->numAmps, multiQubit->deviceStateVec.real, 
+        initStateZeroKernel<<<CUDABlocks, threadsPerCUDABlock>>>(multiQubit->numAmps, multiQubit->deviceStateVec.real, 
 		multiQubit->deviceStateVec.imag);
 }
+
+void __global__ initStatePlusKernel(long long int stateVecSize, double *stateVecReal, double *stateVecImag){
+        long long int index;
+
+	index = blockIdx.x*blockDim.x + threadIdx.x;
+	if (index>=stateVecSize) return;
+
+	REAL normFactor = 1.0/sqrt((double)stateVecSize);
+	stateVecReal[index] = normFactor;
+	stateVecImag[index] = 0.0;
+}
+
+void initStatePlus(MultiQubit *multiQubit)
+{
+        int threadsPerCUDABlock, CUDABlocks;
+        threadsPerCUDABlock = 128;
+        CUDABlocks = ceil((double)(multiQubit->numAmps)/threadsPerCUDABlock);
+        initStatePlusKernel<<<CUDABlocks, threadsPerCUDABlock>>>(multiQubit->numAmps, multiQubit->deviceStateVec.real, 
+		multiQubit->deviceStateVec.imag);
+}
+
+void __global__ initStateDebugKernel(long long int stateVecSize, double *stateVecReal, double *stateVecImag){
+        long long int index;
+
+	index = blockIdx.x*blockDim.x + threadIdx.x;
+	if (index>=stateVecSize) return;
+
+	stateVecReal[index] = (index*2.0)/10.0;
+	stateVecImag[index] = (index*2.0+1.0)/10.0;
+}
+
+void initStateDebug(MultiQubit *multiQubit)
+{
+        int threadsPerCUDABlock, CUDABlocks;
+        threadsPerCUDABlock = 128;
+        CUDABlocks = ceil((double)(multiQubit->numAmps)/threadsPerCUDABlock);
+        initStateDebugKernel<<<CUDABlocks, threadsPerCUDABlock>>>(multiQubit->numAmps, multiQubit->deviceStateVec.real, 
+		multiQubit->deviceStateVec.imag);
+}
+
+void __global__ initStateOfSingleQubitKernel(long long int stateVecSize, double *stateVecReal, double *stateVecImag, int qubitId, int outcome){
+        long long int index;
+	int bit;
+
+	index = blockIdx.x*blockDim.x + threadIdx.x;
+	if (index>=stateVecSize) return;
+
+	REAL normFactor = 1.0/sqrt((double)stateVecSize/2);
+	bit = extractBit(qubitId, index);
+	if (bit==outcome) {
+		stateVecReal[index] = normFactor;
+		stateVecImag[index] = 0.0;
+	} else {
+		stateVecReal[index] = 0.0;
+		stateVecImag[index] = 0.0;
+	}
+}
+
+void initStateOfSingleQubit(MultiQubit *multiQubit, int qubitId, int outcome)
+{
+        int threadsPerCUDABlock, CUDABlocks;
+        threadsPerCUDABlock = 128;
+        CUDABlocks = ceil((double)(multiQubit->numAmps)/threadsPerCUDABlock);
+        initStateOfSingleQubitKernel<<<CUDABlocks, threadsPerCUDABlock>>>(multiQubit->numAmps, multiQubit->deviceStateVec.real, multiQubit->deviceStateVec.imag, qubitId, outcome);
+}
+
+void initializeStateFromSingleFile(MultiQubit *multiQubit, char filename[200], QuESTEnv env){
+        long long int chunkSize, stateVecSize;
+        long long int indexInChunk, totalIndex;
+
+        chunkSize = multiQubit->numAmps;
+        stateVecSize = chunkSize*multiQubit->numChunks;
+
+        REAL *stateVecReal = multiQubit->stateVec.real;
+        REAL *stateVecImag = multiQubit->stateVec.imag;
+
+        FILE *fp;
+        char line[200];
+
+	fp = fopen(filename, "r");
+	indexInChunk = 0; totalIndex = 0;
+	while (fgets(line, sizeof(char)*200, fp) != NULL && totalIndex<stateVecSize){
+		if (line[0]!='#'){
+			int chunkId = totalIndex/chunkSize;
+			if (chunkId==multiQubit->chunkId){
+				//! fix -- format needs to work for single precision values
+				sscanf(line, "%lf, %lf", &(stateVecReal[indexInChunk]),
+						&(stateVecImag[indexInChunk]));
+				indexInChunk += 1;
+			}
+			totalIndex += 1;
+		}
+	}
+	fclose(fp);
+	
+	copyStateToGPU(*multiQubit);
+}
+
+int compareStates(MultiQubit mq1, MultiQubit mq2, REAL precision){
+        REAL diff;
+        int chunkSize = mq1.numAmps;
+
+	copyStateFromGPU(mq1);
+	copyStateFromGPU(mq2);
+
+        for (int i=0; i<chunkSize; i++){
+                diff = mq1.stateVec.real[i] - mq2.stateVec.real[i];
+                if (diff<0) diff *= -1;
+                if (diff>precision) return 0;
+                diff = mq1.stateVec.imag[i] - mq2.stateVec.imag[i];
+                if (diff<0) diff *= -1;
+                if (diff>precision) return 0;
+        }
+        return 1;
+}
+
 
 double calcTotalProbability(MultiQubit multiQubit){
         double pTotal=0; 
@@ -429,6 +580,86 @@ double findProbabilityOfZero(MultiQubit multiQubit,
 	return stateProb;
 }
 
+REAL findProbabilityOfOutcome(MultiQubit multiQubit, const int measureQubit, int outcome)
+{
+        REAL stateProb=0;
+        stateProb = findProbabilityOfZero(multiQubit, measureQubit);
+        if (outcome==1) stateProb = 1.0 - stateProb;
+        return stateProb;
+}
+
+__global__ void measureInStateKernel(MultiQubit multiQubit, int measureQubit, double totalProbability, int outcome)
+{
+        // ----- sizes
+        long long int sizeBlock,                                           // size of blocks
+        sizeHalfBlock;                                       // size of blocks halved
+        // ----- indices
+        long long int thisBlock,                                           // current block
+             index;                                               // current index for first half block
+        // ----- measured probability
+        double   renorm;                                    // probability (returned) value
+        // ----- temp variables
+        long long int thisTask;                                   // task based approach for expose loop with small granularity
+        // (good for shared memory parallelism)
+        long long int numTasks=multiQubit.numAmps>>1;
+
+        // ---------------------------------------------------------------- //
+        //            tests                                                 //
+        // ---------------------------------------------------------------- //
+
+	//! fix -- this should report an error
+        if (!(measureQubit >= 0 && measureQubit < multiQubit.numQubits)) return;
+        if (!(totalProbability != 0)) return;
+        // ---------------------------------------------------------------- //
+        //            dimensions                                            //
+        // ---------------------------------------------------------------- //
+        sizeHalfBlock = 1LL << (measureQubit);                       // number of state vector elements to sum,
+        // and then the number to skip
+        sizeBlock     = 2LL * sizeHalfBlock;                           // size of blocks (pairs of measure and skip entries)
+
+        // ---------------------------------------------------------------- //
+        //            find probability                                      //
+        // ---------------------------------------------------------------- //
+
+        //
+        // --- task-based shared-memory parallel implementation
+        //
+        renorm=1/sqrt(totalProbability);
+        double *stateVecReal = multiQubit.deviceStateVec.real;
+        double *stateVecImag = multiQubit.deviceStateVec.imag;
+
+	thisTask = blockIdx.x*blockDim.x + threadIdx.x;
+	if (thisTask>=numTasks) return;
+	thisBlock = thisTask / sizeHalfBlock;
+	index     = thisBlock*sizeBlock + thisTask%sizeHalfBlock;
+
+	if (outcome==0){
+		stateVecReal[index]=stateVecReal[index]*renorm;
+		stateVecImag[index]=stateVecImag[index]*renorm;
+
+		stateVecReal[index+sizeHalfBlock]=0;
+		stateVecImag[index+sizeHalfBlock]=0;
+	} else if (outcome==1){
+		stateVecReal[index]=0;
+		stateVecImag[index]=0;
+
+		stateVecReal[index+sizeHalfBlock]=stateVecReal[index+sizeHalfBlock]*renorm;
+		stateVecImag[index+sizeHalfBlock]=stateVecImag[index+sizeHalfBlock]*renorm;
+	}
+
+}
+
+double measureInState(MultiQubit multiQubit, const int measureQubit, int outcome)
+{        
+        double stateProb;
+	stateProb = findProbabilityOfOutcome(multiQubit, measureQubit, outcome);
+
+	int threadsPerCUDABlock, CUDABlocks;
+        threadsPerCUDABlock = 128;
+        CUDABlocks = ceil((double)(multiQubit.numAmps>>1)/threadsPerCUDABlock);
+        if (stateProb!=0) measureInStateKernel<<<CUDABlocks, threadsPerCUDABlock>>>(multiQubit, measureQubit, stateProb, outcome);
+        return stateProb;
+}
 
 __global__ void measureInZeroKernel(MultiQubit multiQubit, int measureQubit, double totalProbability)
 {
@@ -485,7 +716,7 @@ double measureInZero(MultiQubit multiQubit, const int measureQubit)
 	int threadsPerCUDABlock, CUDABlocks;
         threadsPerCUDABlock = 128;
         CUDABlocks = ceil((double)(multiQubit.numAmps>>1)/threadsPerCUDABlock);
-        measureInZeroKernel<<<CUDABlocks, threadsPerCUDABlock>>>(multiQubit, measureQubit, stateProb);
+        if (stateProb!=0) measureInZeroKernel<<<CUDABlocks, threadsPerCUDABlock>>>(multiQubit, measureQubit, stateProb);
         return stateProb;
 }
 
@@ -529,7 +760,7 @@ double filterOut111(MultiQubit multiQubit, const int idQubit1, const int idQubit
         CUDABlocks = ceil((double)(multiQubit.numAmps)/threadsPerCUDABlock);
 
         stateProb = probOfFilterOut111(multiQubit, idQubit1, idQubit2, idQubit3);
-        filterOut111Kernel<<<CUDABlocks, threadsPerCUDABlock>>>(multiQubit, idQubit1, idQubit2, idQubit3, stateProb);
+        if (stateProb!=0) filterOut111Kernel<<<CUDABlocks, threadsPerCUDABlock>>>(multiQubit, idQubit1, idQubit2, idQubit3, stateProb);
         return stateProb;
 }
 
@@ -611,7 +842,6 @@ double probOfFilterOut111(MultiQubit multiQubit, const int idQubit1, const int i
 	}
 	cudaMemcpy(&stateProb, multiQubit.firstLevelReduction, sizeof(double), cudaMemcpyDeviceToHost);
 	return stateProb;
-
 }
 
 

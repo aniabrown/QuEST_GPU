@@ -15,12 +15,12 @@ static void getRotAngle(int chunkIsUpper, Complex *rot1, Complex *rot2, Complex 
 static int getChunkPairId(int chunkIsUpper, int chunkId, long long int chunkSize, int rotQubit);
 static int halfMatrixBlockFitsInChunk(long long int chunkSize, int rotQubit);
 
-void createMultiQubit(MultiQubit *multiQubit, int numQubits, QUESTEnv env)
+void createMultiQubit(MultiQubit *multiQubit, int numQubits, QuESTEnv env)
 {
         createMultiQubitCPU(multiQubit, numQubits, env);
 } 
 
-void destroyMultiQubit(MultiQubit multiQubit, QUESTEnv env)
+void destroyMultiQubit(MultiQubit multiQubit, QuESTEnv env)
 {
         destroyMultiQubitCPU(multiQubit, numQubits);
 }
@@ -29,7 +29,7 @@ void initStateVec(MultiQubit *multiQubit){
         initStateVecCPU(multiQubit); 
 }
 
-void initQUESTEnv(QUESTEnv *env){
+void initQuESTEnv(QuESTEnv *env){
         // init MPI environment
         int rank, numRanks, initialized;
 	MPI_Initialized(&initialized);
@@ -46,21 +46,21 @@ void initQUESTEnv(QUESTEnv *env){
 		}
 		env->rank=rank;
 		env->numRanks=numRanks;
-	} else printf("ERROR: Trying to initialize QUESTEnv multiple times. Ignoring\n");
+	} else printf("ERROR: Trying to initialize QuESTEnv multiple times. Ignoring\n");
 }
 
-void syncQUESTEnv(QUESTEnv env){
+void syncQuESTEnv(QuESTEnv env){
 	MPI_Barrier(MPI_COMM_WORLD);
 }
 
-void closeQUESTEnv(QUESTEnv env){
+void closeQuESTEnv(QuESTEnv env){
 	int finalized;
 	MPI_Finalized(&finalized);
 	if (!finalized) MPI_Finalize();
-	else printf("ERROR: Trying to close QUESTEnv multiple times. Ignoring\n");
+	else printf("ERROR: Trying to close QuESTEnv multiple times. Ignoring\n");
 }
 
-void reportQUESTEnv(QUESTEnv env){
+void reportQuESTEnv(QuESTEnv env){
 	if (env.rank==0){
 		printf("EXECUTION ENVIRONMENT:\n"); 
 		printf("Running distributed (MPI) version\n");

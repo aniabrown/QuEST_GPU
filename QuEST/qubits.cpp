@@ -1,11 +1,12 @@
 /** @file qubits.c
- * The core of the QUEST Library.
+ * The core of the QuEST Library.
  */
 
 # include <math.h>  //SCB new line
 # include <stdio.h>
 # include <stdlib.h>
 # include <assert.h>
+# include "precision.h"
 # include "qubits.h"
 
 # define DEBUG 0
@@ -21,7 +22,7 @@ static int extractBit (const int locationOfBitFromRight, const long long int the
  * @param[in] numQubits number of qubits in the system
  * @param[in] env object representing the execution environment (local, multinode etc)
  */
-void createMultiQubitCPU(MultiQubit *multiQubit, int numQubits, QUESTEnv env)
+void createMultiQubitCPU(MultiQubit *multiQubit, int numQubits, QuESTEnv env)
 {
 	long long int numAmps = 1L << numQubits;
 	long long int numAmpsPerRank = numAmps/env.numRanks;
@@ -57,7 +58,7 @@ void createMultiQubitCPU(MultiQubit *multiQubit, int numQubits, QUESTEnv env)
  * @param[in,out] multiQubit object to be deallocated
  * @param[in] env object representing the execution environment (local, multinode etc)
  */
-void destroyMultiQubitCPU(MultiQubit multiQubit, QUESTEnv env){
+void destroyMultiQubitCPU(MultiQubit multiQubit, QuESTEnv env){
 	free(multiQubit.stateVec.real);
 	free(multiQubit.stateVec.imag);
 	if (env.numRanks>1){
@@ -99,6 +100,38 @@ void reportState(MultiQubit multiQubit){
 	}
 	fclose(state);
 }
+
+/** Print the current state vector of probability amplitudes for a set of qubits to standard out. 
+For debugging purposes. Each rank should print output serially. Only print output for systems <= 5 qubits
+*/
+/*
+void reportStateToScreen(MultiQubit multiQubit, QuESTEnv env, int reportRank){
+        long long int index;
+        int rank;
+	copyStateFromGPU(multiQubit);
+        if (multiQubit.numQubits<=5){
+                for (rank=0; rank<multiQubit.numChunks; rank++){
+                        if (multiQubit.chunkId==rank){
+                                if (reportRank) {
+                                        printf("Reporting state from rank %d [\n", multiQubit.chunkId);
+                                        //printf("\trank, index, real, imag\n");
+                                        printf("real, imag\n");
+                                } else if (rank==0) {
+                                        printf("Reporting state [\n");
+                                        printf("real, imag\n");
+                                }
+
+                                for(index=0; index<multiQubit.numAmps; index++){
+                                        printf(REAL_STRING_FORMAT ", " REAL_STRING_FORMAT "\n", multiQubit.stateVec.real[index], multiQubit.stateVec.imag[index]);
+                                }
+                                if (reportRank || rank==multiQubit.numChunks-1) printf("]\n");
+                        }
+                        syncQuESTEnv(env);
+                }
+        }
+}
+*/
+
 
 /** Report metainformation about a set of qubits: number of qubits, number of probability amplitudes.
  * @param[in,out] multiQubit object representing the set of qubits
