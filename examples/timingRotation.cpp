@@ -106,11 +106,6 @@ int main (int narg, char** varg) {
 
 	numAmps = 1L << numQubits;
 
-	if (env.rank==0){
-		printf("Demo of single qubit rotations.\n");
-		printf("Number of qubits is %d.\n", numQubits);
-		printf("Number of amps is %ld.\n", numAmps);
-	}
 
 	// timing variables
 	REAL wtime_start,
@@ -123,6 +118,11 @@ int main (int narg, char** varg) {
 	
 	createMultiQubit(&multiQubit, numQubits, env);
 	if (DEBUG) printf("alloced mem\n");
+
+	if (env.rank==0){
+		reportMultiQubitParams(multiQubit);
+		reportQuESTEnv(env);
+	}
 
 	// initialise the state to |0000..0>
 	initStateZero(&multiQubit);
@@ -169,6 +169,7 @@ int main (int narg, char** varg) {
 		syncQuESTEnv(env);
 	}
 
+	printf("Rotating\n");
 	for (rotQubit=0; rotQubit<numQubits; rotQubit++) {
 		for (trial=0; trial<N_TRIALS; trial++){
 			// for timing -- have all ranks start at same place
