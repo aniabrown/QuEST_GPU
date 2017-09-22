@@ -11,16 +11,16 @@
 */
 typedef struct ComplexArray
 {
-	double *real; 
-	double *imag;
+	REAL *real; 
+	REAL *imag;
 } ComplexArray;
 
 /** Represents one complex number.
 */
 typedef struct Complex
 {
-	double real;
-	double imag;
+	REAL real;
+	REAL imag;
 } Complex;
 
 /** Represents a system of qubits.
@@ -35,7 +35,7 @@ typedef struct MultiQubit
 	//! Storage for probability amplitudes for the multi qubit state on GPU 
 	ComplexArray deviceStateVec;
 	//! Storage for reduction of probabilities on GPU
-	double *firstLevelReduction, *secondLevelReduction;
+	REAL *firstLevelReduction, *secondLevelReduction;
 	//! Number of qubits in the state
 	int numQubits;
 	//! Number of probability amplitudes held in stateVec by this process
@@ -59,6 +59,8 @@ typedef struct QuESTEnv
 
 // QuEST library functions whose implementation is independent of environment (local, MPI)
 void reportState(MultiQubit multiQubit);
+
+void getEnvironmentString(QuESTEnv env, MultiQubit multiQubit, char str[200]);
 
 void reportStateToScreen(MultiQubit multiQubit, QuESTEnv env, int reportRank);
 
@@ -117,7 +119,7 @@ void reportQuESTEnv(QuESTEnv env);
  * @param[in] multiQubit object representing a set of qubits
  * @return total probability
  */
-double calcTotalProbability(MultiQubit multiQubit);
+REAL calcTotalProbability(MultiQubit multiQubit);
 
 /** Rotate a single qubit in the state vector of probability amplitudes, given the angle rotation arguments.
 alphaRe = cos(angle1) * cos(angle2) \n
@@ -142,12 +144,12 @@ of a specified qubit being in the zero state.
 @param[in] measureQubit qubit to measure
 @return probability of qubit measureQubit being zero
 */
-double findProbabilityOfZero(MultiQubit multiQubit, const int measureQubit);
+REAL findProbabilityOfZero(MultiQubit multiQubit, const int measureQubit);
 
 REAL findProbabilityOfOutcome(MultiQubit multiQubit, const int measureQubit, int outcome);
 
 
-double measureInState(MultiQubit multiQubit, const int measureQubit, int outcome);
+REAL measureInState(MultiQubit multiQubit, const int measureQubit, int outcome);
 
 /** Update the state vector to be consistent with measuring measureQubit=0.
 Measure in Zero performs an irreversible change to the state vector: it updates the vector according
@@ -160,7 +162,7 @@ probability of making this measurement.
 @param[in] measureQubit qubit to measure
 @return probability of qubit measureQubit being zero
 */
-double measureInZero(MultiQubit multiQubit, const int measureQubit);
+REAL measureInZero(MultiQubit multiQubit, const int measureQubit);
 
 /** Updates the state according to this scenario: we ask "are these 3 qubits in 111" and the answer is "no".
 The function returns the probability of this outcome (if zero, it will exit with error) 
@@ -168,7 +170,7 @@ The function returns the probability of this outcome (if zero, it will exit with
 @param[in] idQubit1, idQubit2, idQubit3 specified qubits                 
 @return Total probability that the 3 qubits are not all in the 1 state. 
 */
-double filterOut111(MultiQubit multiQubit, const int idQubit1, const int idQubit2, const int idQubit3);
+REAL filterOut111(MultiQubit multiQubit, const int idQubit1, const int idQubit2, const int idQubit3);
 
 /** Evaluates the state according to this scenario: we ask "are these 3 qubits in 111" and the answer is "no".
 The function returns the probability of this outcome (if zero, it will exit with error) 
@@ -176,7 +178,7 @@ The function returns the probability of this outcome (if zero, it will exit with
 @param[in] idQubit1, idQubit2, idQubit3 specified qubits                 
 @return Total probability that the 3 qubits are not all in the 1 state. 
 */
-double probOfFilterOut111(MultiQubit multiQubit, const int idQubit1, const int idQubit2, const int idQubit3);
+REAL probOfFilterOut111(MultiQubit multiQubit, const int idQubit1, const int idQubit2, const int idQubit3);
 
 
 

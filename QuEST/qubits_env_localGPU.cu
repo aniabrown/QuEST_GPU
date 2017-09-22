@@ -92,6 +92,10 @@ void reportQuESTEnv(QuESTEnv env){
 # endif
 }
 
+void getEnvironmentString(QuESTEnv env, MultiQubit multiQubit, char str[200]){
+	sprintf(str, "%dqubits_GPU_noMpi_noOMP", multiQubit.numQubits);	
+}
+
 void copyStateToGPU(MultiQubit multiQubit)
 {
 	if (DEBUG) printf("Copying data to GPU\n");
@@ -250,9 +254,14 @@ void initializeStateFromSingleFile(MultiQubit *multiQubit, char filename[200], Q
 		if (line[0]!='#'){
 			int chunkId = totalIndex/chunkSize;
 			if (chunkId==multiQubit->chunkId){
-				//! fix -- format needs to work for single precision values
-				sscanf(line, "%lf, %lf", &(stateVecReal[indexInChunk]),
+				//! fix -- hacky
+				if (P==1){
+					sscanf(line, "%f, %f", &(stateVecReal[indexInChunk]),
 						&(stateVecImag[indexInChunk]));
+				} else {
+					sscanf(line, "%lf, %lf", &(stateVecReal[indexInChunk]),
+						&(stateVecImag[indexInChunk]));
+				}
 				indexInChunk += 1;
 			}
 			totalIndex += 1;
