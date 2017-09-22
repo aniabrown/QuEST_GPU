@@ -23,9 +23,9 @@ void createMultiQubit(MultiQubit *multiQubit, int numQubits, QuESTEnv env)
 	createMultiQubitCPU(multiQubit, numQubits, env);
 	cudaMalloc(&(multiQubit->deviceStateVec.real), multiQubit->numAmps*sizeof(*(multiQubit->deviceStateVec.real)));
 	cudaMalloc(&(multiQubit->deviceStateVec.imag), multiQubit->numAmps*sizeof(*(multiQubit->deviceStateVec.imag)));
-	cudaMalloc(&(multiQubit->firstLevelReduction), ceil(multiQubit->numAmps/(double)REDUCE_SHARED_SIZE)*sizeof(double));
-	cudaMalloc(&(multiQubit->secondLevelReduction), ceil(multiQubit->numAmps/(double)(REDUCE_SHARED_SIZE*REDUCE_SHARED_SIZE))*
-		sizeof(double));
+	cudaMalloc(&(multiQubit->firstLevelReduction), ceil(multiQubit->numAmps/(REAL)REDUCE_SHARED_SIZE)*sizeof(REAL));
+	cudaMalloc(&(multiQubit->secondLevelReduction), ceil(multiQubit->numAmps/(REAL)(REDUCE_SHARED_SIZE*REDUCE_SHARED_SIZE))*
+		sizeof(REAL));
 
         if (!(multiQubit->deviceStateVec.real) || !(multiQubit->deviceStateVec.imag)){
                 printf("Could not allocate memory on GPU!\n");
@@ -145,7 +145,7 @@ void reportStateToScreen(MultiQubit multiQubit, QuESTEnv env, int reportRank){
                 }
         }
 }
-void __global__ initStateZeroKernel(long long int stateVecSize, double *stateVecReal, double *stateVecImag){
+void __global__ initStateZeroKernel(long long int stateVecSize, REAL *stateVecReal, REAL *stateVecImag){
         long long int index;
 
         // initialise the state to |0000..0000>
@@ -165,18 +165,18 @@ void initStateZero(MultiQubit *multiQubit)
 {
         int threadsPerCUDABlock, CUDABlocks;
         threadsPerCUDABlock = 128;
-        CUDABlocks = ceil((double)(multiQubit->numAmps)/threadsPerCUDABlock);
+        CUDABlocks = ceil((REAL)(multiQubit->numAmps)/threadsPerCUDABlock);
         initStateZeroKernel<<<CUDABlocks, threadsPerCUDABlock>>>(multiQubit->numAmps, multiQubit->deviceStateVec.real, 
 		multiQubit->deviceStateVec.imag);
 }
 
-void __global__ initStatePlusKernel(long long int stateVecSize, double *stateVecReal, double *stateVecImag){
+void __global__ initStatePlusKernel(long long int stateVecSize, REAL *stateVecReal, REAL *stateVecImag){
         long long int index;
 
 	index = blockIdx.x*blockDim.x + threadIdx.x;
 	if (index>=stateVecSize) return;
 
-	REAL normFactor = 1.0/sqrt((double)stateVecSize);
+	REAL normFactor = 1.0/sqrt((REAL)stateVecSize);
 	stateVecReal[index] = normFactor;
 	stateVecImag[index] = 0.0;
 }
@@ -185,12 +185,12 @@ void initStatePlus(MultiQubit *multiQubit)
 {
         int threadsPerCUDABlock, CUDABlocks;
         threadsPerCUDABlock = 128;
-        CUDABlocks = ceil((double)(multiQubit->numAmps)/threadsPerCUDABlock);
+        CUDABlocks = ceil((REAL)(multiQubit->numAmps)/threadsPerCUDABlock);
         initStatePlusKernel<<<CUDABlocks, threadsPerCUDABlock>>>(multiQubit->numAmps, multiQubit->deviceStateVec.real, 
 		multiQubit->deviceStateVec.imag);
 }
 
-void __global__ initStateDebugKernel(long long int stateVecSize, double *stateVecReal, double *stateVecImag){
+void __global__ initStateDebugKernel(long long int stateVecSize, REAL *stateVecReal, REAL *stateVecImag){
         long long int index;
 
 	index = blockIdx.x*blockDim.x + threadIdx.x;
@@ -204,19 +204,19 @@ void initStateDebug(MultiQubit *multiQubit)
 {
         int threadsPerCUDABlock, CUDABlocks;
         threadsPerCUDABlock = 128;
-        CUDABlocks = ceil((double)(multiQubit->numAmps)/threadsPerCUDABlock);
+        CUDABlocks = ceil((REAL)(multiQubit->numAmps)/threadsPerCUDABlock);
         initStateDebugKernel<<<CUDABlocks, threadsPerCUDABlock>>>(multiQubit->numAmps, multiQubit->deviceStateVec.real, 
 		multiQubit->deviceStateVec.imag);
 }
 
-void __global__ initStateOfSingleQubitKernel(long long int stateVecSize, double *stateVecReal, double *stateVecImag, int qubitId, int outcome){
+void __global__ initStateOfSingleQubitKernel(long long int stateVecSize, REAL *stateVecReal, REAL *stateVecImag, int qubitId, int outcome){
         long long int index;
 	int bit;
 
 	index = blockIdx.x*blockDim.x + threadIdx.x;
 	if (index>=stateVecSize) return;
 
-	REAL normFactor = 1.0/sqrt((double)stateVecSize/2);
+	REAL normFactor = 1.0/sqrt((REAL)stateVecSize/2);
 	bit = extractBit(qubitId, index);
 	if (bit==outcome) {
 		stateVecReal[index] = normFactor;
@@ -231,7 +231,7 @@ void initStateOfSingleQubit(MultiQubit *multiQubit, int qubitId, int outcome)
 {
         int threadsPerCUDABlock, CUDABlocks;
         threadsPerCUDABlock = 128;
-        CUDABlocks = ceil((double)(multiQubit->numAmps)/threadsPerCUDABlock);
+        CUDABlocks = ceil((REAL)(multiQubit->numAmps)/threadsPerCUDABlock);
         initStateOfSingleQubitKernel<<<CUDABlocks, threadsPerCUDABlock>>>(multiQubit->numAmps, multiQubit->deviceStateVec.real, multiQubit->deviceStateVec.imag, qubitId, outcome);
 }
 
@@ -291,18 +291,39 @@ int compareStates(MultiQubit mq1, MultiQubit mq2, REAL precision){
 }
 
 
-double calcTotalProbability(MultiQubit multiQubit){
-        double pTotal=0; 
-	long long int index;
-	long long int numAmpsPerRank = multiQubit.numAmps;
+REAL calcTotalProbability(MultiQubit multiQubit){
+  /* IJB - implemented using Kahan summation for greater accuracy at a slight floating
+     point operation overhead. For more details see https://en.wikipedia.org/wiki/Kahan_summation_algorithm */
+  /* Don't change the bracketing in this routine! */
+  REAL pTotal=0;
+  REAL y, t, c;
+  long long int index;
+  long long int numAmpsPerRank = multiQubit.numAmps;
 
-	copyStateFromGPU(multiQubit);
+  copyStateFromGPU(multiQubit);
 
-        for (index=0; index<numAmpsPerRank; index++){ 
-                pTotal+=multiQubit.stateVec.real[index]*multiQubit.stateVec.real[index];      
-                pTotal+=multiQubit.stateVec.imag[index]*multiQubit.stateVec.imag[index];      
-        } 
-	return pTotal;
+  c = 0.0;
+  for (index=0; index<numAmpsPerRank; index++){
+    /* Perform pTotal+=multiQubit.stateVec.real[index]*multiQubit.stateVec.real[index]; by Kahan */
+   // pTotal+=multiQubit.stateVec.real[index]*multiQubit.stateVec.real[index];
+
+    y = multiQubit.stateVec.real[index]*multiQubit.stateVec.real[index] - c;
+    t = pTotal + y;
+    c = ( t - pTotal ) - y;
+    pTotal = t;
+
+    /* Perform pTotal+=multiQubit.stateVec.imag[index]*multiQubit.stateVec.imag[index]; by Kahan */
+    //pTotal+=multiQubit.stateVec.imag[index]*multiQubit.stateVec.imag[index];
+
+
+    y = multiQubit.stateVec.imag[index]*multiQubit.stateVec.imag[index] - c;
+    t = pTotal + y;
+    c = ( t - pTotal ) - y;
+    pTotal = t;
+
+
+  }
+  return pTotal;
 }
 
 
@@ -315,7 +336,7 @@ __global__ void rotateQubitKernel (MultiQubit multiQubit, const int rotQubit, Co
              indexUp,indexLo;                                     // current index and corresponding index in lower half block
 
         // ----- temp variables
-        double   stateRealUp,stateRealLo,                             // storage for previous state values
+        REAL   stateRealUp,stateRealLo,                             // storage for previous state values
                  stateImagUp,stateImagLo;                             // (used in updates)
         // ----- temp variables
         long long int thisTask;                                   // task based approach for expose loop with small granularity
@@ -346,10 +367,10 @@ __global__ void rotateQubitKernel (MultiQubit multiQubit, const int rotQubit, Co
 
         // Can't use multiQubit.stateVec as a private OMP var
 	//! fix -- no necessary for GPU version
-        double *stateVecReal = multiQubit.deviceStateVec.real;
-        double *stateVecImag = multiQubit.deviceStateVec.imag;
-        double alphaImag=alpha.imag, alphaReal=alpha.real;
-        double betaImag=beta.imag, betaReal=beta.real;
+        REAL *stateVecReal = multiQubit.deviceStateVec.real;
+        REAL *stateVecImag = multiQubit.deviceStateVec.imag;
+        REAL alphaImag=alpha.imag, alphaReal=alpha.real;
+        REAL betaImag=beta.imag, betaReal=beta.real;
 
 	thisTask = blockIdx.x*blockDim.x + threadIdx.x;
 	if (thisTask>=numTasks) return;
@@ -382,7 +403,7 @@ void rotateQubit(MultiQubit multiQubit, const int rotQubit, Complex alpha, Compl
 {
         int threadsPerCUDABlock, CUDABlocks;
         threadsPerCUDABlock = 128;
-        CUDABlocks = ceil((double)(multiQubit.numAmps>>1)/threadsPerCUDABlock);
+        CUDABlocks = ceil((REAL)(multiQubit.numAmps>>1)/threadsPerCUDABlock);
         rotateQubitKernel<<<CUDABlocks, threadsPerCUDABlock>>>(multiQubit, rotQubit, alpha, beta);
 }
 
@@ -394,8 +415,8 @@ __global__ void controlPhaseGateKernel(MultiQubit multiQubit, const int idQubit1
         int bit1, bit2;
 
         stateVecSize = multiQubit.numAmps;
-        double *stateVecReal = multiQubit.deviceStateVec.real;
-        double *stateVecImag = multiQubit.deviceStateVec.imag;
+        REAL *stateVecReal = multiQubit.deviceStateVec.real;
+        REAL *stateVecImag = multiQubit.deviceStateVec.imag;
 
 	index = blockIdx.x*blockDim.x + threadIdx.x;
 	if (index>=stateVecSize) return;
@@ -412,7 +433,7 @@ void controlPhaseGate(MultiQubit multiQubit, const int idQubit1, const int idQub
 {
         int threadsPerCUDABlock, CUDABlocks;
         threadsPerCUDABlock = 128;
-        CUDABlocks = ceil((double)(multiQubit.numAmps)/threadsPerCUDABlock);
+        CUDABlocks = ceil((REAL)(multiQubit.numAmps)/threadsPerCUDABlock);
         controlPhaseGateKernel<<<CUDABlocks, threadsPerCUDABlock>>>(multiQubit, idQubit1, idQubit2);
 }
 
@@ -424,8 +445,8 @@ __global__ void quadCPhaseGateKernel(MultiQubit multiQubit, const int idQubit1, 
         int bit1, bit2, bit3, bit4;
 
         stateVecSize = multiQubit.numAmps;
-        double *stateVecReal = multiQubit.deviceStateVec.real;
-        double *stateVecImag = multiQubit.deviceStateVec.imag;
+        REAL *stateVecReal = multiQubit.deviceStateVec.real;
+        REAL *stateVecImag = multiQubit.deviceStateVec.imag;
 	
 	index = blockIdx.x*blockDim.x + threadIdx.x;
 	if (index>=stateVecSize) return;
@@ -445,7 +466,7 @@ void quadCPhaseGate(MultiQubit multiQubit, const int idQubit1, const int idQubit
 {
         int threadsPerCUDABlock, CUDABlocks;
         threadsPerCUDABlock = 128;
-        CUDABlocks = ceil((double)(multiQubit.numAmps)/threadsPerCUDABlock);
+        CUDABlocks = ceil((REAL)(multiQubit.numAmps)/threadsPerCUDABlock);
         quadCPhaseGateKernel<<<CUDABlocks, threadsPerCUDABlock>>>(multiQubit, idQubit1, idQubit2, idQubit3, idQubit4);
 }
 
@@ -456,7 +477,7 @@ __device__ __host__ unsigned int log2Int( unsigned int x )
         return ans ;
 }
 
-__device__ void reduceBlock(double *arrayIn, double *reducedArray, int length){
+__device__ void reduceBlock(REAL *arrayIn, REAL *reducedArray, int length){
         int i, l, r;
         int threadMax, maxDepth;
         threadMax = length/2;
@@ -475,8 +496,8 @@ __device__ void reduceBlock(double *arrayIn, double *reducedArray, int length){
         if (threadIdx.x==0) reducedArray[blockIdx.x] = arrayIn[0];
 }
 
-__global__ void copySharedReduceBlock(double*arrayIn, double *reducedArray, int length){
-	extern __shared__ double tempReductionArray[];
+__global__ void copySharedReduceBlock(REAL*arrayIn, REAL *reducedArray, int length){
+	extern __shared__ REAL tempReductionArray[];
 	int blockOffset = blockIdx.x*length;
 	tempReductionArray[threadIdx.x*2] = arrayIn[blockOffset + threadIdx.x*2];
 	tempReductionArray[threadIdx.x*2+1] = arrayIn[blockOffset + threadIdx.x*2+1];
@@ -485,7 +506,7 @@ __global__ void copySharedReduceBlock(double*arrayIn, double *reducedArray, int 
 }
 
 __global__ void findProbabilityOfZeroKernel(MultiQubit multiQubit,
-                const int measureQubit, double *reducedArray)
+                const int measureQubit, REAL *reducedArray)
 {
         // ----- sizes
         long long int sizeBlock,                                           // size of blocks
@@ -498,7 +519,7 @@ __global__ void findProbabilityOfZeroKernel(MultiQubit multiQubit,
         long long int numTasks=multiQubit.numAmps>>1;
         // (good for shared memory parallelism)
 
-	extern __shared__ double tempReductionArray[];
+	extern __shared__ REAL tempReductionArray[];
 
         // ---------------------------------------------------------------- //
         //            dimensions                                            //
@@ -515,15 +536,15 @@ __global__ void findProbabilityOfZeroKernel(MultiQubit multiQubit,
         // --- task-based shared-memory parallel implementation
         //
 
-        double *stateVecReal = multiQubit.deviceStateVec.real;
-        double *stateVecImag = multiQubit.deviceStateVec.imag;
+        REAL *stateVecReal = multiQubit.deviceStateVec.real;
+        REAL *stateVecImag = multiQubit.deviceStateVec.imag;
 
 	thisTask = blockIdx.x*blockDim.x + threadIdx.x;
 	if (thisTask>=numTasks) return;
 
 	thisBlock = thisTask / sizeHalfBlock;
 	index     = thisBlock*sizeBlock + thisTask%sizeHalfBlock;
-	double realVal, imagVal;
+	REAL realVal, imagVal;
 	realVal = stateVecReal[index];
 	imagVal = stateVecImag[index]; 	
 	tempReductionArray[threadIdx.x] = realVal*realVal + imagVal*imagVal;
@@ -543,19 +564,19 @@ int getNumReductionLevels(long long int numValuesToReduce, int numReducedPerLeve
 	return levels;
 }
 
-void swapDouble(double **a, double **b){
-        double *temp;
+void swapDouble(REAL **a, REAL **b){
+        REAL *temp;
         temp = *a;
         *a = *b;
         *b = temp;
 }
 
-double findProbabilityOfZero(MultiQubit multiQubit,
+REAL findProbabilityOfZero(MultiQubit multiQubit,
                 const int measureQubit)
 {
 	long long int numValuesToReduce = multiQubit.numAmps>>1;
 	int valuesPerCUDABlock, numCUDABlocks, sharedMemSize;
-	double stateProb=0;
+	REAL stateProb=0;
 	int firstTime=1;
 	int maxReducedPerLevel = REDUCE_SHARED_SIZE;
 
@@ -567,9 +588,9 @@ double findProbabilityOfZero(MultiQubit multiQubit,
 		} else {
 			// Use full CUDA blocks, with block size constrained by shared mem usage
 			valuesPerCUDABlock = maxReducedPerLevel;
-			numCUDABlocks = ceil((double)numValuesToReduce/valuesPerCUDABlock);
+			numCUDABlocks = ceil((REAL)numValuesToReduce/valuesPerCUDABlock);
 		}
-		sharedMemSize = valuesPerCUDABlock*sizeof(double);
+		sharedMemSize = valuesPerCUDABlock*sizeof(REAL);
 
 		if (firstTime){
 			findProbabilityOfZeroKernel<<<numCUDABlocks, valuesPerCUDABlock, sharedMemSize>>>(
@@ -585,7 +606,7 @@ double findProbabilityOfZero(MultiQubit multiQubit,
 		}
 		numValuesToReduce = numValuesToReduce/maxReducedPerLevel;
 	}
-	cudaMemcpy(&stateProb, multiQubit.firstLevelReduction, sizeof(double), cudaMemcpyDeviceToHost);
+	cudaMemcpy(&stateProb, multiQubit.firstLevelReduction, sizeof(REAL), cudaMemcpyDeviceToHost);
 	return stateProb;
 }
 
@@ -597,7 +618,7 @@ REAL findProbabilityOfOutcome(MultiQubit multiQubit, const int measureQubit, int
         return stateProb;
 }
 
-__global__ void measureInStateKernel(MultiQubit multiQubit, int measureQubit, double totalProbability, int outcome)
+__global__ void measureInStateKernel(MultiQubit multiQubit, int measureQubit, REAL totalProbability, int outcome)
 {
         // ----- sizes
         long long int sizeBlock,                                           // size of blocks
@@ -606,7 +627,7 @@ __global__ void measureInStateKernel(MultiQubit multiQubit, int measureQubit, do
         long long int thisBlock,                                           // current block
              index;                                               // current index for first half block
         // ----- measured probability
-        double   renorm;                                    // probability (returned) value
+        REAL   renorm;                                    // probability (returned) value
         // ----- temp variables
         long long int thisTask;                                   // task based approach for expose loop with small granularity
         // (good for shared memory parallelism)
@@ -634,8 +655,8 @@ __global__ void measureInStateKernel(MultiQubit multiQubit, int measureQubit, do
         // --- task-based shared-memory parallel implementation
         //
         renorm=1/sqrt(totalProbability);
-        double *stateVecReal = multiQubit.deviceStateVec.real;
-        double *stateVecImag = multiQubit.deviceStateVec.imag;
+        REAL *stateVecReal = multiQubit.deviceStateVec.real;
+        REAL *stateVecImag = multiQubit.deviceStateVec.imag;
 
 	thisTask = blockIdx.x*blockDim.x + threadIdx.x;
 	if (thisTask>=numTasks) return;
@@ -658,19 +679,19 @@ __global__ void measureInStateKernel(MultiQubit multiQubit, int measureQubit, do
 
 }
 
-double measureInState(MultiQubit multiQubit, const int measureQubit, int outcome)
+REAL measureInState(MultiQubit multiQubit, const int measureQubit, int outcome)
 {        
-        double stateProb;
+        REAL stateProb;
 	stateProb = findProbabilityOfOutcome(multiQubit, measureQubit, outcome);
 
 	int threadsPerCUDABlock, CUDABlocks;
         threadsPerCUDABlock = 128;
-        CUDABlocks = ceil((double)(multiQubit.numAmps>>1)/threadsPerCUDABlock);
+        CUDABlocks = ceil((REAL)(multiQubit.numAmps>>1)/threadsPerCUDABlock);
         if (stateProb!=0) measureInStateKernel<<<CUDABlocks, threadsPerCUDABlock>>>(multiQubit, measureQubit, stateProb, outcome);
         return stateProb;
 }
 
-__global__ void measureInZeroKernel(MultiQubit multiQubit, int measureQubit, double totalProbability)
+__global__ void measureInZeroKernel(MultiQubit multiQubit, int measureQubit, REAL totalProbability)
 {
         // ----- sizes
         long long int sizeBlock,                                           // size of blocks
@@ -679,7 +700,7 @@ __global__ void measureInZeroKernel(MultiQubit multiQubit, int measureQubit, dou
         long long int thisBlock,                                           // current block
              index;                                               // current index for first half block
         // ----- measured probability
-        double   renorm;                                    // probability (returned) value
+        REAL   renorm;                                    // probability (returned) value
         // ----- temp variables
         long long int thisTask;                                   // task based approach for expose loop with small granularity
         // (good for shared memory parallelism)
@@ -703,8 +724,8 @@ __global__ void measureInZeroKernel(MultiQubit multiQubit, int measureQubit, dou
         // --- task-based shared-memory parallel implementation
         //
         renorm=1/sqrt(totalProbability);
-        double *stateVecReal = multiQubit.deviceStateVec.real;
-        double *stateVecImag = multiQubit.deviceStateVec.imag;
+        REAL *stateVecReal = multiQubit.deviceStateVec.real;
+        REAL *stateVecImag = multiQubit.deviceStateVec.imag;
 
 	thisTask = blockIdx.x*blockDim.x + threadIdx.x;
 	if (thisTask>=numTasks) return;
@@ -717,14 +738,14 @@ __global__ void measureInZeroKernel(MultiQubit multiQubit, int measureQubit, dou
 	stateVecImag[index+sizeHalfBlock]=0;
 }
 
-double measureInZero(MultiQubit multiQubit, const int measureQubit)
+REAL measureInZero(MultiQubit multiQubit, const int measureQubit)
 {        
-        double stateProb;
+        REAL stateProb;
 	stateProb = findProbabilityOfZero(multiQubit, measureQubit);
 
 	int threadsPerCUDABlock, CUDABlocks;
         threadsPerCUDABlock = 128;
-        CUDABlocks = ceil((double)(multiQubit.numAmps>>1)/threadsPerCUDABlock);
+        CUDABlocks = ceil((REAL)(multiQubit.numAmps>>1)/threadsPerCUDABlock);
         if (stateProb!=0) measureInZeroKernel<<<CUDABlocks, threadsPerCUDABlock>>>(multiQubit, measureQubit, stateProb);
         return stateProb;
 }
@@ -735,7 +756,7 @@ double measureInZero(MultiQubit multiQubit, const int measureQubit)
 @param[in] probOfFilter Total probability that the 3 qubits are not all in the 1 state. 
 */
 __global__ void filterOut111Kernel(MultiQubit multiQubit, const int idQubit1, const int idQubit2, const int idQubit3,
-                const double probOfFilter)
+                const REAL probOfFilter)
 {
         long long int index;
         long long int stateVecSize;
@@ -743,9 +764,9 @@ __global__ void filterOut111Kernel(MultiQubit multiQubit, const int idQubit1, co
 
         stateVecSize = multiQubit.numAmps;
 
-        double myNorm=1/sqrt(probOfFilter);
-        double *stateVecReal = multiQubit.deviceStateVec.real;
-        double *stateVecImag = multiQubit.deviceStateVec.imag;
+        REAL myNorm=1/sqrt(probOfFilter);
+        REAL *stateVecReal = multiQubit.deviceStateVec.real;
+        REAL *stateVecImag = multiQubit.deviceStateVec.imag;
 
 	index = blockIdx.x*blockDim.x + threadIdx.x;
 	if (index>=stateVecSize) return;
@@ -761,12 +782,12 @@ __global__ void filterOut111Kernel(MultiQubit multiQubit, const int idQubit1, co
 	}
 }
 
-double filterOut111(MultiQubit multiQubit, const int idQubit1, const int idQubit2, const int idQubit3)
+REAL filterOut111(MultiQubit multiQubit, const int idQubit1, const int idQubit2, const int idQubit3)
 {
-        double stateProb=0;
+        REAL stateProb=0;
         int threadsPerCUDABlock, CUDABlocks;
         threadsPerCUDABlock = 128;
-        CUDABlocks = ceil((double)(multiQubit.numAmps)/threadsPerCUDABlock);
+        CUDABlocks = ceil((REAL)(multiQubit.numAmps)/threadsPerCUDABlock);
 
         stateProb = probOfFilterOut111(multiQubit, idQubit1, idQubit2, idQubit3);
         if (stateProb!=0) filterOut111Kernel<<<CUDABlocks, threadsPerCUDABlock>>>(multiQubit, idQubit1, idQubit2, idQubit3, stateProb);
@@ -780,7 +801,7 @@ The function returns the probability of this outcome across all amplitudes in th
 @param[in] idQubit1, idQubit2, idQubit3 specified qubits                 
 @return Total probability that the 3 qubits are not all in the 1 state. 
 */
-__global__ void probOfFilterOut111Kernel(MultiQubit multiQubit, const int idQubit1, const int idQubit2, const int idQubit3, double *reducedArray)
+__global__ void probOfFilterOut111Kernel(MultiQubit multiQubit, const int idQubit1, const int idQubit2, const int idQubit3, REAL *reducedArray)
 {
         long long int index;
         long long int stateVecSize;
@@ -788,15 +809,15 @@ __global__ void probOfFilterOut111Kernel(MultiQubit multiQubit, const int idQubi
 
         stateVecSize = multiQubit.numAmps;
 
-        double *stateVecReal = multiQubit.deviceStateVec.real;
-        double *stateVecImag = multiQubit.deviceStateVec.imag;
+        REAL *stateVecReal = multiQubit.deviceStateVec.real;
+        REAL *stateVecImag = multiQubit.deviceStateVec.imag;
 	
-	extern __shared__ double tempReductionArray[];
+	extern __shared__ REAL tempReductionArray[];
 
 	index = blockIdx.x*blockDim.x + threadIdx.x;
 	if (index>=stateVecSize) return;
 
-	double realVal, imagVal;
+	REAL realVal, imagVal;
 	realVal = stateVecReal[index];
 	imagVal = stateVecImag[index];
 
@@ -815,11 +836,11 @@ __global__ void probOfFilterOut111Kernel(MultiQubit multiQubit, const int idQubi
 	}
 }
 
-double probOfFilterOut111(MultiQubit multiQubit, const int idQubit1, const int idQubit2, const int idQubit3)
+REAL probOfFilterOut111(MultiQubit multiQubit, const int idQubit1, const int idQubit2, const int idQubit3)
 {
 	long long int numValuesToReduce = multiQubit.numAmps;
 	int valuesPerCUDABlock, numCUDABlocks, sharedMemSize;
-	double stateProb=0;
+	REAL stateProb=0;
 	int firstTime=1;
 	int maxReducedPerLevel = REDUCE_SHARED_SIZE;
 
@@ -831,9 +852,9 @@ double probOfFilterOut111(MultiQubit multiQubit, const int idQubit1, const int i
 		} else {
 			// Use full CUDA blocks, with block size constrained by shared mem usage
 			valuesPerCUDABlock = maxReducedPerLevel;
-			numCUDABlocks = ceil((double)numValuesToReduce/valuesPerCUDABlock);
+			numCUDABlocks = ceil((REAL)numValuesToReduce/valuesPerCUDABlock);
 		}
-		sharedMemSize = valuesPerCUDABlock*sizeof(double);
+		sharedMemSize = valuesPerCUDABlock*sizeof(REAL);
 
 		if (firstTime){
 			probOfFilterOut111Kernel<<<numCUDABlocks, valuesPerCUDABlock, sharedMemSize>>>(
@@ -849,7 +870,7 @@ double probOfFilterOut111(MultiQubit multiQubit, const int idQubit1, const int i
 		}
 		numValuesToReduce = numValuesToReduce/maxReducedPerLevel;
 	}
-	cudaMemcpy(&stateProb, multiQubit.firstLevelReduction, sizeof(double), cudaMemcpyDeviceToHost);
+	cudaMemcpy(&stateProb, multiQubit.firstLevelReduction, sizeof(REAL), cudaMemcpyDeviceToHost);
 	return stateProb;
 }
 

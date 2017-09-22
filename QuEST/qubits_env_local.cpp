@@ -50,14 +50,37 @@ void reportQuESTEnv(QuESTEnv env){
 }
 
 double calcTotalProbability(MultiQubit multiQubit){
-        double pTotal=0; 
-	long long int index;
-	long long int numAmpsPerRank = multiQubit.numAmps;
-        for (index=0; index<numAmpsPerRank; index++){ 
-                pTotal+=multiQubit.stateVec.real[index]*multiQubit.stateVec.real[index];      
-                pTotal+=multiQubit.stateVec.imag[index]*multiQubit.stateVec.imag[index];      
-        } 
-	return pTotal;
+
+  /* IJB - implemented using Kahan summation for greater accuracy at a slight floating
+     point operation overhead. For more details see https://en.wikipedia.org/wiki/Kahan_summation_algorithm */
+  /* Don't change the bracketing in this routine! */
+  REAL pTotal=0;
+  REAL y, t, c;
+  long long int index;
+  long long int numAmpsPerRank = multiQubit.numAmps;
+
+  c = 0.0;
+  for (index=0; index<numAmpsPerRank; index++){
+    /* Perform pTotal+=multiQubit.stateVec.real[index]*multiQubit.stateVec.real[index]; by Kahan */
+   // pTotal+=multiQubit.stateVec.real[index]*multiQubit.stateVec.real[index];
+
+    y = multiQubit.stateVec.real[index]*multiQubit.stateVec.real[index] - c;
+    t = pTotal + y;
+    c = ( t - pTotal ) - y;
+    pTotal = t;
+
+    /* Perform pTotal+=multiQubit.stateVec.imag[index]*multiQubit.stateVec.imag[index]; by Kahan */
+    //pTotal+=multiQubit.stateVec.imag[index]*multiQubit.stateVec.imag[index];
+
+
+    y = multiQubit.stateVec.imag[index]*multiQubit.stateVec.imag[index] - c;
+    t = pTotal + y;
+    c = ( t - pTotal ) - y;
+    pTotal = t;
+
+
+  }
+  return pTotal;
 }
 
 void rotateQubit(MultiQubit multiQubit, const int rotQubit, Complex alpha, Complex beta) 
