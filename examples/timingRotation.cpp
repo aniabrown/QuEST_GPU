@@ -153,7 +153,7 @@ int main (int narg, char** varg) {
 	char filename[255];
 
 	if (REPORT_TIMING && env.rank==0){	
-		sprintf(filename, "TIMING_%s.csv", envString);
+		sprintf(filename, "TIMINGROTATE_%s.csv", envString);
 		timing = fopen(filename, "w");
 		fprintf(timing, "qubit, time(s), standardDev, maxDelta, minDelta\n");
 
