@@ -11,7 +11,7 @@
 CC = nvcc
 EXE = demo
 MY_FILE_NAME = basicTemplate
-QUEST_DIR = QUEST
+QUEST_DIR = QuEST
 
 #
 # --- compiler
