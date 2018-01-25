@@ -107,6 +107,13 @@ int main (int narg, char** varg) {
 		// do rotation of each qubit
 		rotateQubit(multiQubit,rotQubit,alpha,beta);
 	}
+    REAL angle = 1.2385;
+    Vector axis = {1,0.5,0};
+	for (rotQubit=0; rotQubit<numQubits; rotQubit++) {
+		// do rotation of each qubit
+		rotateQubitByAngle(multiQubit,rotQubit,angle,axis);
+	}
+
 	// END QUBIT ROTATION
 
 	// Verification: check vector size is unchanged
