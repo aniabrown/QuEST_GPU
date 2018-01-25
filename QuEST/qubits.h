@@ -23,6 +23,11 @@ typedef struct Complex
 	REAL imag;
 } Complex;
 
+typedef struct Vector
+{
+    REAL x, y, z;
+} Vector;
+
 /** Represents a system of qubits.
 Qubits are zero-based and the the first qubit is the rightmost
 */
@@ -136,6 +141,8 @@ the first qubit is the rightmost
 @param[in] beta rotation angle
  */
 void rotateQubit(MultiQubit multiQubit, const int rotQubit, Complex alpha, Complex beta);
+
+void rotateQubitByAngle(MultiQubit multiQubit, const int rotQubit, REAL angle, Vector unitAxis);
 
 /** Measure the probability
 of a specified qubit being in the zero state.     
