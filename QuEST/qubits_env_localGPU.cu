@@ -108,7 +108,7 @@ void syncQuESTEnv(QuESTEnv env){
 	cudaDeviceSynchronize();
 } 
 
-int syncQuESTSuccess(QuESTEnv env, int successCode){
+int syncQuESTSuccess(int successCode){
 	return successCode;
 }
 

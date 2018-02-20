@@ -100,7 +100,7 @@ void closeQuESTEnv(QuESTEnv env);
  */
 void syncQuESTEnv(QuESTEnv env);
 
-int syncQuESTSuccess(QuESTEnv env, int successCode);
+int syncQuESTSuccess(int successCode);
 
 /** Report information about the QuEST environment
  * @param[in] env object representing the execution environment. A single instance is used for each program
