@@ -71,9 +71,6 @@ void reportStateToScreen(MultiQubit multiQubit, QuESTEnv env, int reportRank);
 
 void reportMultiQubitParams(MultiQubit multiQubit);
 
-void quadCPhaseGate (MultiQubit multiQubit, const int idQubit1, const int idQubit2, 
-	const int idQubit3, const int idQubit4);
-
 void controlPhaseGate (MultiQubit multiQubit, const int idQubit1, const int idQubit2);
 
 
@@ -170,23 +167,6 @@ probability of making this measurement.
 @return probability of qubit measureQubit being zero
 */
 REAL measureInZero(MultiQubit multiQubit, const int measureQubit);
-
-/** Updates the state according to this scenario: we ask "are these 3 qubits in 111" and the answer is "no".
-The function returns the probability of this outcome (if zero, it will exit with error) 
-@param[in,out] multiQubit object representing the set of qubits
-@param[in] idQubit1, idQubit2, idQubit3 specified qubits                 
-@return Total probability that the 3 qubits are not all in the 1 state. 
-*/
-REAL filterOut111(MultiQubit multiQubit, const int idQubit1, const int idQubit2, const int idQubit3);
-
-/** Evaluates the state according to this scenario: we ask "are these 3 qubits in 111" and the answer is "no".
-The function returns the probability of this outcome (if zero, it will exit with error) 
-@param[in,out] multiQubit object representing the set of qubits
-@param[in] idQubit1, idQubit2, idQubit3 specified qubits                 
-@return Total probability that the 3 qubits are not all in the 1 state. 
-*/
-REAL probOfFilterOut111(MultiQubit multiQubit, const int idQubit1, const int idQubit2, const int idQubit3);
-
 
 
 
