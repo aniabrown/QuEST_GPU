@@ -83,14 +83,6 @@ void initStateZero(MultiQubit *multiQubit);
 
 void initStatePlus(MultiQubit *multiQubit);
 
-void initStateDebug(MultiQubit *multiQubit);
-
-void initStateOfSingleQubit(MultiQubit *multiQubit, int qubitId, int outcome);
-
-void initializeStateFromSingleFile(MultiQubit *multiQubit, char filename[200], QuESTEnv env);
-
-int compareStates(MultiQubit mq1, MultiQubit mq2, REAL precision);
-
 /** Initialize QuEST environment. If something needs to be done to set up the execution environment, such as 
  * initializing MPI when running in distributed mode, it is handled here
  * @param[in,out] env object representing the execution environment. A single instance is used for each program
@@ -138,7 +130,7 @@ the first qubit is the rightmost
  */
 void compactUnitary(MultiQubit multiQubit, const int rotQubit, Complex alpha, Complex beta);
 
-void rotateQubitByAngle(MultiQubit multiQubit, const int rotQubit, REAL angle, Vector unitAxis);
+void rotateAroundAxis(MultiQubit multiQubit, const int rotQubit, REAL angle, Vector unitAxis);
 
 /** Measure the probability
 of a specified qubit being in the zero state.     
@@ -152,7 +144,7 @@ REAL findProbabilityOfZero(MultiQubit multiQubit, const int measureQubit);
 REAL findProbabilityOfOutcome(MultiQubit multiQubit, const int measureQubit, int outcome);
 
 
-REAL measureInState(MultiQubit multiQubit, const int measureQubit, int outcome);
+REAL collapseToOutcome(MultiQubit multiQubit, const int measureQubit, int outcome);
 
 /** Update the state vector to be consistent with measuring measureQubit=0.
 Measure in Zero performs an irreversible change to the state vector: it updates the vector according
