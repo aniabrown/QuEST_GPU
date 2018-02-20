@@ -454,7 +454,7 @@ int test_findProbabilityOfOutcome(char testName[200]){
 	return passed;
 }
 
-int test_measureInState(char testName[200]){
+int test_collapseToOutcome(char testName[200]){
 	int passed=1;
 
 	int numQubits=3;
@@ -469,14 +469,14 @@ int test_measureInState(char testName[200]){
 	for (qubit=0; qubit<numQubits; qubit++){
 		initStateZero(&mq);
 		initStateZero(&mqVerif);
-		outcome = measureInState(mq, qubit, 0);
+		outcome = collapseToOutcome(mq, qubit, 0);
 		if (passed) passed = compareReals(1, outcome, COMPARE_PRECISION);
 		if (passed) passed = compareStates(mq, mqVerif, COMPARE_PRECISION);
 
 
 		initStateZero(&mq);
 		initStateZero(&mqVerif);
-		outcome = measureInState(mq, qubit, 1);
+		outcome = collapseToOutcome(mq, qubit, 1);
 		if (passed) passed = compareReals(0, outcome, COMPARE_PRECISION);
 		if (passed) passed = compareStates(mq, mqVerif, COMPARE_PRECISION);
 	}
@@ -486,13 +486,13 @@ int test_measureInState(char testName[200]){
 	for (qubit=0; qubit<numQubits; qubit++){
 		initStateOfSingleQubit(&mq, qubit, 1);
 		initStateOfSingleQubit(&mqVerif, qubit, 1);
-		outcome = measureInState(mq, qubit, 0);
+		outcome = collapseToOutcome(mq, qubit, 0);
 		if (passed) passed = compareReals(0, outcome, COMPARE_PRECISION);
 		if (passed) passed = compareStates(mq, mqVerif, COMPARE_PRECISION);
 
 		initStateOfSingleQubit(&mq, qubit, 1);
 		initStateOfSingleQubit(&mqVerif, qubit, 1);
-		outcome = measureInState(mq, qubit, 1);
+		outcome = collapseToOutcome(mq, qubit, 1);
 		if (passed) passed = compareReals(1, outcome, COMPARE_PRECISION);
 		if (passed) passed = compareStates(mq, mqVerif, COMPARE_PRECISION);
 	}
@@ -501,13 +501,13 @@ int test_measureInState(char testName[200]){
 	for (qubit=0; qubit<numQubits; qubit++){
 		initStatePlus(&mq);
 		initStateOfSingleQubit(&mqVerif, qubit, 0);
-		outcome = measureInState(mq, qubit, 0);
+		outcome = collapseToOutcome(mq, qubit, 0);
 		if (passed) passed = compareReals(0.5, outcome, COMPARE_PRECISION);
 		if (passed) passed = compareStates(mq, mqVerif, COMPARE_PRECISION);
 
 		initStatePlus(&mq);
 		initStateOfSingleQubit(&mqVerif, qubit, 1);
-		outcome = measureInState(mq, qubit, 1);
+		outcome = collapseToOutcome(mq, qubit, 1);
 		if (passed) passed = compareReals(0.5, outcome, COMPARE_PRECISION);
 		if (passed) passed = compareStates(mq, mqVerif, COMPARE_PRECISION);
 	}
@@ -537,7 +537,7 @@ int main (int narg, char** varg) {
 		test_compactUnitary,
 		//test_controlRotateQubit,
 		test_findProbabilityOfOutcome,
-		test_measureInState,
+		test_collapseToOutcome,
 	};
 
 	char testNames[NUM_TESTS][200] = {
@@ -554,7 +554,7 @@ int main (int narg, char** varg) {
 		"compactUnitary",
 		//"controlRotateQubit",
 		"findProbabilityOfOutcome",
-		"measureInState",
+		"collapseToOutcome",
 	};
 	int passed=0;
 

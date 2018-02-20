@@ -621,7 +621,7 @@ REAL findProbabilityOfOutcome(MultiQubit multiQubit, const int measureQubit, int
         return stateProb;
 }
 
-__global__ void measureInStateKernel(MultiQubit multiQubit, int measureQubit, REAL totalProbability, int outcome)
+__global__ void collapseToOutcomeKernel(MultiQubit multiQubit, int measureQubit, REAL totalProbability, int outcome)
 {
         // ----- sizes
         long long int sizeBlock,                                           // size of blocks
@@ -682,7 +682,7 @@ __global__ void measureInStateKernel(MultiQubit multiQubit, int measureQubit, RE
 
 }
 
-REAL measureInState(MultiQubit multiQubit, const int measureQubit, int outcome)
+REAL collapseToOutcome(MultiQubit multiQubit, const int measureQubit, int outcome)
 {        
         REAL stateProb;
 	stateProb = findProbabilityOfOutcome(multiQubit, measureQubit, outcome);
@@ -690,7 +690,7 @@ REAL measureInState(MultiQubit multiQubit, const int measureQubit, int outcome)
 	int threadsPerCUDABlock, CUDABlocks;
         threadsPerCUDABlock = 128;
         CUDABlocks = ceil((REAL)(multiQubit.numAmps>>1)/threadsPerCUDABlock);
-        if (stateProb!=0) measureInStateKernel<<<CUDABlocks, threadsPerCUDABlock>>>(multiQubit, measureQubit, stateProb, outcome);
+        if (stateProb!=0) collapseToOutcomeKernel<<<CUDABlocks, threadsPerCUDABlock>>>(multiQubit, measureQubit, stateProb, outcome);
         return stateProb;
 }
 
