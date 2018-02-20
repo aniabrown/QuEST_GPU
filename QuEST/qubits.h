@@ -132,6 +132,10 @@ the first qubit is the rightmost
  */
 void compactUnitary(MultiQubit multiQubit, const int rotQubit, Complex alpha, Complex beta);
 
+void sigmaX(MultiQubit multiQubit, const int targetQubit);
+
+void sigmaY(MultiQubit multiQubit, const int targetQubit);
+
 void rotateAroundAxis(MultiQubit multiQubit, const int rotQubit, REAL angle, Vector unitAxis);
 
 /** Measure the probability

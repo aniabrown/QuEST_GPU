@@ -377,31 +377,14 @@ __global__ void compactUnitaryKernel (MultiQubit multiQubit, const int rotQubit,
         // ----- temp variables
         long long int thisTask;                                   // task based approach for expose loop with small granularity
         const long long int numTasks=multiQubit.numAmps>>1;
-        // (good for shared memory parallelism)
 
-
-        // ---------------------------------------------------------------- //
-        //            tests                                                 //
-        // ---------------------------------------------------------------- //
-        //assert (rotQubit >= 0 && rotQubit < multiQubit.numQubits);
-
-
-        // ---------------------------------------------------------------- //
-        //            dimensions                                            //
-        // ---------------------------------------------------------------- //
         sizeHalfBlock = 1LL << rotQubit;                               // size of blocks halved
         sizeBlock     = 2LL * sizeHalfBlock;                           // size of blocks
-
 
         // ---------------------------------------------------------------- //
         //            rotate                                                //
         // ---------------------------------------------------------------- //
 
-        //
-        // --- task-based shared-memory parallel implementation
-        //
-
-        // Can't use multiQubit.stateVec as a private OMP var
 	//! fix -- no necessary for GPU version
         REAL *stateVecReal = multiQubit.deviceStateVec.real;
         REAL *stateVecImag = multiQubit.deviceStateVec.imag;
@@ -443,6 +426,110 @@ void compactUnitary(MultiQubit multiQubit, const int rotQubit, Complex alpha, Co
         compactUnitaryKernel<<<CUDABlocks, threadsPerCUDABlock>>>(multiQubit, rotQubit, alpha, beta);
 }
 
+__global__ void sigmaXKernel(MultiQubit multiQubit, const int targetQubit){
+// ----- sizes
+        long long int sizeBlock,                                           // size of blocks
+        sizeHalfBlock;                                       // size of blocks halved
+        // ----- indices
+        long long int thisBlock,                                           // current block
+             indexUp,indexLo;                                     // current index and corresponding index in lower half block
+
+        // ----- temp variables
+        REAL   stateRealUp,                             // storage for previous state values
+                 stateImagUp;                             // (used in updates)
+        // ----- temp variables
+        long long int thisTask;                                   // task based approach for expose loop with small granularity
+        const long long int numTasks=multiQubit.numAmps>>1;
+
+        sizeHalfBlock = 1LL << targetQubit;                               // size of blocks halved
+        sizeBlock     = 2LL * sizeHalfBlock;                           // size of blocks
+
+        // ---------------------------------------------------------------- //
+        //            rotate                                                //
+        // ---------------------------------------------------------------- //
+
+	//! fix -- no necessary for GPU version
+        REAL *stateVecReal = multiQubit.deviceStateVec.real;
+        REAL *stateVecImag = multiQubit.deviceStateVec.imag;
+
+	thisTask = blockIdx.x*blockDim.x + threadIdx.x;
+	if (thisTask>=numTasks) return;
+
+	thisBlock   = thisTask / sizeHalfBlock;
+	indexUp     = thisBlock*sizeBlock + thisTask%sizeHalfBlock;
+	indexLo     = indexUp + sizeHalfBlock;
+
+	// store current state vector values in temp variables
+	stateRealUp = stateVecReal[indexUp];
+	stateImagUp = stateVecImag[indexUp];
+
+    stateVecReal[indexUp] = stateVecReal[indexLo];
+    stateVecImag[indexUp] = stateVecImag[indexLo];
+
+    stateVecReal[indexLo] = stateRealUp;
+    stateVecImag[indexLo] = stateImagUp;
+}
+
+void sigmaX(MultiQubit multiQubit, const int targetQubit) 
+{
+        int threadsPerCUDABlock, CUDABlocks;
+        threadsPerCUDABlock = 128;
+        CUDABlocks = ceil((REAL)(multiQubit.numAmps>>1)/threadsPerCUDABlock);
+        sigmaXKernel<<<CUDABlocks, threadsPerCUDABlock>>>(multiQubit, targetQubit);
+}
+
+
+__global__ void sigmaYKernel(MultiQubit multiQubit, const int targetQubit){
+// ----- sizes
+        long long int sizeBlock,                                           // size of blocks
+        sizeHalfBlock;                                       // size of blocks halved
+        // ----- indices
+        long long int thisBlock,                                           // current block
+             indexUp,indexLo;                                     // current index and corresponding index in lower half block
+
+        // ----- temp variables
+        REAL   stateRealUp,                             // storage for previous state values
+                 stateImagUp;                             // (used in updates)
+        // ----- temp variables
+        long long int thisTask;                                   // task based approach for expose loop with small granularity
+        const long long int numTasks=multiQubit.numAmps>>1;
+
+        sizeHalfBlock = 1LL << targetQubit;                               // size of blocks halved
+        sizeBlock     = 2LL * sizeHalfBlock;                           // size of blocks
+
+        // ---------------------------------------------------------------- //
+        //            rotate                                                //
+        // ---------------------------------------------------------------- //
+
+	//! fix -- no necessary for GPU version
+        REAL *stateVecReal = multiQubit.deviceStateVec.real;
+        REAL *stateVecImag = multiQubit.deviceStateVec.imag;
+
+	thisTask = blockIdx.x*blockDim.x + threadIdx.x;
+	if (thisTask>=numTasks) return;
+
+	thisBlock   = thisTask / sizeHalfBlock;
+	indexUp     = thisBlock*sizeBlock + thisTask%sizeHalfBlock;
+	indexLo     = indexUp + sizeHalfBlock;
+
+	// store current state vector values in temp variables
+	stateRealUp = stateVecReal[indexUp];
+	stateImagUp = stateVecImag[indexUp];
+
+    stateVecReal[indexUp] = stateVecImag[indexLo];
+    stateVecImag[indexUp] = -stateVecReal[indexLo];
+
+    stateVecReal[indexLo] = -stateImagUp;
+    stateVecImag[indexLo] = stateRealUp;
+}
+
+void sigmaY(MultiQubit multiQubit, const int targetQubit) 
+{
+        int threadsPerCUDABlock, CUDABlocks;
+        threadsPerCUDABlock = 128;
+        CUDABlocks = ceil((REAL)(multiQubit.numAmps>>1)/threadsPerCUDABlock);
+        sigmaYKernel<<<CUDABlocks, threadsPerCUDABlock>>>(multiQubit, targetQubit);
+}
 
 __global__ void controlledPhaseGateKernel(MultiQubit multiQubit, const int idQubit1, const int idQubit2)
 {
@@ -482,8 +569,8 @@ __global__ void controlledNotKernel(MultiQubit multiQubit, const int controlQubi
         int controlBit;
         
         // ----- temp variables
-        REAL   stateRealUp,stateRealLo,                             // storage for previous state values
-                 stateImagUp,stateImagLo;                             // (used in updates)
+        REAL   stateRealUp,                             // storage for previous state values
+                 stateImagUp;                             // (used in updates)
         long long int thisBlock,                                           // current block
              indexUp,indexLo;                                     // current index and corresponding index in lower half block
         sizeHalfBlock = 1LL << targetQubit;                               // size of blocks halved
