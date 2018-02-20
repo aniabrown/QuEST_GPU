@@ -10,7 +10,7 @@
 # include "QuEST/precision.h"
 # include "QuEST/qubits_debug.h"
 
-# define NUM_TESTS 6
+# define NUM_TESTS 7
 # define COMPARE_PRECISION 10e-13
 # define PATH_TO_TESTS "tests/unit/"
 # define VERBOSE 0
@@ -245,7 +245,7 @@ int test_tGate(char testName[200]){
 
 	return passed;
 }
-
+*/
 int test_controlledNot(char testName[200]){
 	char filename[200];
 	int passed=1;
@@ -279,7 +279,7 @@ int test_controlledNot(char testName[200]){
 
 	return passed;
 }
-*/
+
 int test_controlledPhaseGate(char testName[200]){
 	char filename[200];
 	int passed=1;
@@ -856,7 +856,7 @@ int main (int narg, char** varg) {
 	reportQuESTEnv(env);
 
 	int (*tests[NUM_TESTS])(char[200]) = {
-//		test_controlledNot,
+		test_controlledNot,
 		test_initStateZero,
 		test_initStatePlus,
 //		test_sigmaX,
@@ -879,7 +879,7 @@ int main (int narg, char** varg) {
 	};
 
 	char testNames[NUM_TESTS][200] = {
-//		"controlledNot",
+		"controlledNot",
 		"initStateZero",
 		"initStatePlus",
 //		"sigmaX",

@@ -73,6 +73,8 @@ void reportMultiQubitParams(MultiQubit multiQubit);
 
 void controlledPhaseGate(MultiQubit multiQubit, const int idQubit1, const int idQubit2);
 
+void controlledNot(MultiQubit multiQubit, const int controlQubit, const int targetQubit);
+
 // QuEST library functions whose implementation depends on environment (local, MPI)
 
 void createMultiQubit(MultiQubit *multiQubit, int numQubits, QuESTEnv env);

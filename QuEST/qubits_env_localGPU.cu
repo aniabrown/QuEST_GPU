@@ -473,6 +473,53 @@ void controlledPhaseGate(MultiQubit multiQubit, const int idQubit1, const int id
         controlledPhaseGateKernel<<<CUDABlocks, threadsPerCUDABlock>>>(multiQubit, idQubit1, idQubit2);
 }
 
+__global__ void controlledNotKernel(MultiQubit multiQubit, const int controlQubit, const int targetQubit)
+{
+        long long int index;
+        long long int sizeBlock,                                           // size of blocks
+        sizeHalfBlock;                                       // size of blocks halved
+        long long int stateVecSize;
+        int controlBit;
+        
+        // ----- temp variables
+        REAL   stateRealUp,stateRealLo,                             // storage for previous state values
+                 stateImagUp,stateImagLo;                             // (used in updates)
+        long long int thisBlock,                                           // current block
+             indexUp,indexLo;                                     // current index and corresponding index in lower half block
+        sizeHalfBlock = 1LL << targetQubit;                               // size of blocks halved
+        sizeBlock     = 2LL * sizeHalfBlock;                           // size of blocks
+
+        stateVecSize = multiQubit.numAmps;
+        REAL *stateVecReal = multiQubit.deviceStateVec.real;
+        REAL *stateVecImag = multiQubit.deviceStateVec.imag;
+
+	index = blockIdx.x*blockDim.x + threadIdx.x;
+	if (index>=(stateVecSize>>1)) return;
+	thisBlock   = index / sizeHalfBlock;
+	indexUp     = thisBlock*sizeBlock + index%sizeHalfBlock;
+	indexLo     = indexUp + sizeHalfBlock;
+
+    controlBit = extractBit(controlQubit, indexUp);
+    if (controlBit){
+        stateRealUp = stateVecReal[indexUp];
+        stateImagUp = stateVecImag[indexUp];
+
+        stateVecReal[indexUp] = stateVecReal[indexLo];
+        stateVecImag[indexUp] = stateVecImag[indexLo];
+
+        stateVecReal[indexLo] = stateRealUp;
+        stateVecImag[indexLo] = stateImagUp;
+    }
+}
+
+void controlledNot(MultiQubit multiQubit, const int controlQubit, const int targetQubit)
+{
+        int threadsPerCUDABlock, CUDABlocks;
+        threadsPerCUDABlock = 128;
+        CUDABlocks = ceil((REAL)(multiQubit.numAmps)/threadsPerCUDABlock);
+        controlledNotKernel<<<CUDABlocks, threadsPerCUDABlock>>>(multiQubit, controlQubit, targetQubit);
+}
+
 __device__ __host__ unsigned int log2Int( unsigned int x )
 {
         unsigned int ans = 0 ;
