@@ -9,7 +9,7 @@
 # include "QuEST/qubits.h"
 # include "QuEST/precision.h"
 
-# define NUM_TESTS 9
+# define NUM_TESTS 6
 # define COMPARE_PRECISION 10e-13
 # define PATH_TO_TESTS "tests/unit/"
 # define VERBOSE 0
@@ -309,32 +309,6 @@ int test_controlPhaseGate(char testName[200]){
 	return passed;
 }
 
-int test_quadCPhaseGate(char testName[200]){
-	char filename[200];
-	int passed=1;
-	int count=1;
-
-	int numQubits=4;
-	MultiQubit mq, mqVerif; 
-
-	createMultiQubit(&mq, numQubits, env);
-	createMultiQubit(&mqVerif, numQubits, env);
-
-	int qubit0=0, qubit1=1, qubit2=2, qubit3=3;
-	initStateDebug(&mq);
-	quadCPhaseGate(mq, qubit0, qubit1, qubit2, qubit3);
-
-	sprintf(filename, "%s%s%d.out", PATH_TO_TESTS, testName, count++); 	
-	initializeStateFromSingleFile(&mqVerif, filename, env);
-
-	passed = compareStates(mq, mqVerif, COMPARE_PRECISION);
-
-	destroyMultiQubit(mq, env);
-	destroyMultiQubit(mqVerif, env);
-
-	return passed;
-}
-
 int test_rotateQubit(char testName[200]){
 	printf("skipping rotate!\n");
 	return 1;
@@ -544,81 +518,6 @@ int test_measureInState(char testName[200]){
 	return passed;
 }
 
-int test_probOfFilterOut111(char testName[200]){
-	char filename[200];
-	int passed=1;
-	int inCount=1;
-
-	int numQubits=3;
-	MultiQubit mq; 
-	int qubit0=0, qubit1=1, qubit2=2;
-	REAL outcome;
-
-	createMultiQubit(&mq, numQubits, env);
-
-	// test qubit = |0> 
-	initStateZero(&mq);
-	outcome = probOfFilterOut111(mq, qubit0, qubit1, qubit2);
-	if (passed) passed = compareReals(1, outcome, COMPARE_PRECISION);
-
-	// test qubit = |+> 
-	initStatePlus(&mq);
-	outcome = probOfFilterOut111(mq, qubit0, qubit1, qubit2);
-	if (passed) passed = compareReals(7.0/8.0, outcome, COMPARE_PRECISION);
-
-	sprintf(filename, "%s%s%d.in", PATH_TO_TESTS, testName, inCount++); 	
-	initializeStateFromSingleFile(&mq, filename, env);
-	outcome = probOfFilterOut111(mq, qubit0, qubit1, qubit2);
-	if (passed) passed = compareReals(0, outcome, COMPARE_PRECISION);
-
-	destroyMultiQubit(mq, env);
-
-	return passed;
-}
-
-
-int test_filterOut111(char testName[200]){
-	char filename[200];
-	int passed=1;
-	int inCount=1;
-	int count=1;
-
-	int numQubits=3;
-	MultiQubit mq, mqVerif; 
-	int qubit0=0, qubit1=1, qubit2=2;
-	REAL outcome;
-
-	createMultiQubit(&mq, numQubits, env);
-	createMultiQubit(&mqVerif, numQubits, env);
-
-	// test qubit = |0> 
-	initStateZero(&mq);
-	initStateZero(&mqVerif);
-	outcome = filterOut111(mq, qubit0, qubit1, qubit2);
-	if (passed) passed = compareReals(1, outcome, COMPARE_PRECISION);
-	if (passed) passed = compareStates(mq, mqVerif, COMPARE_PRECISION);
-
-	// test qubit = |+> 
-	initStatePlus(&mq);
-	outcome = filterOut111(mq, qubit0, qubit1, qubit2);
-	sprintf(filename, "%s%s%d.out", PATH_TO_TESTS, testName, count++); 	
-	initializeStateFromSingleFile(&mqVerif, filename, env);
-	if (passed) passed = compareReals(7.0/8.0, outcome, COMPARE_PRECISION);
-	if (passed) passed = compareStates(mq, mqVerif, COMPARE_PRECISION);
-
-	sprintf(filename, "%s%s%d.in", PATH_TO_TESTS, testName, inCount++); 	
-	initializeStateFromSingleFile(&mq, filename, env);
-	outcome = probOfFilterOut111(mq, qubit0, qubit1, qubit2);
-	initializeStateFromSingleFile(&mqVerif, filename, env);
-	if (passed) passed = compareReals(0, outcome, COMPARE_PRECISION);
-	if (passed) passed = compareStates(mq, mqVerif, COMPARE_PRECISION);
-
-	destroyMultiQubit(mq, env);
-	destroyMultiQubit(mqVerif, env);
-
-	return passed;
-}
-
 
 int main (int narg, char** varg) {
 	initQuESTEnv(&env);
@@ -635,13 +534,10 @@ int main (int narg, char** varg) {
 		//test_sGate,
 		//test_tGate,
 		test_controlPhaseGate,
-		test_quadCPhaseGate,
 		test_rotateQubit,
 		//test_controlRotateQubit,
 		test_findProbabilityOfOutcome,
 		test_measureInState,
-		test_probOfFilterOut111,
-		test_filterOut111
 	};
 
 	char testNames[NUM_TESTS][200] = {
@@ -655,13 +551,10 @@ int main (int narg, char** varg) {
 		//"sGate",
 		//"tGate",
 		"controlPhaseGate",
-		"quadCPhaseGate",
 		"rotateQubit",
 		//"controlRotateQubit",
 		"findProbabilityOfOutcome",
 		"measureInState",
-		"probOfFilterOut111",
-		"filterOut111"
 	};
 	int passed=0;
 
