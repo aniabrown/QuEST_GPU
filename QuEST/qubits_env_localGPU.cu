@@ -363,7 +363,7 @@ REAL calcTotalProbability(MultiQubit multiQubit){
 }
 
 
-__global__ void rotateQubitKernel (MultiQubit multiQubit, const int rotQubit, Complex alpha, Complex beta){
+__global__ void compactUnitaryKernel (MultiQubit multiQubit, const int rotQubit, Complex alpha, Complex beta){
 // ----- sizes
         long long int sizeBlock,                                           // size of blocks
         sizeHalfBlock;                                       // size of blocks halved
@@ -435,16 +435,16 @@ __global__ void rotateQubitKernel (MultiQubit multiQubit, const int rotQubit, Co
 		+ alphaReal*stateImagLo - alphaImag*stateRealLo;
 }
 
-void rotateQubit(MultiQubit multiQubit, const int rotQubit, Complex alpha, Complex beta) 
+void compactUnitary(MultiQubit multiQubit, const int rotQubit, Complex alpha, Complex beta) 
 {
         int threadsPerCUDABlock, CUDABlocks;
         threadsPerCUDABlock = 128;
         CUDABlocks = ceil((REAL)(multiQubit.numAmps>>1)/threadsPerCUDABlock);
-        rotateQubitKernel<<<CUDABlocks, threadsPerCUDABlock>>>(multiQubit, rotQubit, alpha, beta);
+        compactUnitaryKernel<<<CUDABlocks, threadsPerCUDABlock>>>(multiQubit, rotQubit, alpha, beta);
 }
 
 
-__global__ void controlPhaseGateKernel(MultiQubit multiQubit, const int idQubit1, const int idQubit2)
+__global__ void controlledPhaseGateKernel(MultiQubit multiQubit, const int idQubit1, const int idQubit2)
 {
         long long int index;
         long long int stateVecSize;
@@ -465,12 +465,12 @@ __global__ void controlPhaseGateKernel(MultiQubit multiQubit, const int idQubit1
 	}
 }
 
-void controlPhaseGate(MultiQubit multiQubit, const int idQubit1, const int idQubit2)
+void controlledPhaseGate(MultiQubit multiQubit, const int idQubit1, const int idQubit2)
 {
         int threadsPerCUDABlock, CUDABlocks;
         threadsPerCUDABlock = 128;
         CUDABlocks = ceil((REAL)(multiQubit.numAmps)/threadsPerCUDABlock);
-        controlPhaseGateKernel<<<CUDABlocks, threadsPerCUDABlock>>>(multiQubit, idQubit1, idQubit2);
+        controlledPhaseGateKernel<<<CUDABlocks, threadsPerCUDABlock>>>(multiQubit, idQubit1, idQubit2);
 }
 
 __device__ __host__ unsigned int log2Int( unsigned int x )

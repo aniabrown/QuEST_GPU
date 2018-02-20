@@ -71,8 +71,7 @@ void reportStateToScreen(MultiQubit multiQubit, QuESTEnv env, int reportRank);
 
 void reportMultiQubitParams(MultiQubit multiQubit);
 
-void controlPhaseGate (MultiQubit multiQubit, const int idQubit1, const int idQubit2);
-
+void controlledPhaseGate(MultiQubit multiQubit, const int idQubit1, const int idQubit2);
 
 // QuEST library functions whose implementation depends on environment (local, MPI)
 
@@ -137,7 +136,7 @@ the first qubit is the rightmost
 @param[in] alpha rotation angle
 @param[in] beta rotation angle
  */
-void rotateQubit(MultiQubit multiQubit, const int rotQubit, Complex alpha, Complex beta);
+void compactUnitary(MultiQubit multiQubit, const int rotQubit, Complex alpha, Complex beta);
 
 void rotateQubitByAngle(MultiQubit multiQubit, const int rotQubit, REAL angle, Vector unitAxis);
 

@@ -278,7 +278,7 @@ int test_controlNot(char testName[200]){
 	return passed;
 }
 */
-int test_controlPhaseGate(char testName[200]){
+int test_controlledPhaseGate(char testName[200]){
 	char filename[200];
 	int passed=1;
 	int count=1;
@@ -295,7 +295,7 @@ int test_controlPhaseGate(char testName[200]){
 		for (int i=0; i<3; i++){
 			initStateDebug(&mq);
 			rotateQubit=i;
-			controlPhaseGate(mq, rotateQubit, controlQubit);
+			controlledPhaseGate(mq, rotateQubit, controlQubit);
 			
 			sprintf(filename, "%s%s%d.out", PATH_TO_TESTS, testName, count++); 	
 			initializeStateFromSingleFile(&mqVerif, filename, env);
@@ -309,7 +309,7 @@ int test_controlPhaseGate(char testName[200]){
 	return passed;
 }
 
-int test_rotateQubit(char testName[200]){
+int test_compactUnitary(char testName[200]){
 	printf("skipping rotate!\n");
 	return 1;
 	int passed=1;
@@ -337,7 +337,7 @@ int test_rotateQubit(char testName[200]){
 		initStateDebug(&mqVerif);
 		for (int i=0; i<numQubits; i++){
 			rotQubit=i;
-			rotateQubit(mq, rotQubit, alpha, beta);
+			compactUnitary(mq, rotQubit, alpha, beta);
 		}
 		// note -- this is only checking if the state changed at all due to rotation,
 		// not that it changed correctly
@@ -353,7 +353,7 @@ int test_rotateQubit(char testName[200]){
 
 		for (int i=0; i<numQubits; i++){
 			rotQubit=i;
-			rotateQubit(mq, rotQubit, alpha, beta);
+			compactUnitary(mq, rotQubit, alpha, beta);
 		}
 
 		if (passed) passed = compareStates(mq, mqVerif, COMPARE_PRECISION);
@@ -374,7 +374,7 @@ int test_controlRotateQubit(char testName[200]){
 	int rotQubit, controlQubit;
 	MultiQubit mq, mqVerif; 
 
-	// assumes rotateQubit function is correct
+	// assumes compactUnitary function is correct
 	
 	REAL ang1, ang2, ang3;
         ang1 = 1.2320;
@@ -533,8 +533,8 @@ int main (int narg, char** varg) {
 		//test_hadamard,
 		//test_sGate,
 		//test_tGate,
-		test_controlPhaseGate,
-		test_rotateQubit,
+		test_controlledPhaseGate,
+		test_compactUnitary,
 		//test_controlRotateQubit,
 		test_findProbabilityOfOutcome,
 		test_measureInState,
@@ -550,8 +550,8 @@ int main (int narg, char** varg) {
 		//"hadamard",
 		//"sGate",
 		//"tGate",
-		"controlPhaseGate",
-		"rotateQubit",
+		"controlledPhaseGate",
+		"compactUnitary",
 		//"controlRotateQubit",
 		"findProbabilityOfOutcome",
 		"measureInState",
