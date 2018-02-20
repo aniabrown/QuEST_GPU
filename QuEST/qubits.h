@@ -61,6 +61,8 @@ typedef struct QuESTEnv
 	int numRanks;
 } QuESTEnv;
 
+// Codes for sigmaZ phase gate variations
+enum phaseGateType {SIGMA_Z=0, S_GATE=1, T_GATE=2};
 
 // QuEST library functions whose implementation is independent of environment (local, MPI)
 void reportState(MultiQubit multiQubit);
@@ -135,6 +137,12 @@ void compactUnitary(MultiQubit multiQubit, const int rotQubit, Complex alpha, Co
 void sigmaX(MultiQubit multiQubit, const int targetQubit);
 
 void sigmaY(MultiQubit multiQubit, const int targetQubit);
+
+void sigmaZ(MultiQubit multiQubit, const int targetQubit);
+
+void sGate(MultiQubit multiQubit, const int targetQubit);
+
+void tGate(MultiQubit multiQubit, const int targetQubit);
 
 void rotateAroundAxis(MultiQubit multiQubit, const int rotQubit, REAL angle, Vector unitAxis);
 

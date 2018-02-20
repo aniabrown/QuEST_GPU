@@ -6,7 +6,7 @@
  * directly. 
  */
 
-
+void phaseGate(MultiQubit multiQubit, const int targetQubit, enum phaseGateType type);
 
 
 # endif

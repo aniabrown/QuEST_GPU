@@ -8,6 +8,7 @@
 # include <assert.h>
 # include "precision.h"
 # include "qubits.h"
+# include "qubits_internal.h"
 
 # define DEBUG 0
 
@@ -75,4 +76,19 @@ void rotateAroundAxis(MultiQubit multiQubit, const int rotQubit, REAL angle, Vec
     beta.real = 0;
     beta.imag = -sin(angle/2.0)*(unitAxis.x + unitAxis.y);
     compactUnitary(multiQubit, rotQubit, alpha, beta);
+}
+
+void sigmaZ(MultiQubit multiQubit, const int targetQubit)
+{
+    phaseGate(multiQubit, targetQubit, SIGMA_Z);
+}
+
+void sGate(MultiQubit multiQubit, const int targetQubit)
+{
+    phaseGate(multiQubit, targetQubit, S_GATE);
+} 
+
+void tGate(MultiQubit multiQubit, const int targetQubit)
+{
+    phaseGate(multiQubit, targetQubit, T_GATE);
 }

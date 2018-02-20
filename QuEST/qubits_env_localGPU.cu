@@ -531,6 +531,67 @@ void sigmaY(MultiQubit multiQubit, const int targetQubit)
         sigmaYKernel<<<CUDABlocks, threadsPerCUDABlock>>>(multiQubit, targetQubit);
 }
 
+__global__ void phaseGateKernel(MultiQubit multiQubit, const int targetQubit, enum phaseGateType type){
+// ----- sizes
+        long long int sizeBlock,                                           // size of blocks
+        sizeHalfBlock;                                       // size of blocks halved
+        // ----- indices
+        long long int thisBlock,                                           // current block
+             indexUp,indexLo;                                     // current index and corresponding index in lower half block
+
+        // ----- temp variables
+        REAL   stateRealUp,stateRealLo,                             // storage for previous state values
+                 stateImagUp,stateImagLo;                             // (used in updates)
+        // ----- temp variables
+        long long int thisTask;                                   // task based approach for expose loop with small granularity
+        const long long int numTasks=multiQubit.numAmps>>1;
+
+        sizeHalfBlock = 1LL << targetQubit;                               // size of blocks halved
+        sizeBlock     = 2LL * sizeHalfBlock;                           // size of blocks
+
+        REAL recRoot2 = 1.0/sqrt(2.0);
+
+        // ---------------------------------------------------------------- //
+        //            rotate                                                //
+        // ---------------------------------------------------------------- //
+
+	//! fix -- no necessary for GPU version
+        REAL *stateVecReal = multiQubit.deviceStateVec.real;
+        REAL *stateVecImag = multiQubit.deviceStateVec.imag;
+
+	thisTask = blockIdx.x*blockDim.x + threadIdx.x;
+	if (thisTask>=numTasks) return;
+    thisBlock   = thisTask / sizeHalfBlock;
+    indexUp     = thisBlock*sizeBlock + thisTask%sizeHalfBlock;
+    indexLo     = indexUp + sizeHalfBlock;
+
+    if (type==SIGMA_Z){
+        stateVecReal[indexLo] = -stateVecReal[indexLo];
+        stateVecImag[indexLo] = -stateVecImag[indexLo];
+    } else if (type==S_GATE){
+        stateRealLo = stateVecReal[indexLo];
+        stateImagLo = stateVecImag[indexLo];
+
+        stateVecReal[indexLo] = -stateImagLo;
+        stateVecImag[indexLo] = stateRealLo;
+    } else if (type==T_GATE){
+        stateRealLo = stateVecReal[indexLo];
+        stateImagLo = stateVecImag[indexLo];
+
+        stateVecReal[indexLo] = recRoot2 * (stateRealLo - stateImagLo);
+        stateVecImag[indexLo] = recRoot2 * (stateRealLo + stateImagLo);
+    }
+
+}
+
+void phaseGate(MultiQubit multiQubit, const int targetQubit, enum phaseGateType type) 
+{
+        int threadsPerCUDABlock, CUDABlocks;
+        threadsPerCUDABlock = 128;
+        CUDABlocks = ceil((REAL)(multiQubit.numAmps>>1)/threadsPerCUDABlock);
+        phaseGateKernel<<<CUDABlocks, threadsPerCUDABlock>>>(multiQubit, targetQubit, type);
+}
+
 __global__ void controlledPhaseGateKernel(MultiQubit multiQubit, const int idQubit1, const int idQubit2)
 {
         long long int index;

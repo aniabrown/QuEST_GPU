@@ -10,7 +10,7 @@
 # include "QuEST/precision.h"
 # include "QuEST/qubits_debug.h"
 
-# define NUM_TESTS 9
+# define NUM_TESTS 12
 # define COMPARE_PRECISION 10e-13
 # define PATH_TO_TESTS "tests/unit/"
 # define VERBOSE 0
@@ -133,7 +133,6 @@ int test_sigmaY(char testName[200]){
 	return passed;
 }
 
-/*
 int test_sigmaZ(char testName[200]){
 	char filename[200];
 	int passed=1;
@@ -163,6 +162,7 @@ int test_sigmaZ(char testName[200]){
 	return passed;
 }
 
+/*
 int test_hadamard(char testName[200]){
 	char filename[200];
 	int passed=1;
@@ -190,6 +190,7 @@ int test_hadamard(char testName[200]){
 
 	return passed;
 }
+*/
 
 int test_sGate(char testName[200]){
 	char filename[200];
@@ -246,7 +247,7 @@ int test_tGate(char testName[200]){
 
 	return passed;
 }
-*/
+
 int test_controlledNot(char testName[200]){
 	char filename[200];
 	int passed=1;
@@ -862,10 +863,10 @@ int main (int narg, char** varg) {
 		test_initStatePlus,
 		test_sigmaX,
 		test_sigmaY,
-//		test_sigmaZ,
+		test_sigmaZ,
 //		test_hadamard,
-//		test_sGate,
-//		test_tGate,
+		test_sGate,
+		test_tGate,
 		test_controlledPhaseGate,
 //		test_multiControlledPhaseGate,
 		test_compactUnitary,
@@ -885,10 +886,10 @@ int main (int narg, char** varg) {
 		"initStatePlus",
 		"sigmaX",
 		"sigmaY",
-//		"sigmaZ",
+		"sigmaZ",
 //		"hadamard",
-//		"sGate",
-//		"tGate",
+		"sGate",
+		"tGate",
 		"controlledPhaseGate",
 //		"multiControlledPhaseGate",
 		"compactUnitary",
