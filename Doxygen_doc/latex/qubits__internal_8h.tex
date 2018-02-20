@@ -9,7 +9,11 @@ Internal functions used to implement the public facing API in \hyperlink{qubits_
 \begin{DoxyCompactItemize}
 \item 
 void \hyperlink{qubits__internal_8h_aae7a8a7f1ccbddb7f76b6c52b746bb43}{phaseGate} (\hyperlink{structMultiQubit}{MultiQubit} multiQubit, const int targetQubit, enum \hyperlink{qubits_8h_a5739021c733cecc49647956b2f7338ea}{phaseGateType} type)
-\end{DoxyCompactItemize}
+\item 
+REAL \hyperlink{qubits__internal_8h_a2e4cedb70bd181d250b3abb945cc108e}{findProbabilityOfZero} (\hyperlink{structMultiQubit}{MultiQubit} multiQubit, const int measureQubit)
+\begin{DoxyCompactList}\small\item\em Measure the probability of a specified qubit being in the zero state. \item\end{DoxyCompactList}\item 
+REAL \hyperlink{qubits__internal_8h_a21094de735f3cb48488a184cfa4d8d41}{measureInZero} (\hyperlink{structMultiQubit}{MultiQubit} multiQubit, const int measureQubit)
+\begin{DoxyCompactList}\small\item\em Update the state vector to be consistent with measuring measureQubit=0. \item\end{DoxyCompactList}\end{DoxyCompactItemize}
 
 
 \subsubsection{Detailed Description}
@@ -18,6 +22,34 @@ Internal functions used to implement the public facing API in \hyperlink{qubits_
 Definition in file \hyperlink{qubits__internal_8h_source}{qubits\_\-internal.h}.
 
 \subsubsection{Function Documentation}
+\hypertarget{qubits__internal_8h_a2e4cedb70bd181d250b3abb945cc108e}{
+\index{qubits\_\-internal.h@{qubits\_\-internal.h}!findProbabilityOfZero@{findProbabilityOfZero}}
+\index{findProbabilityOfZero@{findProbabilityOfZero}!qubits_internal.h@{qubits\_\-internal.h}}
+\paragraph[{findProbabilityOfZero}]{\setlength{\rightskip}{0pt plus 5cm}REAL findProbabilityOfZero ({\bf MultiQubit} {\em multiQubit}, \/  const int {\em measureQubit})}\hfill}
+\label{qubits__internal_8h_a2e4cedb70bd181d250b3abb945cc108e}
+
+
+Measure the probability of a specified qubit being in the zero state. 
+\begin{DoxyParams}{Parameters}
+\item[\mbox{$\leftarrow$} {\em multiQubit}]object representing the set of qubits \item[\mbox{$\leftarrow$} {\em measureQubit}]qubit to measure \end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+probability of qubit measureQubit being zero 
+\end{DoxyReturn}
+\hypertarget{qubits__internal_8h_a21094de735f3cb48488a184cfa4d8d41}{
+\index{qubits\_\-internal.h@{qubits\_\-internal.h}!measureInZero@{measureInZero}}
+\index{measureInZero@{measureInZero}!qubits_internal.h@{qubits\_\-internal.h}}
+\paragraph[{measureInZero}]{\setlength{\rightskip}{0pt plus 5cm}REAL measureInZero ({\bf MultiQubit} {\em multiQubit}, \/  const int {\em measureQubit})}\hfill}
+\label{qubits__internal_8h_a21094de735f3cb48488a184cfa4d8d41}
+
+
+Update the state vector to be consistent with measuring measureQubit=0. Measure in Zero performs an irreversible change to the state vector: it updates the vector according to the event that a zero have been measured on the qubit indicated by measureQubit (where his label starts from 0, of course). It achieves this by setting all inconsistent amplitudes to 0 and then renormalising based on the total probability of measuring measureQubit=0. It then returns the probability of making this measurement.
+
+
+\begin{DoxyParams}{Parameters}
+\item[\mbox{$\leftrightarrow$} {\em multiQubit}]object representing the set of qubits \item[\mbox{$\leftarrow$} {\em measureQubit}]qubit to measure \end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+probability of qubit measureQubit being zero 
+\end{DoxyReturn}
 \hypertarget{qubits__internal_8h_aae7a8a7f1ccbddb7f76b6c52b746bb43}{
 \index{qubits\_\-internal.h@{qubits\_\-internal.h}!phaseGate@{phaseGate}}
 \index{phaseGate@{phaseGate}!qubits_internal.h@{qubits\_\-internal.h}}

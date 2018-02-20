@@ -32,58 +32,54 @@ enum \hyperlink{qubits_8h_a5739021c733cecc49647956b2f7338ea}{phaseGateType} \{ \
 \item 
 void \hyperlink{qubits_8h_a96f4de9ce7fefc7680a44d601fc3d894}{reportState} (\hyperlink{structMultiQubit}{MultiQubit} multiQubit)
 \begin{DoxyCompactList}\small\item\em Print the current state vector of probability amplitudes for a set of qubits to file. \item\end{DoxyCompactList}\item 
+void \hyperlink{qubits_8h_aa5e77e0e64f3a4a3d3f5cc7382bffcd9}{reportMultiQubitParams} (\hyperlink{structMultiQubit}{MultiQubit} multiQubit)
+\begin{DoxyCompactList}\small\item\em Report metainformation about a set of qubits: number of qubits, number of probability amplitudes. \item\end{DoxyCompactList}\item 
+void \hyperlink{qubits_8h_a7fadb225fc385db789e844c87fcba9e1}{rotateAroundAxis} (\hyperlink{structMultiQubit}{MultiQubit} multiQubit, const int rotQubit, REAL angle, \hyperlink{structVector}{Vector} unitAxis)
+\begin{DoxyCompactList}\small\item\em Rotate a single qubit by a given angle around a given vector on the Bloch-\/sphere. \item\end{DoxyCompactList}\item 
+void \hyperlink{qubits_8h_aebaab86326779de55d335cfea3efde8f}{sigmaZ} (\hyperlink{structMultiQubit}{MultiQubit} multiQubit, const int targetQubit)
+\begin{DoxyCompactList}\small\item\em Apply the single-\/qubit sigma-\/Z (also known as the Z, Pauli-\/Z or phase-\/flip) gate. \item\end{DoxyCompactList}\item 
+void \hyperlink{qubits_8h_adda6c47876a7676488ed0565a19eaa65}{sGate} (\hyperlink{structMultiQubit}{MultiQubit} multiQubit, const int targetQubit)
+\begin{DoxyCompactList}\small\item\em Apply the single-\/qubit S gate. \item\end{DoxyCompactList}\item 
+void \hyperlink{qubits_8h_af764ea63a2e870098f4e1ce08562942e}{tGate} (\hyperlink{structMultiQubit}{MultiQubit} multiQubit, const int targetQubit)
+\begin{DoxyCompactList}\small\item\em Apply the single-\/qubit T gate. \item\end{DoxyCompactList}\item 
 void \hyperlink{qubits_8h_a8f10aabf9f607f19093aee54630caa21}{getEnvironmentString} (\hyperlink{structQuESTEnv}{QuESTEnv} \hyperlink{runTests_8cpp_a5fd8ba97fcae3408ae6221dfc3cc1f93}{env}, \hyperlink{structMultiQubit}{MultiQubit} multiQubit, char str\mbox{[}200\mbox{]})
 \item 
 void \hyperlink{qubits_8h_a842d6884e063a5865a2232cba56b65ac}{reportStateToScreen} (\hyperlink{structMultiQubit}{MultiQubit} multiQubit, \hyperlink{structQuESTEnv}{QuESTEnv} \hyperlink{runTests_8cpp_a5fd8ba97fcae3408ae6221dfc3cc1f93}{env}, int reportRank)
-\item 
-void \hyperlink{qubits_8h_aa5e77e0e64f3a4a3d3f5cc7382bffcd9}{reportMultiQubitParams} (\hyperlink{structMultiQubit}{MultiQubit} multiQubit)
-\begin{DoxyCompactList}\small\item\em Report metainformation about a set of qubits: number of qubits, number of probability amplitudes. \item\end{DoxyCompactList}\item 
+\begin{DoxyCompactList}\small\item\em Print the current state vector of probability amplitudes for a set of qubits to standard out. \item\end{DoxyCompactList}\item 
 void \hyperlink{qubits_8h_a11a96159191cbf1b01a1080e7f045aac}{controlledPhaseGate} (\hyperlink{structMultiQubit}{MultiQubit} multiQubit, const int idQubit1, const int idQubit2)
-\item 
+\begin{DoxyCompactList}\small\item\em Apply the (two-\/qubit) controlled phase gate, also known as the controlled sigmaZ gate. \item\end{DoxyCompactList}\item 
 void \hyperlink{qubits_8h_a67576895bbc65463481a8ea24d9b1e22}{controlledNot} (\hyperlink{structMultiQubit}{MultiQubit} multiQubit, const int controlQubit, const int targetQubit)
-\item 
+\begin{DoxyCompactList}\small\item\em Apply the controlled not (single control, single target) gate, also known as the c-\/X, c-\/sigma-\/X, c-\/Pauli-\/X and c-\/bit-\/flip gate. \item\end{DoxyCompactList}\item 
 void \hyperlink{qubits_8h_a9c02591bc64c2918503afa231d90d83f}{createMultiQubit} (\hyperlink{structMultiQubit}{MultiQubit} $\ast$multiQubit, int numQubits, \hyperlink{structQuESTEnv}{QuESTEnv} \hyperlink{runTests_8cpp_a5fd8ba97fcae3408ae6221dfc3cc1f93}{env})
-\item 
+\begin{DoxyCompactList}\small\item\em Create a \hyperlink{structMultiQubit}{MultiQubit} object representing a set of qubits. \item\end{DoxyCompactList}\item 
 void \hyperlink{qubits_8h_ae5d6acc322314d7a3d8a2eccf00d3b19}{destroyMultiQubit} (\hyperlink{structMultiQubit}{MultiQubit} multiQubit, \hyperlink{structQuESTEnv}{QuESTEnv} \hyperlink{runTests_8cpp_a5fd8ba97fcae3408ae6221dfc3cc1f93}{env})
-\item 
+\begin{DoxyCompactList}\small\item\em Deallocate a \hyperlink{structMultiQubit}{MultiQubit} object representing a set of qubits. \item\end{DoxyCompactList}\item 
 void \hyperlink{qubits_8h_acb5b2eff794339090004d29f02a70d9a}{initStateZero} (\hyperlink{structMultiQubit}{MultiQubit} $\ast$multiQubit)
-\item 
+\begin{DoxyCompactList}\small\item\em Initialise a set of $ N $ qubits to the classical zero state $ {| 0 \rangle}^{\otimes N} $. \item\end{DoxyCompactList}\item 
 void \hyperlink{qubits_8h_a43bcb279fc9717fbd06a19cdef48b9d8}{initStatePlus} (\hyperlink{structMultiQubit}{MultiQubit} $\ast$multiQubit)
-\item 
+\begin{DoxyCompactList}\small\item\em Initialise a set of $ N $ qubits to the plus state $ {| + \rangle}^{\otimes N} = \frac{1}{\sqrt{2^N}} (| 0 \rangle + | 1 \rangle)^{\otimes N} $. \item\end{DoxyCompactList}\item 
 void \hyperlink{qubits_8h_ad84a3ce68d1ca02b4e3f741ea45b6054}{initQuESTEnv} (\hyperlink{structQuESTEnv}{QuESTEnv} $\ast$\hyperlink{runTests_8cpp_a5fd8ba97fcae3408ae6221dfc3cc1f93}{env})
 \begin{DoxyCompactList}\small\item\em Initialize QuEST environment. \item\end{DoxyCompactList}\item 
 void \hyperlink{qubits_8h_abd4bc926cd3f9b65610bb228d0c59fe0}{closeQuESTEnv} (\hyperlink{structQuESTEnv}{QuESTEnv} \hyperlink{runTests_8cpp_a5fd8ba97fcae3408ae6221dfc3cc1f93}{env})
-\begin{DoxyCompactList}\small\item\em Close QuEST environment. \item\end{DoxyCompactList}\item 
+\begin{DoxyCompactList}\small\item\em Initialize the QuEST environment. \item\end{DoxyCompactList}\item 
 void \hyperlink{qubits_8h_a8d31fe2d1ad4d01e2a1f5f6b8bc15b77}{syncQuESTEnv} (\hyperlink{structQuESTEnv}{QuESTEnv} \hyperlink{runTests_8cpp_a5fd8ba97fcae3408ae6221dfc3cc1f93}{env})
 \begin{DoxyCompactList}\small\item\em Guarantees that all code up to the given point has been executed on all nodes. \item\end{DoxyCompactList}\item 
 int \hyperlink{qubits_8h_ac7e38d768a1bd79019f88cc1e6295092}{syncQuESTSuccess} (int successCode)
-\item 
+\begin{DoxyCompactList}\small\item\em Performs a logical AND on all successCodes held by all processes. \item\end{DoxyCompactList}\item 
 void \hyperlink{qubits_8h_af8a14ae79c3fb2c0b5f6255cc37bebf9}{reportQuESTEnv} (\hyperlink{structQuESTEnv}{QuESTEnv} \hyperlink{runTests_8cpp_a5fd8ba97fcae3408ae6221dfc3cc1f93}{env})
 \begin{DoxyCompactList}\small\item\em Report information about the QuEST environment. \item\end{DoxyCompactList}\item 
 REAL \hyperlink{qubits_8h_a818a4c7cd7252d2b10b896b12fa431d3}{calcTotalProbability} (\hyperlink{structMultiQubit}{MultiQubit} multiQubit)
 \begin{DoxyCompactList}\small\item\em Calculate the probability of being in any state by taking the norm of the entire state vector. \item\end{DoxyCompactList}\item 
 void \hyperlink{qubits_8h_ad13ae1902276195d0df106116e032aff}{compactUnitary} (\hyperlink{structMultiQubit}{MultiQubit} multiQubit, const int rotQubit, \hyperlink{structComplex}{Complex} alpha, \hyperlink{structComplex}{Complex} beta)
-\begin{DoxyCompactList}\small\item\em Rotate a single qubit in the state vector of probability amplitudes, given the angle rotation arguments. \item\end{DoxyCompactList}\item 
+\begin{DoxyCompactList}\small\item\em Apply a single-\/qubit unitary parameterised by two given complex scalars. \item\end{DoxyCompactList}\item 
 void \hyperlink{qubits_8h_a86e396e06b7d527cac20ba0108872423}{sigmaX} (\hyperlink{structMultiQubit}{MultiQubit} multiQubit, const int targetQubit)
-\item 
+\begin{DoxyCompactList}\small\item\em Apply the single-\/qubit sigma-\/X (also known as the X, Pauli-\/X, NOT or bit-\/flip) gate. \item\end{DoxyCompactList}\item 
 void \hyperlink{qubits_8h_a1f54d70a42403f7e1c2e2c2007332f61}{sigmaY} (\hyperlink{structMultiQubit}{MultiQubit} multiQubit, const int targetQubit)
-\item 
-void \hyperlink{qubits_8h_aebaab86326779de55d335cfea3efde8f}{sigmaZ} (\hyperlink{structMultiQubit}{MultiQubit} multiQubit, const int targetQubit)
-\item 
-void \hyperlink{qubits_8h_adda6c47876a7676488ed0565a19eaa65}{sGate} (\hyperlink{structMultiQubit}{MultiQubit} multiQubit, const int targetQubit)
-\item 
-void \hyperlink{qubits_8h_af764ea63a2e870098f4e1ce08562942e}{tGate} (\hyperlink{structMultiQubit}{MultiQubit} multiQubit, const int targetQubit)
-\item 
-void \hyperlink{qubits_8h_a7fadb225fc385db789e844c87fcba9e1}{rotateAroundAxis} (\hyperlink{structMultiQubit}{MultiQubit} multiQubit, const int rotQubit, REAL angle, \hyperlink{structVector}{Vector} unitAxis)
-\begin{DoxyCompactList}\small\item\em Rotate a single qubit a certain angle about an axis. \item\end{DoxyCompactList}\item 
-REAL \hyperlink{qubits_8h_a2e4cedb70bd181d250b3abb945cc108e}{findProbabilityOfZero} (\hyperlink{structMultiQubit}{MultiQubit} multiQubit, const int measureQubit)
-\begin{DoxyCompactList}\small\item\em Measure the probability of a specified qubit being in the zero state. \item\end{DoxyCompactList}\item 
+\begin{DoxyCompactList}\small\item\em Apply the single-\/qubit sigma-\/Y (also known as the Y or Pauli-\/Y) gate. \item\end{DoxyCompactList}\item 
 REAL \hyperlink{qubits_8h_ad315c941a51bc053d39ebfa2040fd32e}{findProbabilityOfOutcome} (\hyperlink{structMultiQubit}{MultiQubit} multiQubit, const int measureQubit, int outcome)
-\item 
+\begin{DoxyCompactList}\small\item\em Gives the probability of a specified qubit being measured in the given outcome (0 or 1). \item\end{DoxyCompactList}\item 
 REAL \hyperlink{qubits_8h_a07418ebac70fd9ae5d051d089961631d}{collapseToOutcome} (\hyperlink{structMultiQubit}{MultiQubit} multiQubit, const int measureQubit, int outcome)
-\item 
-REAL \hyperlink{qubits_8h_a21094de735f3cb48488a184cfa4d8d41}{measureInZero} (\hyperlink{structMultiQubit}{MultiQubit} multiQubit, const int measureQubit)
-\begin{DoxyCompactList}\small\item\em Update the state vector to be consistent with measuring measureQubit=0. \item\end{DoxyCompactList}\end{DoxyCompactItemize}
+\begin{DoxyCompactList}\small\item\em Updates the state vector to be consistent with measuring the measure qubit in the given outcome (0 or 1), and returns the probability of such a measurement outcome. \item\end{DoxyCompactList}\end{DoxyCompactItemize}
 
 
 \subsubsection{Detailed Description}
@@ -133,7 +129,9 @@ Definition at line 65 of file qubits.h.
 \label{qubits_8h_a818a4c7cd7252d2b10b896b12fa431d3}
 
 
-Calculate the probability of being in any state by taking the norm of the entire state vector. Should be equal to 1. 
+Calculate the probability of being in any state by taking the norm of the entire state vector. Should be equal to 1.
+
+
 \begin{DoxyParams}{Parameters}
 \item[\mbox{$\leftarrow$} {\em multiQubit}]object representing a set of qubits \end{DoxyParams}
 \begin{DoxyReturn}{Returns}
@@ -148,9 +146,11 @@ Referenced by test\_\-compactUnitary().\hypertarget{qubits_8h_abd4bc926cd3f9b656
 \label{qubits_8h_abd4bc926cd3f9b65610bb228d0c59fe0}
 
 
-Close QuEST environment. If something needs to be done to clean up the execution environment, such as finalizing MPI when running in distributed mode, it is handled here 
+Initialize the QuEST environment. If something needs to be done to set up the execution environment, such as initializing MPI when running in distributed mode, it is handled here
+
+
 \begin{DoxyParams}{Parameters}
-\item[\mbox{$\leftarrow$} {\em env}]object representing the execution environment. A single instance is used for each program \end{DoxyParams}
+\item[\mbox{$\leftrightarrow$} {\em env}]object representing the execution environment. A single instance is used for each program \end{DoxyParams}
 
 
 Referenced by main().\hypertarget{qubits_8h_a07418ebac70fd9ae5d051d089961631d}{
@@ -160,6 +160,19 @@ Referenced by main().\hypertarget{qubits_8h_a07418ebac70fd9ae5d051d089961631d}{
 \label{qubits_8h_a07418ebac70fd9ae5d051d089961631d}
 
 
+Updates the state vector to be consistent with measuring the measure qubit in the given outcome (0 or 1), and returns the probability of such a measurement outcome. This is effectively performing a measurement and forcing the outcome. This is an irreversible change to the state vector, whereby incompatible states in the state vector are given zero amplitude and the remaining states are renormalised. Exits with error if the given outcome has $\sim$zero probability, and so cannot be collapsed into.
+
+
+\begin{DoxyParams}{Parameters}
+\item[\mbox{$\leftrightarrow$} {\em multiQubit}]object representing the set of all qubits \item[\mbox{$\leftarrow$} {\em measureQubit}]qubit to measure \item[\mbox{$\leftarrow$} {\em outcome}]to force the measure qubit to enter \end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+probability of the (forced) measurement outcome 
+\end{DoxyReturn}
+
+\begin{DoxyExceptions}{Exceptions}
+\item[{\em exitWithError}]if {\ttfamily measureQubit} is outside \mbox{[}0, {\ttfamily multiQubit.numQubits}), or if {\ttfamily outcome} is not in \{0, 1\}, or if the probability of {\ttfamily outcome} is zero (within machine epsilon) \end{DoxyExceptions}
+
+
 Referenced by test\_\-collapseToOutcome().\hypertarget{qubits_8h_ad13ae1902276195d0df106116e032aff}{
 \index{qubits.h@{qubits.h}!compactUnitary@{compactUnitary}}
 \index{compactUnitary@{compactUnitary}!qubits.h@{qubits.h}}
@@ -167,18 +180,16 @@ Referenced by test\_\-collapseToOutcome().\hypertarget{qubits_8h_ad13ae190227619
 \label{qubits_8h_ad13ae1902276195d0df106116e032aff}
 
 
-Rotate a single qubit in the state vector of probability amplitudes, given the angle rotation arguments. alphaRe = cos(angle1) $\ast$ cos(angle2) \par
- alphaIm = cos(angle1) $\ast$ sin(angle2) \par
- betaRe = sin(angle1) $\ast$ cos(angle3) \par
- betaIm = sin(angle1) $\ast$ sin(angle3) \par
+Apply a single-\/qubit unitary parameterised by two given complex scalars. Given valid complex numbers $\alpha$ and $\beta$, applies the unitary \[ U = \begin{pmatrix} \alpha & -\beta^* \\ \beta & \alpha^* \end{pmatrix} \] which is general up to a global phase factor. Valid $\alpha$, $\beta$ satisfy $|\alpha|^2 + |\beta|^2 = 1$.
 
+\[ \setlength{\fboxrule}{0.01pt} \fbox{ \begin{tikzpicture}[scale=.5] \node[draw=none] at (-3.5, 0) {target}; \draw (-2,0) -- (-1, 0); \draw (1, 0) -- (2, 0); \draw (-1,-1)--(-1,1)--(1,1)--(1,-1)--cycle; \node[draw=none] at (0, 0) {U}; \end{tikzpicture} } \]
 
-\begin{DoxyRemark}{Remarks}
-Qubits are zero-\/based and the the first qubit is the rightmost
-\end{DoxyRemark}
 
 \begin{DoxyParams}{Parameters}
-\item[\mbox{$\leftrightarrow$} {\em multiQubit}]object representing the set of qubits \item[\mbox{$\leftarrow$} {\em rotQubit}]qubit to rotate \item[\mbox{$\leftarrow$} {\em alpha}]rotation angle \item[\mbox{$\leftarrow$} {\em beta}]rotation angle \end{DoxyParams}
+\item[\mbox{$\leftrightarrow$} {\em multiQubit}]object representing the set of all qubits \item[\mbox{$\leftarrow$} {\em targetQubit}]qubit to operate on \item[\mbox{$\leftarrow$} {\em alpha}]complex unitary parameter (row 1, column 1) \item[\mbox{$\leftarrow$} {\em beta}]complex unitary parameter (row 2, column 1) \end{DoxyParams}
+
+\begin{DoxyExceptions}{Exceptions}
+\item[{\em exitWithError}]if {\ttfamily targetQubit} is outside \mbox{[}0, {\ttfamily multiQubit.numQubits}), or if {\ttfamily alpha}, {\ttfamily beta} don't satisfy $|${\ttfamily alpha$|$$^\wedge$2} + $|${\ttfamily beta$|$$^\wedge$2} = 1. \end{DoxyExceptions}
 
 
 Referenced by rotateAroundAxis(), and test\_\-compactUnitary().\hypertarget{qubits_8h_a67576895bbc65463481a8ea24d9b1e22}{
@@ -188,11 +199,35 @@ Referenced by rotateAroundAxis(), and test\_\-compactUnitary().\hypertarget{qubi
 \label{qubits_8h_a67576895bbc65463481a8ea24d9b1e22}
 
 
+Apply the controlled not (single control, single target) gate, also known as the c-\/X, c-\/sigma-\/X, c-\/Pauli-\/X and c-\/bit-\/flip gate. This applies sigmaX to the target qubit if the control qubit has value 1. This effects the two-\/qubit unitary \[ \begin{pmatrix} 1 \\ & 1 \\\ & & & 1 \\ & & 1 \end{pmatrix} \] on the control and target qubits.
+
+\[ \setlength{\fboxrule}{0.01pt} \fbox{ \begin{tikzpicture}[scale=.5] \node[draw=none] at (-3.5, 2) {control}; \node[draw=none] at (-3.5, 0) {target}; \draw (-2, 2) -- (2, 2); \draw[fill=black] (0, 2) circle (.2); \draw (0, 2) -- (0, -.5); \draw (-2,0) -- (2, 0); \draw (0, 0) circle (.5); \end{tikzpicture} } \]
+
+
+\begin{DoxyParams}{Parameters}
+\item[\mbox{$\leftrightarrow$} {\em multiQubit}]object representing the set of all qubits \item[\mbox{$\leftarrow$} {\em controlQubit}]nots the target if this qubit is 1 \item[\mbox{$\leftarrow$} {\em targetQubit}]qubit to not \end{DoxyParams}
+
+\begin{DoxyExceptions}{Exceptions}
+\item[{\em exitWithError}]if either {\ttfamily controlQubit} or {\ttfamily targetQubit} are outside \mbox{[}0, {\ttfamily multiQubit.numQubits}), or are equal. \end{DoxyExceptions}
+
+
 Referenced by test\_\-controlledNot().\hypertarget{qubits_8h_a11a96159191cbf1b01a1080e7f045aac}{
 \index{qubits.h@{qubits.h}!controlledPhaseGate@{controlledPhaseGate}}
 \index{controlledPhaseGate@{controlledPhaseGate}!qubits.h@{qubits.h}}
 \paragraph[{controlledPhaseGate}]{\setlength{\rightskip}{0pt plus 5cm}void controlledPhaseGate ({\bf MultiQubit} {\em multiQubit}, \/  const int {\em idQubit1}, \/  const int {\em idQubit2})}\hfill}
 \label{qubits_8h_a11a96159191cbf1b01a1080e7f045aac}
+
+
+Apply the (two-\/qubit) controlled phase gate, also known as the controlled sigmaZ gate. For each state, if both input qubits have value one, multiply the amplitude of that state by -\/1. This applies the two-\/qubit unitary: \[ \begin{pmatrix} 1 \\ & 1 \\\ & & 1 \\ & & & -1 \end{pmatrix} \]
+
+\[ \setlength{\fboxrule}{0.01pt} \fbox{ \begin{tikzpicture}[scale=.5] \node[draw=none] at (-3.5, 2) {idQubit1}; \node[draw=none] at (-3.5, 0) {idQubit2}; \draw (-2, 2) -- (2, 2); \draw[fill=black] (0, 2) circle (.2); \draw (0, 2) -- (0, 0); \draw (-2,0) -- (2, 0); \draw[fill=black] (0, 0) circle (.2); \end{tikzpicture} } \]
+
+
+\begin{DoxyParams}{Parameters}
+\item[\mbox{$\leftrightarrow$} {\em multiQubit}]object representing the set of all qubits \item[\mbox{$\leftarrow$} {\em idQubit1,idQubit2}]qubits to operate upon \end{DoxyParams}
+
+\begin{DoxyExceptions}{Exceptions}
+\item[{\em exitWithError}]if {\ttfamily idQubit1} or {\ttfamily idQubit2} are outside \mbox{[}0, {\ttfamily multiQubit.numQubits}), or are equal \end{DoxyExceptions}
 
 
 Referenced by test\_\-controlledPhaseGate().\hypertarget{qubits_8h_a9c02591bc64c2918503afa231d90d83f}{
@@ -202,11 +237,28 @@ Referenced by test\_\-controlledPhaseGate().\hypertarget{qubits_8h_a9c02591bc64c
 \label{qubits_8h_a9c02591bc64c2918503afa231d90d83f}
 
 
+Create a \hyperlink{structMultiQubit}{MultiQubit} object representing a set of qubits. Allocate space for state vector of probability amplitudes, including space for temporary values to be copied from one other chunk if running the distributed version. Define properties related to the size of the set of qubits. initStateZero should be called after this to initialise the qubits to the zero state.
+
+
+\begin{DoxyParams}{Parameters}
+\item[\mbox{$\leftrightarrow$} {\em multiQubit}]a pointer to an object representing the set of qubits \item[\mbox{$\leftarrow$} {\em numQubits}]number of qubits in the system \item[\mbox{$\leftarrow$} {\em env}]object representing the execution environment (local, multinode etc) \end{DoxyParams}
+
+\begin{DoxyExceptions}{Exceptions}
+\item[{\em exitWithError}]if {\ttfamily numQubits} $<$= 0 \end{DoxyExceptions}
+
+
 Referenced by test\_\-collapseToOutcome(), test\_\-compactUnitary(), test\_\-controlledNot(), test\_\-controlledPhaseGate(), test\_\-findProbabilityOfOutcome(), test\_\-initStatePlus(), test\_\-initStateZero(), test\_\-sGate(), test\_\-sigmaX(), test\_\-sigmaY(), test\_\-sigmaZ(), and test\_\-tGate().\hypertarget{qubits_8h_ae5d6acc322314d7a3d8a2eccf00d3b19}{
 \index{qubits.h@{qubits.h}!destroyMultiQubit@{destroyMultiQubit}}
 \index{destroyMultiQubit@{destroyMultiQubit}!qubits.h@{qubits.h}}
 \paragraph[{destroyMultiQubit}]{\setlength{\rightskip}{0pt plus 5cm}void destroyMultiQubit ({\bf MultiQubit} {\em multiQubit}, \/  {\bf QuESTEnv} {\em env})}\hfill}
 \label{qubits_8h_ae5d6acc322314d7a3d8a2eccf00d3b19}
+
+
+Deallocate a \hyperlink{structMultiQubit}{MultiQubit} object representing a set of qubits. Free memory allocated to state vector of probability amplitudes, including temporary vector for values copied from another chunk if running the distributed version.
+
+
+\begin{DoxyParams}{Parameters}
+\item[\mbox{$\leftrightarrow$} {\em multiQubit}]object to be deallocated \item[\mbox{$\leftarrow$} {\em env}]object representing the execution environment (local, multinode etc) \end{DoxyParams}
 
 
 Referenced by test\_\-collapseToOutcome(), test\_\-compactUnitary(), test\_\-controlledNot(), test\_\-controlledPhaseGate(), test\_\-findProbabilityOfOutcome(), test\_\-initStatePlus(), test\_\-initStateZero(), test\_\-sGate(), test\_\-sigmaX(), test\_\-sigmaY(), test\_\-sigmaZ(), and test\_\-tGate().\hypertarget{qubits_8h_ad315c941a51bc053d39ebfa2040fd32e}{
@@ -216,20 +268,20 @@ Referenced by test\_\-collapseToOutcome(), test\_\-compactUnitary(), test\_\-con
 \label{qubits_8h_ad315c941a51bc053d39ebfa2040fd32e}
 
 
-Referenced by test\_\-findProbabilityOfOutcome().\hypertarget{qubits_8h_a2e4cedb70bd181d250b3abb945cc108e}{
-\index{qubits.h@{qubits.h}!findProbabilityOfZero@{findProbabilityOfZero}}
-\index{findProbabilityOfZero@{findProbabilityOfZero}!qubits.h@{qubits.h}}
-\paragraph[{findProbabilityOfZero}]{\setlength{\rightskip}{0pt plus 5cm}REAL findProbabilityOfZero ({\bf MultiQubit} {\em multiQubit}, \/  const int {\em measureQubit})}\hfill}
-\label{qubits_8h_a2e4cedb70bd181d250b3abb945cc108e}
+Gives the probability of a specified qubit being measured in the given outcome (0 or 1). This performs no actual measurement and does not change the state of the qubits.
 
 
-Measure the probability of a specified qubit being in the zero state. 
 \begin{DoxyParams}{Parameters}
-\item[\mbox{$\leftarrow$} {\em multiQubit}]object representing the set of qubits \item[\mbox{$\leftarrow$} {\em measureQubit}]qubit to measure \end{DoxyParams}
+\item[\mbox{$\leftarrow$} {\em multiQubit}]object representing the set of all qubits \item[\mbox{$\leftarrow$} {\em measureQubit}]qubit to study \item[\mbox{$\leftarrow$} {\em outcome}]for which to find the probability of the qubit being measured in \end{DoxyParams}
 \begin{DoxyReturn}{Returns}
-probability of qubit measureQubit being zero 
+probability of qubit measureQubit being measured in the given outcome 
 \end{DoxyReturn}
-\hypertarget{qubits_8h_a8f10aabf9f607f19093aee54630caa21}{
+
+\begin{DoxyExceptions}{Exceptions}
+\item[{\em exitWithError}]if {\ttfamily measureQubit} is outside \mbox{[}0, {\ttfamily multiQubit.numQubits}), or if {\ttfamily outcome} is not in \{0, 1\}. \end{DoxyExceptions}
+
+
+Referenced by test\_\-findProbabilityOfOutcome().\hypertarget{qubits_8h_a8f10aabf9f607f19093aee54630caa21}{
 \index{qubits.h@{qubits.h}!getEnvironmentString@{getEnvironmentString}}
 \index{getEnvironmentString@{getEnvironmentString}!qubits.h@{qubits.h}}
 \paragraph[{getEnvironmentString}]{\setlength{\rightskip}{0pt plus 5cm}void getEnvironmentString ({\bf QuESTEnv} {\em env}, \/  {\bf MultiQubit} {\em multiQubit}, \/  char {\em str}\mbox{[}200\mbox{]})}\hfill}
@@ -253,6 +305,13 @@ Referenced by main().\hypertarget{qubits_8h_a43bcb279fc9717fbd06a19cdef48b9d8}{
 \label{qubits_8h_a43bcb279fc9717fbd06a19cdef48b9d8}
 
 
+Initialise a set of $ N $ qubits to the plus state $ {| + \rangle}^{\otimes N} = \frac{1}{\sqrt{2^N}} (| 0 \rangle + | 1 \rangle)^{\otimes N} $. This is the product state of $N$ qubits where every classical state is uniformly populated with real coefficient $\frac{1}{\sqrt{2^N}}$. This is equivalent to applying a Hadamard to every qubit in the zero state: $ \hat{H}^{\otimes N} {|0\rangle}^{\otimes N} $
+
+
+\begin{DoxyParams}{Parameters}
+\item[\mbox{$\leftrightarrow$} {\em multiQubit}]a pointer to the object representing the set of qubits to be initialised \end{DoxyParams}
+
+
 Referenced by test\_\-collapseToOutcome(), test\_\-compactUnitary(), test\_\-findProbabilityOfOutcome(), and test\_\-initStatePlus().\hypertarget{qubits_8h_acb5b2eff794339090004d29f02a70d9a}{
 \index{qubits.h@{qubits.h}!initStateZero@{initStateZero}}
 \index{initStateZero@{initStateZero}!qubits.h@{qubits.h}}
@@ -260,22 +319,12 @@ Referenced by test\_\-collapseToOutcome(), test\_\-compactUnitary(), test\_\-fin
 \label{qubits_8h_acb5b2eff794339090004d29f02a70d9a}
 
 
-Referenced by test\_\-collapseToOutcome(), test\_\-findProbabilityOfOutcome(), and test\_\-initStateZero().\hypertarget{qubits_8h_a21094de735f3cb48488a184cfa4d8d41}{
-\index{qubits.h@{qubits.h}!measureInZero@{measureInZero}}
-\index{measureInZero@{measureInZero}!qubits.h@{qubits.h}}
-\paragraph[{measureInZero}]{\setlength{\rightskip}{0pt plus 5cm}REAL measureInZero ({\bf MultiQubit} {\em multiQubit}, \/  const int {\em measureQubit})}\hfill}
-\label{qubits_8h_a21094de735f3cb48488a184cfa4d8d41}
-
-
-Update the state vector to be consistent with measuring measureQubit=0. Measure in Zero performs an irreversible change to the state vector: it updates the vector according to the event that a zero have been measured on the qubit indicated by measureQubit (where his label starts from 0, of course). It achieves this by setting all inconsistent amplitudes to 0 and then renormalising based on the total probability of measuring measureQubit=0. It then returns the probability of making this measurement.
-
-
+Initialise a set of $ N $ qubits to the classical zero state $ {| 0 \rangle}^{\otimes N} $. 
 \begin{DoxyParams}{Parameters}
-\item[\mbox{$\leftrightarrow$} {\em multiQubit}]object representing the set of qubits \item[\mbox{$\leftarrow$} {\em measureQubit}]qubit to measure \end{DoxyParams}
-\begin{DoxyReturn}{Returns}
-probability of qubit measureQubit being zero 
-\end{DoxyReturn}
-\hypertarget{qubits_8h_aa5e77e0e64f3a4a3d3f5cc7382bffcd9}{
+\item[\mbox{$\leftrightarrow$} {\em multiQubit}]a pointer to the object representing the set of all qubits to initialise \end{DoxyParams}
+
+
+Referenced by test\_\-collapseToOutcome(), test\_\-findProbabilityOfOutcome(), and test\_\-initStateZero().\hypertarget{qubits_8h_aa5e77e0e64f3a4a3d3f5cc7382bffcd9}{
 \index{qubits.h@{qubits.h}!reportMultiQubitParams@{reportMultiQubitParams}}
 \index{reportMultiQubitParams@{reportMultiQubitParams}!qubits.h@{qubits.h}}
 \paragraph[{reportMultiQubitParams}]{\setlength{\rightskip}{0pt plus 5cm}void reportMultiQubitParams ({\bf MultiQubit} {\em multiQubit})}\hfill}
@@ -370,6 +419,8 @@ References MultiQubit::chunkId, ComplexArray::imag, MultiQubit::numAmps, Complex
 \label{qubits_8h_a842d6884e063a5865a2232cba56b65ac}
 
 
+Print the current state vector of probability amplitudes for a set of qubits to standard out. For debugging purposes. Each rank should print output serially. Only print output for systems $<$= 5 qubits 
+
 Referenced by reportTest().\hypertarget{qubits_8h_a7fadb225fc385db789e844c87fcba9e1}{
 \index{qubits.h@{qubits.h}!rotateAroundAxis@{rotateAroundAxis}}
 \index{rotateAroundAxis@{rotateAroundAxis}!qubits.h@{qubits.h}}
@@ -377,7 +428,17 @@ Referenced by reportTest().\hypertarget{qubits_8h_a7fadb225fc385db789e844c87fcba
 \label{qubits_8h_a7fadb225fc385db789e844c87fcba9e1}
 
 
-Rotate a single qubit a certain angle about an axis. \begin{DoxyRemark}{Remarks}
+Rotate a single qubit by a given angle around a given vector on the Bloch-\/sphere. $\ast$ The vector must not be zero (else an error is thrown), but needn't be unit magnitude.
+
+
+\begin{DoxyParams}{Parameters}
+\item[\mbox{$\leftrightarrow$} {\em multiQubit}]object representing the set of all qubits \item[\mbox{$\leftarrow$} {\em rotQubit}]qubit to rotate \item[\mbox{$\leftarrow$} {\em angle}]angle by which to rotate in radians \item[\mbox{$\leftarrow$} {\em axis}]vector around which to rotate \end{DoxyParams}
+
+\begin{DoxyExceptions}{Exceptions}
+\item[{\em exitWithError}]if {\ttfamily rotQubit} is outside \mbox{[}0, {\ttfamily multiQubit.numQubits}), or if {\ttfamily axis} is the zero vector\end{DoxyExceptions}
+Rotate a single qubit by a given angle around a given vector on the Bloch-\/sphere.
+
+\begin{DoxyRemark}{Remarks}
 Qubits are zero-\/based and the the first qubit is the rightmost 
 \end{DoxyRemark}
 
@@ -408,6 +469,18 @@ References compactUnitary(), Complex::imag, Complex::real, Vector::x, Vector::y,
 \label{qubits_8h_adda6c47876a7676488ed0565a19eaa65}
 
 
+Apply the single-\/qubit S gate. This is a rotation of $\pi/2$ around the Z-\/axis on the Bloch sphere, or the unitary: \[ \begin{pmatrix} 1 & 0 \\ 0 & i \end{pmatrix} \]
+
+\[ \setlength{\fboxrule}{0.01pt} \fbox{ \begin{tikzpicture}[scale=.5] \node[draw=none] at (-3.5, 0) {target}; \draw (-2,0) -- (-1, 0); \draw (1, 0) -- (2, 0); \draw (-1,-1)--(-1,1)--(1,1)--(1,-1)--cycle; \node[draw=none] at (0, 0) {S}; \end{tikzpicture} } \]
+
+
+\begin{DoxyParams}{Parameters}
+\item[\mbox{$\leftrightarrow$} {\em multiQubit}]object representing the set of all qubits \item[\mbox{$\leftarrow$} {\em targetQubit}]qubit to operate upon \end{DoxyParams}
+
+\begin{DoxyExceptions}{Exceptions}
+\item[{\em exitWithError}]if {\ttfamily targetQubit} is outside \mbox{[}0, {\ttfamily multiQubit.numQubits}) \end{DoxyExceptions}
+
+
 Definition at line 86 of file qubits.cpp.
 
 References phaseGate(), and S\_\-GATE.
@@ -427,6 +500,18 @@ Referenced by test\_\-sGate().
 \label{qubits_8h_a86e396e06b7d527cac20ba0108872423}
 
 
+Apply the single-\/qubit sigma-\/X (also known as the X, Pauli-\/X, NOT or bit-\/flip) gate. This is a rotation of $\pi$ around the x-\/axis on the Bloch sphere. I.e. \[ \begin{pmatrix} 0 & 1 \\ 1 & 0 \end{pmatrix} \]
+
+\[ \setlength{\fboxrule}{0.01pt} \fbox{ \begin{tikzpicture}[scale=.5] \node[draw=none] at (-3.5, 0) {target}; \draw (-2,0) -- (2, 0); \draw (0, 0) circle (.5); \draw (0, .5) -- (0, -.5); \end{tikzpicture} } \]
+
+
+\begin{DoxyParams}{Parameters}
+\item[\mbox{$\leftrightarrow$} {\em multiQubit}]object representing the set of all qubits \item[\mbox{$\leftarrow$} {\em targetQubit}]qubit to operate on \end{DoxyParams}
+
+\begin{DoxyExceptions}{Exceptions}
+\item[{\em exitWithError}]if {\ttfamily targetQubit} is outside \mbox{[}0, {\ttfamily multiQubit.numQubits}). \end{DoxyExceptions}
+
+
 Referenced by test\_\-sigmaX().\hypertarget{qubits_8h_a1f54d70a42403f7e1c2e2c2007332f61}{
 \index{qubits.h@{qubits.h}!sigmaY@{sigmaY}}
 \index{sigmaY@{sigmaY}!qubits.h@{qubits.h}}
@@ -434,11 +519,35 @@ Referenced by test\_\-sigmaX().\hypertarget{qubits_8h_a1f54d70a42403f7e1c2e2c200
 \label{qubits_8h_a1f54d70a42403f7e1c2e2c2007332f61}
 
 
+Apply the single-\/qubit sigma-\/Y (also known as the Y or Pauli-\/Y) gate. This is a rotation of $\pi$ around the Y-\/axis on the Bloch sphere. I.e. \[ \begin{pmatrix} 0 & -i \\ i & 0 \end{pmatrix} \]
+
+\[ \setlength{\fboxrule}{0.01pt} \fbox{ \begin{tikzpicture}[scale=.5] \node[draw=none] at (-3.5, 0) {target}; \draw (-2,0) -- (-1, 0); \draw (1, 0) -- (2, 0); \draw (-1,-1)--(-1,1)--(1,1)--(1,-1)--cycle; \node[draw=none] at (0, 0) {$\sigma_y$}; \end{tikzpicture} } \]
+
+
+\begin{DoxyParams}{Parameters}
+\item[\mbox{$\leftrightarrow$} {\em multiQubit}]object representing the set of all qubits \item[\mbox{$\leftarrow$} {\em targetQubit}]qubit to operate on \end{DoxyParams}
+
+\begin{DoxyExceptions}{Exceptions}
+\item[{\em exitWithError}]if {\ttfamily targetQubit} is outside \mbox{[}0, {\ttfamily multiQubit.numQubits}). \end{DoxyExceptions}
+
+
 Referenced by test\_\-sigmaY().\hypertarget{qubits_8h_aebaab86326779de55d335cfea3efde8f}{
 \index{qubits.h@{qubits.h}!sigmaZ@{sigmaZ}}
 \index{sigmaZ@{sigmaZ}!qubits.h@{qubits.h}}
 \paragraph[{sigmaZ}]{\setlength{\rightskip}{0pt plus 5cm}void sigmaZ ({\bf MultiQubit} {\em multiQubit}, \/  const int {\em targetQubit})}\hfill}
 \label{qubits_8h_aebaab86326779de55d335cfea3efde8f}
+
+
+Apply the single-\/qubit sigma-\/Z (also known as the Z, Pauli-\/Z or phase-\/flip) gate. This is a rotation of $\pi$ around the Z-\/axis (a phase shift) on the Bloch sphere. I.e. \[ \begin{pmatrix} 1 & 0 \\ 0 & -1 \end{pmatrix} \]
+
+\[ \setlength{\fboxrule}{0.01pt} \fbox{ \begin{tikzpicture}[scale=.5] \node[draw=none] at (-3.5, 0) {target}; \draw (-2,0) -- (-1, 0); \draw (1, 0) -- (2, 0); \draw (-1,-1)--(-1,1)--(1,1)--(1,-1)--cycle; \node[draw=none] at (0, 0) {$\sigma_z$}; \end{tikzpicture} } \]
+
+
+\begin{DoxyParams}{Parameters}
+\item[\mbox{$\leftrightarrow$} {\em multiQubit}]object representing the set of all qubits \item[\mbox{$\leftarrow$} {\em targetQubit}]qubit to operate on \end{DoxyParams}
+
+\begin{DoxyExceptions}{Exceptions}
+\item[{\em exitWithError}]if {\ttfamily targetQubit} is outside \mbox{[}0, {\ttfamily multiQubit.numQubits}). \end{DoxyExceptions}
 
 
 Definition at line 81 of file qubits.cpp.
@@ -472,11 +581,33 @@ Referenced by test\_\-controlledNot().\hypertarget{qubits_8h_ac7e38d768a1bd79019
 \label{qubits_8h_ac7e38d768a1bd79019f88cc1e6295092}
 
 
+Performs a logical AND on all successCodes held by all processes. If any one process has a zero successCode all processes will return a zero success code.
+
+
+\begin{DoxyParams}{Parameters}
+\item[\mbox{$\leftarrow$} {\em env}]object representing the execution environment. A single instance is used for each program \item[\mbox{$\leftarrow$} {\em successCode}]1 if process task succeeded, 0 if process task failed \end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+1 if all processes succeeded, 0 if any one process failed 
+\end{DoxyReturn}
+
+
 Referenced by main().\hypertarget{qubits_8h_af764ea63a2e870098f4e1ce08562942e}{
 \index{qubits.h@{qubits.h}!tGate@{tGate}}
 \index{tGate@{tGate}!qubits.h@{qubits.h}}
 \paragraph[{tGate}]{\setlength{\rightskip}{0pt plus 5cm}void tGate ({\bf MultiQubit} {\em multiQubit}, \/  const int {\em targetQubit})}\hfill}
 \label{qubits_8h_af764ea63a2e870098f4e1ce08562942e}
+
+
+Apply the single-\/qubit T gate. This is a rotation of $\pi/4$ around the Z-\/axis on the Bloch sphere, or the unitary: \[ \begin{pmatrix} 1 & 0 \\ 0 & \exp\left(i \frac{\pi}{4}\right) \end{pmatrix} \]
+
+\[ \setlength{\fboxrule}{0.01pt} \fbox{ \begin{tikzpicture}[scale=.5] \node[draw=none] at (-3.5, 0) {target}; \draw (-2,0) -- (-1, 0); \draw (1, 0) -- (2, 0); \draw (-1,-1)--(-1,1)--(1,1)--(1,-1)--cycle; \node[draw=none] at (0, 0) {T}; \end{tikzpicture} } \]
+
+
+\begin{DoxyParams}{Parameters}
+\item[\mbox{$\leftrightarrow$} {\em multiQubit}]object representing the set of all qubits \item[\mbox{$\leftarrow$} {\em targetQubit}]qubit to operate upon \end{DoxyParams}
+
+\begin{DoxyExceptions}{Exceptions}
+\item[{\em exitWithError}]if {\ttfamily targetQubit} is outside \mbox{[}0, {\ttfamily multiQubit.numQubits}) \end{DoxyExceptions}
 
 
 Definition at line 91 of file qubits.cpp.

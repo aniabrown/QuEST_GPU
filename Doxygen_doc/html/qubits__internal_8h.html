@@ -32,6 +32,10 @@
 <table border="0" cellpadding="0" cellspacing="0">
 <tr><td colspan="2"><h2>Functions</h2></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="qubits__internal_8h.html#aae7a8a7f1ccbddb7f76b6c52b746bb43">phaseGate</a> (<a class="el" href="structMultiQubit.html">MultiQubit</a> multiQubit, const int targetQubit, enum <a class="el" href="qubits_8h.html#a5739021c733cecc49647956b2f7338ea">phaseGateType</a> type)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">REAL&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="qubits__internal_8h.html#a2e4cedb70bd181d250b3abb945cc108e">findProbabilityOfZero</a> (<a class="el" href="structMultiQubit.html">MultiQubit</a> multiQubit, const int measureQubit)</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Measure the probability of a specified qubit being in the zero state.  <a href="#a2e4cedb70bd181d250b3abb945cc108e"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">REAL&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="qubits__internal_8h.html#a21094de735f3cb48488a184cfa4d8d41">measureInZero</a> (<a class="el" href="structMultiQubit.html">MultiQubit</a> multiQubit, const int measureQubit)</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Update the state vector to be consistent with measuring measureQubit=0.  <a href="#a21094de735f3cb48488a184cfa4d8d41"></a><br/></td></tr>
 </table>
 <hr/><a name="_details"></a><h2>Detailed Description</h2>
 <p>Internal functions used to implement the public facing API in <a class="el" href="qubits_8h.html" title="The QuEST library API and objects.">qubits.h</a>. </p>
@@ -39,6 +43,81 @@
 
 <p>Definition in file <a class="el" href="qubits__internal_8h_source.html">qubits_internal.h</a>.</p>
 <hr/><h2>Function Documentation</h2>
+<a class="anchor" id="a2e4cedb70bd181d250b3abb945cc108e"></a><!-- doxytag: member="qubits_internal.h::findProbabilityOfZero" ref="a2e4cedb70bd181d250b3abb945cc108e" args="(MultiQubit multiQubit, const int measureQubit)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">REAL findProbabilityOfZero </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structMultiQubit.html">MultiQubit</a>&nbsp;</td>
+          <td class="paramname"> <em>multiQubit</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const int&nbsp;</td>
+          <td class="paramname"> <em>measureQubit</em></td><td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td><td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Measure the probability of a specified qubit being in the zero state. </p>
+<dl><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>multiQubit</em>&nbsp;</td><td>object representing the set of qubits </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>measureQubit</em>&nbsp;</td><td>qubit to measure </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="return"><dt><b>Returns:</b></dt><dd>probability of qubit measureQubit being zero </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a21094de735f3cb48488a184cfa4d8d41"></a><!-- doxytag: member="qubits_internal.h::measureInZero" ref="a21094de735f3cb48488a184cfa4d8d41" args="(MultiQubit multiQubit, const int measureQubit)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">REAL measureInZero </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structMultiQubit.html">MultiQubit</a>&nbsp;</td>
+          <td class="paramname"> <em>multiQubit</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const int&nbsp;</td>
+          <td class="paramname"> <em>measureQubit</em></td><td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td><td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Update the state vector to be consistent with measuring measureQubit=0. </p>
+<p>Measure in Zero performs an irreversible change to the state vector: it updates the vector according to the event that a zero have been measured on the qubit indicated by measureQubit (where his label starts from 0, of course). It achieves this by setting all inconsistent amplitudes to 0 and then renormalising based on the total probability of measuring measureQubit=0. It then returns the probability of making this measurement.</p>
+<dl><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"><tt>[in,out]</tt>&nbsp;</td><td valign="top"><em>multiQubit</em>&nbsp;</td><td>object representing the set of qubits </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>measureQubit</em>&nbsp;</td><td>qubit to measure </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="return"><dt><b>Returns:</b></dt><dd>probability of qubit measureQubit being zero </dd></dl>
+
+</div>
+</div>
 <a class="anchor" id="aae7a8a7f1ccbddb7f76b6c52b746bb43"></a><!-- doxytag: member="qubits_internal.h::phaseGate" ref="aae7a8a7f1ccbddb7f76b6c52b746bb43" args="(MultiQubit multiQubit, const int targetQubit, enum phaseGateType type)" -->
 <div class="memitem">
 <div class="memproto">
