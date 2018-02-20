@@ -20,7 +20,35 @@ static __device__ int extractBit (int locationOfBitFromRight, long long int theE
 
 void createMultiQubit(MultiQubit *multiQubit, int numQubits, QuESTEnv env)
 {
-	createMultiQubitCPU(multiQubit, numQubits, env);
+    // Allocate CPU memory
+    long long int numAmps = 1L << numQubits;
+    long long int numAmpsPerRank = numAmps/env.numRanks;
+
+        multiQubit->stateVec.real = (REAL*) malloc(numAmpsPerRank * sizeof(multiQubit->stateVec.real));
+        multiQubit->stateVec.imag = (REAL*) malloc(numAmpsPerRank * sizeof(multiQubit->stateVec.imag));
+    if (env.numRanks>1){
+        multiQubit->pairStateVec.real = (REAL*) malloc(numAmpsPerRank * sizeof(multiQubit->pairStateVec.real));
+        multiQubit->pairStateVec.imag = (REAL*) malloc(numAmpsPerRank * sizeof(multiQubit->pairStateVec.imag));
+    }
+
+        if ( (!(multiQubit->stateVec.real) || !(multiQubit->stateVec.imag))
+         && numAmpsPerRank ) {
+                printf("Could not allocate memory!\n");
+                exit (EXIT_FAILURE);
+        }
+
+    if ( env.numRanks>1 && (!(multiQubit->pairStateVec.real) || !(multiQubit->pairStateVec.imag))
+         && numAmpsPerRank ) {
+                printf("Could not allocate memory!\n");
+                exit (EXIT_FAILURE);
+    }
+
+    multiQubit->numQubits = numQubits;
+    multiQubit->numAmps = numAmpsPerRank;
+    multiQubit->chunkId = env.rank;
+    multiQubit->numChunks = env.numRanks;
+
+    // Allocate GPU memory
 	cudaMalloc(&(multiQubit->deviceStateVec.real), multiQubit->numAmps*sizeof(*(multiQubit->deviceStateVec.real)));
 	cudaMalloc(&(multiQubit->deviceStateVec.imag), multiQubit->numAmps*sizeof(*(multiQubit->deviceStateVec.imag)));
 	cudaMalloc(&(multiQubit->firstLevelReduction), ceil(multiQubit->numAmps/(REAL)REDUCE_SHARED_SIZE)*sizeof(REAL));
@@ -36,7 +64,15 @@ void createMultiQubit(MultiQubit *multiQubit, int numQubits, QuESTEnv env)
 
 void destroyMultiQubit(MultiQubit multiQubit, QuESTEnv env)
 {
-	destroyMultiQubitCPU(multiQubit, env);
+    // Free CPU memory
+    free(multiQubit.stateVec.real);
+    free(multiQubit.stateVec.imag);
+    if (env.numRanks>1){
+        free(multiQubit.pairStateVec.real);
+        free(multiQubit.pairStateVec.imag);
+    }
+
+    // Free GPU memory
 	cudaFree(multiQubit.deviceStateVec.real);
 	cudaFree(multiQubit.deviceStateVec.imag);
 }
