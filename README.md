@@ -4,7 +4,7 @@
 
 QuEST is currently in prerelease and may be unstable.  
 
-Latest version: [0.10.0](https://github.com/aniabrown/QuEST/releases/tag/v0.10.0) 
+Latest version: [0.6.0](https://github.com/aniabrown/QuEST_GPU/releases/tag/v0.6.0) 
 
 This is the repository for the GPU version of the code. The CPU version is available [here](https://github.com/aniabrown/QuEST). The GPU version is behind the CPU version -- the full API is listed [here](https://aniabrown.github.io/QuEST/qubits_8h.html) and the subset of this implemented for the GPU is listed [here](https://aniabrown.github.io/QuEST_GPU/qubits_8h.html).
 
