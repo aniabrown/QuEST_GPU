@@ -1,4 +1,4 @@
-# QuEST
+# QuEST for GPU
 
 ## Versions
 
