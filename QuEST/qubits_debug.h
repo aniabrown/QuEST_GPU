@@ -1,3 +1,5 @@
+// Distributed under MIT licence. See https://github.com/aniabrown/QuEST_GPU/blob/master/LICENCE.txt for details
+
 # ifndef QUBITS_DEBUG
 # define QUBITS_DEBUG
 

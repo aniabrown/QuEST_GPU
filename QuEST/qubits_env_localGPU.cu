@@ -1,3 +1,5 @@
+// Distributed under MIT licence. See https://github.com/aniabrown/QuEST_GPU/blob/master/LICENCE.txt for details
+
 /** @file
 An implementation of the API in qubits.h for a local (non-MPI) environment.
 */
