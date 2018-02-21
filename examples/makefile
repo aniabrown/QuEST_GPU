@@ -10,7 +10,7 @@
 
 CC = nvcc
 EXE = demo
-MY_FILE_NAME = basicTemplate
+MY_FILE_NAME = tutorialExample
 QUEST_DIR = QuEST
 
 #
