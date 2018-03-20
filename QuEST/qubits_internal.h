@@ -8,6 +8,8 @@
  * directly. 
  */
 
+extern const char* errorCodes[];
+
 void phaseGate(MultiQubit multiQubit, const int targetQubit, enum phaseGateType type);
 
 /** Measure the probability
@@ -32,6 +34,21 @@ probability of making this measurement.
 @return probability of qubit measureQubit being zero
 */
 REAL measureInZero(MultiQubit multiQubit, const int measureQubit);
+
+// Validation
+
+int validateMatrixIsUnitary(ComplexMatrix2 u);
+
+int validateAlphaBeta(Complex alpha, Complex beta);
+
+int validateUnitVector(REAL ux, REAL uy, REAL uz);
+
+
+// Error reporting
+
+void exitWithError(int errorCode, const char *func);
+
+void QuESTAssert(int isValid, int errorCode, const char *func);
 
 
 # endif

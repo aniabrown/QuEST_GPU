@@ -117,6 +117,96 @@ void reportMultiQubitParams(MultiQubit multiQubit);
  */
 void rotateAroundAxis(MultiQubit multiQubit, const int rotQubit, REAL angle, Vector unitAxis);
 
+/** Rotate a single qubit by a given angle around the X-axis of the Bloch-sphere. For angle \f$\theta\f$, applies
+ * \f[
+ * \begin{pmatrix}
+ * \cos\theta/2 & -i \sin \theta/2\\
+ * -i \sin \theta/2 & \cos \theta/2
+ * \end{pmatrix}
+ * \f]
+ *
+    \f[
+    \setlength{\fboxrule}{0.01pt}
+    \fbox{
+                \begin{tikzpicture}[scale=.5]
+                \node[draw=none] at (-3.5, 0) {rot};
+                \draw (-2,0) -- (-1, 0);
+                \draw (1, 0) -- (2, 0);
+                \draw (-1,-1)--(-1,1)--(1,1)--(1,-1)--cycle;
+                \node[draw=none] at (0, 0) {$R_x(\theta)$};
+                \end{tikzpicture}
+    }
+    \f]
+ *
+ *
+ * @param[in,out] multiQubit object representing the set of all qubits
+ * @param[in] rotQubit qubit to rotate
+ * @param[in] angle angle by which to rotate in radians
+ * @throws exitWithError
+ *      if \p rotQubit is outside [0, \p multiQubit.numQubits).
+ */
+void rotateX(MultiQubit multiQubit, const int rotQubit, REAL angle);
+
+/** Rotate a single qubit by a given angle around the Y-axis of the Bloch-sphere. 
+ * For angle \f$\theta\f$, applies
+ * \f[
+ * \begin{pmatrix}
+ * \cos\theta/2 & \sin \theta/2\\
+ * \sin \theta/2 & \cos \theta/2
+ * \end{pmatrix}
+ * \f]            
+ * 
+    \f[
+    \setlength{\fboxrule}{0.01pt}
+    \fbox{
+                \begin{tikzpicture}[scale=.5]
+                \node[draw=none] at (-3.5, 0) {rot};
+                \draw (-2,0) -- (-1, 0);
+                \draw (1, 0) -- (2, 0);
+                \draw (-1,-1)--(-1,1)--(1,1)--(1,-1)--cycle;
+                \node[draw=none] at (0, 0) {$R_y(\theta)$};
+                \end{tikzpicture}
+    }
+    \f]
+ *
+ * @param[in,out] multiQubit object representing the set of all qubits
+ * @param[in] rotQubit qubit to rotate
+ * @param[in] angle angle by which to rotate in radians
+ * @throws exitWithError
+ *      if \p rotQubit is outside [0, \p multiQubit.numQubits).
+ */
+void rotateY(MultiQubit multiQubit, const int rotQubit, REAL angle);
+
+/** Rotate a single qubit by a given angle around the Z-axis of the Bloch-sphere (also known as a phase shift gate).   
+ * For angle \f$\theta\f$, applies
+ * \f[
+ * \begin{pmatrix}
+ * \exp(-i \theta/2) & 0 \\
+ * 0 & \exp(i \theta/2)
+ * \end{pmatrix}
+ * \f] 
+ *     
+    \f[
+    \setlength{\fboxrule}{0.01pt}
+    \fbox{
+                \begin{tikzpicture}[scale=.5]
+                \node[draw=none] at (-3.5, 0) {rot};
+                \draw (-2,0) -- (-1, 0);
+                \draw (1, 0) -- (2, 0);
+                \draw (-1,-1)--(-1,1)--(1,1)--(1,-1)--cycle;
+                \node[draw=none] at (0, 0) {$R_z(\theta)$};
+                \end{tikzpicture}
+    }
+    \f]
+ * 
+ * @param[in,out] multiQubit object representing the set of all qubits
+ * @param[in] rotQubit qubit to rotate
+ * @param[in] angle angle by which to rotate in radians
+ * @throws exitWithError
+ *      if \p rotQubit is outside [0, \p multiQubit.numQubits).
+ */
+void rotateZ(MultiQubit multiQubit, const int rotQubit, REAL angle);
+
 /** Apply the single-qubit sigma-Z (also known as the Z, Pauli-Z or phase-flip) gate.
  * This is a rotation of \f$\pi\f$ around the Z-axis (a phase shift) on the Bloch sphere. I.e. 
  * \f[

@@ -14,6 +14,20 @@
 
 # define DEBUG 0
 
+const char* errorCodes[] = {
+    "Success",                                              // 0
+    "Invalid target qubit. Note qubits are zero indexed.",  // 1
+    "Invalid control qubit. Note qubits are zero indexed.", // 2 
+    "Control qubit cannot equal target qubit.",             // 3
+    "Invalid number of control qubits",                     // 4
+    "Invalid unitary matrix.",                              // 5
+    "Invalid rotation arguments.",                          // 6
+    "Invalid system size. Cannot print output for systems greater than 5 qubits.", // 7
+    "Can't collapse to state with zero probability.", // 8
+    "Invalid number of qubits.", // 9
+    "Invalid measurement outcome -- must be either 0 or 1." // 10
+};
+
 /** Print the current state vector of probability amplitudes for a set of qubits to file.
  * File format:
  * @verbatim
@@ -80,6 +94,36 @@ void rotateAroundAxis(MultiQubit multiQubit, const int rotQubit, REAL angle, Vec
     compactUnitary(multiQubit, rotQubit, alpha, beta);
 }
 
+void rotateX(MultiQubit multiQubit, const int rotQubit, REAL angle){
+    Complex alpha, beta;
+    Vector unitAxis = {1, 0, 0};
+    alpha.real = cos(angle/2.0);
+    alpha.imag = -sin(angle/2.0)*unitAxis.z;    
+    beta.real = 0;
+    beta.imag = -sin(angle/2.0)*(unitAxis.x + unitAxis.y);
+    compactUnitary(multiQubit, rotQubit, alpha, beta);
+}
+
+void rotateY(MultiQubit multiQubit, const int rotQubit, REAL angle){
+    Complex alpha, beta;
+    Vector unitAxis = {0, 1, 0};
+    alpha.real = cos(angle/2.0);
+    alpha.imag = -sin(angle/2.0)*unitAxis.z;    
+    beta.real = 0;
+    beta.imag = -sin(angle/2.0)*(unitAxis.x + unitAxis.y);
+    compactUnitary(multiQubit, rotQubit, alpha, beta);
+}
+
+void rotateZ(MultiQubit multiQubit, const int rotQubit, REAL angle){
+    Complex alpha, beta;
+    Vector unitAxis = {0, 0, 1};
+    alpha.real = cos(angle/2.0);
+    alpha.imag = -sin(angle/2.0)*unitAxis.z;    
+    beta.real = 0;
+    beta.imag = -sin(angle/2.0)*(unitAxis.x + unitAxis.y);
+    compactUnitary(multiQubit, rotQubit, alpha, beta);
+}
+
 void sigmaZ(MultiQubit multiQubit, const int targetQubit)
 {
     phaseGate(multiQubit, targetQubit, SIGMA_Z);
@@ -94,3 +138,42 @@ void tGate(MultiQubit multiQubit, const int targetQubit)
 {
     phaseGate(multiQubit, targetQubit, T_GATE);
 }
+
+int validateMatrixIsUnitary(ComplexMatrix2 u){
+
+    if ( fabs(u.r0c0.real*u.r0c0.real 
+        + u.r0c0.imag*u.r0c0.imag
+        + u.r1c0.real*u.r1c0.real
+        + u.r1c0.imag*u.r1c0.imag - 1) > REAL_EPS ) return 0;
+    // check
+    if ( fabs(u.r0c1.real*u.r0c1.real 
+        + u.r0c1.imag*u.r0c1.imag
+        + u.r1c1.real*u.r1c1.real
+        + u.r1c1.imag*u.r1c1.imag - 1) > REAL_EPS ) return 0;
+
+    if ( fabs(u.r0c0.real*u.r0c1.real 
+        + u.r0c0.imag*u.r0c1.imag
+        + u.r1c0.real*u.r1c1.real
+        + u.r1c0.imag*u.r1c1.imag) > REAL_EPS ) return 0;
+
+    if ( fabs(u.r0c1.real*u.r0c0.imag
+        - u.r0c0.real*u.r0c1.imag
+        + u.r1c1.real*u.r1c0.imag
+        - u.r1c0.real*u.r1c1.imag) > REAL_EPS ) return 0;
+
+    return 1;
+}
+
+int validateAlphaBeta(Complex alpha, Complex beta){
+    if ( fabs(alpha.real*alpha.real 
+        + alpha.imag*alpha.imag
+        + beta.real*beta.real 
+        + beta.imag*beta.imag - 1) > REAL_EPS ) return 0;
+    else return 1;
+}
+
+int validateUnitVector(REAL ux, REAL uy, REAL uz){
+    if ( fabs(sqrt(ux*ux + uy*uy + uz*uz) - 1) > REAL_EPS ) return 0;
+    else return 1;
+}
+
