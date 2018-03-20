@@ -25,6 +25,14 @@ typedef struct Complex
 	REAL imag;
 } Complex;
 
+/** Represents a 2x2 matrix of complex numbers
+*/
+typedef struct ComplexMatrix2
+{
+    Complex r0c0, r0c1;
+    Complex r1c0, r1c1;
+} ComplexMatrix2;
+
 typedef struct Vector
 {
     REAL x, y, z;
@@ -238,6 +246,50 @@ void reportStateToScreen(MultiQubit multiQubit, QuESTEnv env, int reportRank);
  */
 void controlledPhaseGate(MultiQubit multiQubit, const int idQubit1, const int idQubit2);
 
+/** Apply the multiple-qubit controlled phase gate, also known as the multiple-qubit controlled sigmaZ gate.
+ * For each state, if all control qubits have value one, multiply the amplitude of that state by -1. This applies the many-qubit unitary:
+ * \f[
+ * \begin{pmatrix}
+ * 1 \\
+ * & 1 \\\
+ * & & \ddots \\
+ * & & & 1 \\
+ * & & & & -1 
+ * \end{pmatrix}
+ * \f]
+ * on the control qubits.
+ *
+ * \f[
+    \setlength{\fboxrule}{0.01pt}
+    \fbox{
+                \begin{tikzpicture}[scale=.5]
+                \node[draw=none] at (-3.5, 2) {controls};
+                
+                \node[draw=none] at (0, 6) {$\vdots$};
+                \draw (0, 5) -- (0, 4);
+                
+                \draw (-2, 4) -- (2, 4);
+                \draw[fill=black] (0, 4) circle (.2);
+                \draw (0, 4) -- (0, 2); 
+                
+                \draw (-2, 2) -- (2, 2);
+                \draw[fill=black] (0, 2) circle (.2);
+                \draw (0, 2) -- (0, 0);
+                
+                \draw (-2,0) -- (2, 0);
+                \draw[fill=black] (0, 0) circle (.2);
+                \end{tikzpicture}
+    }
+   \f]
+ *
+ * @param[in,out] multiQubit object representing the set of all qubits
+ * @param[in] controlQubits array of input qubits
+ * @param[in] numControlQubits number of input qubits
+ * @throws exitWithError 
+ *      if \p numControlQubits is outside [1, \p multiQubit.numQubits) 
+ */
+void multiControlledPhaseGate(MultiQubit multiQubit, int *controlQubits, int numControlQubits);
+
 /** Apply the controlled not (single control, single target) gate, also
  * known as the c-X, c-sigma-X, c-Pauli-X and c-bit-flip gate.
  * This applies sigmaX to the target qubit if the control qubit has value 1.
@@ -392,6 +444,170 @@ REAL calcTotalProbability(MultiQubit multiQubit);
  */
 void compactUnitary(MultiQubit multiQubit, const int rotQubit, Complex alpha, Complex beta);
 
+/** Apply a controlled unitary (single control, single target) parameterised by two given complex scalars.
+ * Given valid complex numbers \f$\alpha\f$ and \f$\beta\f$, applies the two-qubit unitary
+ * \f[
+ * \begin{pmatrix}
+ * 1 \\
+ * & 1 \\
+ * & & \alpha & -\beta^* \\
+ * & & \beta & \alpha^*
+ * \end{pmatrix}
+ * \f]
+ * to the control and target qubits.
+ * Valid \f$\alpha\f$, \f$\beta\f$ satisfy \f$|\alpha|^2 + |\beta|^2 = 1\f$. 
+ * The target unitary is general up to a global phase factor.         
+ *
+    \f[
+    \setlength{\fboxrule}{0.01pt}
+    \fbox{
+                \begin{tikzpicture}[scale=.5]
+                \node[draw=none] at (-3.5, 2) {control};
+                \node[draw=none] at (-3.5, 0) {target};
+                \draw (-2, 2) -- (2, 2);
+                \draw[fill=black] (0, 2) circle (.2);
+                \draw (0, 2) -- (0, 1);
+                
+                \draw (-2,0) -- (-1, 0);
+                \draw (1, 0) -- (2, 0);
+                \draw (-1,-1)--(-1,1)--(1,1)--(1,-1)--cycle;
+                \node[draw=none] at (0, 0) {$U_{\alpha, \beta}$};
+                \end{tikzpicture}
+    }
+    \f]
+ *                                                                    
+ * @param[in,out] multiQubit object representing the set of all qubits
+ * @param[in] controlQubit apply the target unitary if this qubit has value 1
+ * @param[in] targetQubit qubit on which to apply the target unitary
+ * @param[in] alpha complex unitary parameter (row 1, column 1)
+ * @param[in] beta complex unitary parameter (row 2, column 1)
+ * @throws exitWithError
+ *      if either \p controlQubit or \p targetQubit are outside [0, \p multiQubit.numQubits) or are equal,
+ *      or if \p alpha, \p beta don't satisfy |\p alpha|^2 + |\p beta|^2 = 1.
+ */
+void controlledCompactUnitary(MultiQubit multiQubit, const int controlQubit, const int targetQubit, Complex alpha, Complex beta);
+
+/** Apply a general single-qubit unitary (including a global phase factor).
+ * The passed 2x2 ComplexMatrix must be unitary, otherwise an error is thrown.
+ *
+    \f[
+    \setlength{\fboxrule}{0.01pt}
+    \fbox{
+                \begin{tikzpicture}[scale=.5]
+                \node[draw=none] at (-3.5, 0) {target};
+                \draw (-2,0) -- (-1, 0);
+                \draw (1, 0) -- (2, 0);
+                \draw (-1,-1)--(-1,1)--(1,1)--(1,-1)--cycle;
+                \node[draw=none] at (0, 0) {U};
+                \end{tikzpicture}
+    }
+    \f]
+ *                                                                    
+ * @param[in,out] multiQubit object representing the set of all qubits
+ * @param[in] targetQubit qubit to operate on
+ * @param[in] u unitary matrix to apply
+ * @throws exitWithError
+ *      if \p targetQubit is outside [0, \p multiQubit.numQubits),
+ *      or matrix \p u is not unitary.
+ */
+void unitary(MultiQubit multiQubit, const int targetQubit, ComplexMatrix2 u);
+
+/** Apply a general controlled unitary (single control, single target), which can include a global phase factor.
+ * The given unitary is applied to the target qubit if the control qubit has value 1,
+ * effecting the two-qubit unitary
+ * \f[
+ * \begin{pmatrix}
+ * 1 \\
+ * & 1 \\
+ * & & u_{00} & u_{01}\\
+ * & & u_{10} & u_{11}
+ * \end{pmatrix}
+ * \f]
+ * on the control and target qubits.
+ *      
+    \f[
+    \setlength{\fboxrule}{0.01pt}
+    \fbox{
+                \begin{tikzpicture}[scale=.5]
+                \node[draw=none] at (-3.5, 2) {control};
+                \node[draw=none] at (-3.5, 0) {target};
+                \draw (-2, 2) -- (2, 2);
+                \draw[fill=black] (0, 2) circle (.2);
+                \draw (0, 2) -- (0, 1);
+                
+                \draw (-2,0) -- (-1, 0);
+                \draw (1, 0) -- (2, 0);
+                \draw (-1,-1)--(-1,1)--(1,1)--(1,-1)--cycle;
+                \node[draw=none] at (0, 0) {U};
+                \end{tikzpicture}
+    }
+    \f]
+ *                                                              
+ * @param[in,out] multiQubit object representing the set of all qubits
+ * @param[in] controlQubit apply unitary if this qubit is 1
+ * @param[in] targetQubit qubit to operate on
+ * @param[in] u single-qubit unitary matrix to apply
+ * @throws exitWithError
+ *      if either \p controlQubit or \p targetQubit are outside [0, \p multiQubit.numQubits) or are equal,
+ *      or if \p u is not unitary.
+ */
+void controlledUnitary(MultiQubit multiQubit, const int controlQubit, const int targetQubit, ComplexMatrix2 u);
+
+/** Apply a general multiple-control single-target unitary, which can include
+ * a global phase factor. Any number of control qubits can be specified,
+ * and if all have value 1, the given unitary is applied to the target qubit.
+ * This effects the many-qubit unitary
+ * \f[
+ * \begin{pmatrix}
+ * 1 \\
+ * & 1 \\\
+ * & & \ddots \\
+ * & & & u_{00} & u_{01}\\
+ * & & & u_{10} & u_{11}
+ * \end{pmatrix}
+ * \f]
+ * on the control and target qubits.
+ * The given 2x2 ComplexMatrix must be unitary, otherwise an error is thrown.
+ *
+    \f[
+    \setlength{\fboxrule}{0.01pt}
+    \fbox{
+                \begin{tikzpicture}[scale=.5]
+                \node[draw=none] at (-3.5, 3) {controls};
+                \node[draw=none] at (-3.5, 0) {target};
+                \node[draw=none] at (0, 6) {$\vdots$};
+                \draw (0, 5) -- (0, 4);
+                
+                \draw (-2, 4) -- (2, 4);
+                \draw[fill=black] (0, 4) circle (.2);
+                \draw (0, 4) -- (0, 2);         
+                
+                \draw (-2, 2) -- (2, 2);
+                \draw[fill=black] (0, 2) circle (.2);
+                \draw (0, 2) -- (0, 1);
+                
+                \draw (-2,0) -- (-1, 0);
+                \draw (1, 0) -- (2, 0);
+                \draw (-1,-1)--(-1,1)--(1,1)--(1,-1)--cycle;
+                \node[draw=none] at (0, 0) {U};
+                \end{tikzpicture}
+    }
+    \f]
+ *                                                                
+ * @param[in,out] multiQubit object representing the set of all qubits
+ * @param[in] controlQubits applies unitary if all qubits in this array equal 1
+ * @param[in] numControlQubits number of control qubits
+ * @param[in] targetQubit qubit to operate on
+ * @param[in] u single-qubit unitary matrix to apply
+ * @throws exitWithError
+ *      if \p numControlQubits is outside [1, \p multiQubit.numQubits]),
+ *      or if any qubit index (\p targetQubit or one in \p controlQubits) is outside
+ *      [0, \p multiQubit.numQubits]), 
+ *      or if \p controlQubits contains \p targetQubit,
+ *      or if \p u is not unitary.
+ */
+void multiControlledUnitary(MultiQubit multiQubit, int* controlQubits, const int numControlQubits, const int targetQubit, ComplexMatrix2 u);
+
 /** Apply the single-qubit sigma-X (also known as the X, Pauli-X, NOT or bit-flip) gate.
  * This is a rotation of \f$\pi\f$ around the x-axis on the Bloch sphere. I.e. 
  * \f[
@@ -448,6 +664,37 @@ void sigmaX(MultiQubit multiQubit, const int targetQubit);
  * 		if \p targetQubit is outside [0, \p multiQubit.numQubits).
  */
 void sigmaY(MultiQubit multiQubit, const int targetQubit);
+
+/** Apply the single-qubit Hadamard gate.
+ * This takes \f$|0\rangle\f$ to \f$|+\rangle\f$ and \f$|1\rangle\f$ to \f$|-\rangle\f$, and is equivalent to a rotation of
+ * \f$\pi\f$ around the x-axis then \f$\pi/2\f$ about the y-axis on the Bloch-sphere. I.e.
+ * \f[
+ * \frac{1}{\sqrt{2}}
+ * \begin{pmatrix}
+ * 1 & 1 \\
+ * 1 & -1
+ * \end{pmatrix}
+ * \f]  
+ *
+    \f[
+    \setlength{\fboxrule}{0.01pt}
+    \fbox{
+                \begin{tikzpicture}[scale=.5]
+                \node[draw=none] at (-3.5, 0) {target};
+                \draw (-2,0) -- (-1, 0);
+                \draw (1, 0) -- (2, 0);
+                \draw (-1,-1)--(-1,1)--(1,1)--(1,-1)--cycle;
+                \node[draw=none] at (0, 0) {H};
+                \end{tikzpicture}
+    }
+    \f]  
+ *
+ * @param[in,out] multiQubit object representing the set of all qubits
+ * @param[in] targetQubit qubit to operate on
+ * @throws exitWithError
+ *      if \p targetQubit is outside [0, \p multiQubit.numQubits).
+ */
+void hadamard(MultiQubit multiQubit, const int targetQubit);
 
 /** Gives the probability of a specified qubit being measured in the given outcome (0 or 1).
  * This performs no actual measurement and does not change the state of the qubits.

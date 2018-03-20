@@ -10,7 +10,7 @@
 # include "QuEST/precision.h"
 # include "QuEST/qubits_debug.h"
 
-# define NUM_TESTS 12
+# define NUM_TESTS 18
 # define COMPARE_PRECISION 10e-13
 # define PATH_TO_TESTS "tests/unit/"
 # define VERBOSE 0
@@ -162,7 +162,6 @@ int test_sigmaZ(char testName[200]){
 	return passed;
 }
 
-/*
 int test_hadamard(char testName[200]){
 	char filename[200];
 	int passed=1;
@@ -190,7 +189,6 @@ int test_hadamard(char testName[200]){
 
 	return passed;
 }
-*/
 
 int test_sGate(char testName[200]){
 	char filename[200];
@@ -313,7 +311,7 @@ int test_controlledPhaseGate(char testName[200]){
 
 	return passed;
 }
-/*
+
 int test_multiControlledPhaseGate(char testName[200]){
 	char filename[200];
 	int passed=1;
@@ -339,7 +337,7 @@ int test_multiControlledPhaseGate(char testName[200]){
 
 	return passed;
 }
-*/
+
 int test_compactUnitary(char testName[200]){
 	int passed=1;
 
@@ -401,10 +399,9 @@ int test_compactUnitary(char testName[200]){
 
 	return passed;
 }
-/*
+
 int test_unitary(char testName[200]){
 	int passed=1;
-
 	int numQubits=10;
 	int rotQubit;
 	MultiQubit mq, mqVerif; 
@@ -419,10 +416,10 @@ int test_unitary(char testName[200]){
     beta.real  = sin(angs[0]) * cos(angs[2]);
     beta.imag  = sin(angs[0]) * sin(angs[2]);
 
-    u.r0c0 = (Complex) {.real=alpha.real, .imag=alpha.imag};
-    u.r0c1 = (Complex) {.real=-beta.real, .imag=beta.imag}; 
-    u.r1c0 = (Complex) {.real=beta.real, .imag=beta.imag};
-    u.r1c1 = (Complex) {.real=alpha.real, .imag=-alpha.imag};
+    u.r0c0.real=alpha.real; u.r0c0.imag=alpha.imag;
+    u.r0c1.real=-beta.real; u.r0c1.imag=beta.imag; 
+    u.r1c0.real=beta.real; u.r1c0.imag=beta.imag;
+    u.r1c1.real=alpha.real; u.r1c1.imag=-alpha.imag;
 
     createMultiQubit(&mq, numQubits, env);
     createMultiQubit(&mqVerif, numQubits, env);
@@ -538,10 +535,10 @@ int test_controlledUnitary(char testName[200]){
     beta.real  = sin(ang1) * cos(ang3);
     beta.imag  = sin(ang1) * sin(ang3);
 
-    u.r0c0 = (Complex) {.real=alpha.real, .imag=alpha.imag};
-    u.r0c1 = (Complex) {.real=-beta.real, .imag=beta.imag}; 
-    u.r1c0 = (Complex) {.real=beta.real, .imag=beta.imag};
-    u.r1c1 = (Complex) {.real=alpha.real, .imag=-alpha.imag};
+    u.r0c0.real=alpha.real; u.r0c0.imag=alpha.imag;
+    u.r0c1.real=-beta.real; u.r0c1.imag=beta.imag; 
+    u.r1c0.real=beta.real; u.r1c0.imag=beta.imag;
+    u.r1c1.real=alpha.real; u.r1c1.imag=-alpha.imag;
 
 	createMultiQubit(&mq, numQubits, env);
 	createMultiQubit(&mqVerif, numQubits, env);
@@ -589,10 +586,10 @@ int test_multiControlledUnitary(char testName[200]){
     beta.real  = sin(ang1) * cos(ang3);
     beta.imag  = sin(ang1) * sin(ang3);
 
-    u.r0c0 = (Complex) {.real=alpha.real, .imag=alpha.imag};
-    u.r0c1 = (Complex) {.real=-beta.real, .imag=beta.imag}; 
-    u.r1c0 = (Complex) {.real=beta.real, .imag=beta.imag};
-    u.r1c1 = (Complex) {.real=alpha.real, .imag=-alpha.imag};
+    u.r0c0.real=alpha.real; u.r0c0.imag=alpha.imag;
+    u.r0c1.real=-beta.real; u.r0c1.imag=beta.imag; 
+    u.r1c0.real=beta.real; u.r1c0.imag=beta.imag;
+    u.r1c1.real=alpha.real; u.r1c1.imag=-alpha.imag;
 
 	createMultiQubit(&mq, numQubits, env);
 	createMultiQubit(&mqVerif, numQubits, env);
@@ -647,7 +644,7 @@ int test_multiControlledUnitary(char testName[200]){
 
 	return passed;
 }
-*/
+
 int test_findProbabilityOfOutcome(char testName[200]){
 	int passed=1;
 
@@ -864,16 +861,16 @@ int main (int narg, char** varg) {
 		test_sigmaX,
 		test_sigmaY,
 		test_sigmaZ,
-//		test_hadamard,
+		test_hadamard,
 		test_sGate,
 		test_tGate,
 		test_controlledPhaseGate,
-//		test_multiControlledPhaseGate,
+		test_multiControlledPhaseGate,
 		test_compactUnitary,
-//      test_unitary,
-//		test_controlledCompactUnitary,
-//        test_controlledUnitary,
-//        test_multiControlledUnitary,
+        test_unitary,
+		test_controlledCompactUnitary,
+        test_controlledUnitary,
+        test_multiControlledUnitary,
 		test_findProbabilityOfOutcome,
 		test_collapseToOutcome,
 //        test_measure,
@@ -887,16 +884,16 @@ int main (int narg, char** varg) {
 		"sigmaX",
 		"sigmaY",
 		"sigmaZ",
-//		"hadamard",
+		"hadamard",
 		"sGate",
 		"tGate",
 		"controlledPhaseGate",
-//		"multiControlledPhaseGate",
+		"multiControlledPhaseGate",
 		"compactUnitary",
-//        "unitary",
-//		"controlledCompactUnitary",
- //       "controlledUnitary",
-//        "multiControlledUnitary",
+        "unitary",
+		"controlledCompactUnitary",
+       "controlledUnitary",
+        "multiControlledUnitary",
 		"findProbabilityOfOutcome",
 		"collapseToOutcome",
 //        "measure",

@@ -428,6 +428,267 @@ void compactUnitary(MultiQubit multiQubit, const int rotQubit, Complex alpha, Co
         compactUnitaryKernel<<<CUDABlocks, threadsPerCUDABlock>>>(multiQubit, rotQubit, alpha, beta);
 }
 
+__global__ void controlledCompactUnitaryKernel (MultiQubit multiQubit, const int controlQubit, const int targetQubit, Complex alpha, Complex beta){
+// ----- sizes
+        long long int sizeBlock,                                           // size of blocks
+        sizeHalfBlock;                                       // size of blocks halved
+        // ----- indices
+        long long int thisBlock,                                           // current block
+             indexUp,indexLo;                                     // current index and corresponding index in lower half block
+
+        // ----- temp variables
+        REAL   stateRealUp,stateRealLo,                             // storage for previous state values
+                 stateImagUp,stateImagLo;                             // (used in updates)
+        // ----- temp variables
+        long long int thisTask;                                   // task based approach for expose loop with small granularity
+        const long long int numTasks=multiQubit.numAmps>>1;
+        int controlBit;
+
+        sizeHalfBlock = 1LL << targetQubit;                               // size of blocks halved
+        sizeBlock     = 2LL * sizeHalfBlock;                           // size of blocks
+
+        // ---------------------------------------------------------------- //
+        //            rotate                                                //
+        // ---------------------------------------------------------------- //
+
+	//! fix -- no necessary for GPU version
+        REAL *stateVecReal = multiQubit.deviceStateVec.real;
+        REAL *stateVecImag = multiQubit.deviceStateVec.imag;
+        REAL alphaImag=alpha.imag, alphaReal=alpha.real;
+        REAL betaImag=beta.imag, betaReal=beta.real;
+
+	thisTask = blockIdx.x*blockDim.x + threadIdx.x;
+	if (thisTask>=numTasks) return;
+
+    thisBlock   = thisTask / sizeHalfBlock;
+    indexUp     = thisBlock*sizeBlock + thisTask%sizeHalfBlock;
+    indexLo     = indexUp + sizeHalfBlock;
+
+    controlBit = extractBit(controlQubit, indexUp);
+    if (controlBit){
+        // store current state vector values in temp variables
+        stateRealUp = stateVecReal[indexUp];
+        stateImagUp = stateVecImag[indexUp];
+
+        stateRealLo = stateVecReal[indexLo];
+        stateImagLo = stateVecImag[indexLo];
+
+        // state[indexUp] = alpha * state[indexUp] - conj(beta)  * state[indexLo]
+        stateVecReal[indexUp] = alphaReal*stateRealUp - alphaImag*stateImagUp 
+            - betaReal*stateRealLo - betaImag*stateImagLo;
+        stateVecImag[indexUp] = alphaReal*stateImagUp + alphaImag*stateRealUp 
+            - betaReal*stateImagLo + betaImag*stateRealLo;
+
+        // state[indexLo] = beta  * state[indexUp] + conj(alpha) * state[indexLo]
+        stateVecReal[indexLo] = betaReal*stateRealUp - betaImag*stateImagUp 
+            + alphaReal*stateRealLo + alphaImag*stateImagLo;
+        stateVecImag[indexLo] = betaReal*stateImagUp + betaImag*stateRealUp 
+            + alphaReal*stateImagLo - alphaImag*stateRealLo;
+    }
+}
+
+void controlledCompactUnitary(MultiQubit multiQubit, const int controlQubit, const int targetQubit, Complex alpha, Complex beta) 
+{
+        int threadsPerCUDABlock, CUDABlocks;
+        threadsPerCUDABlock = 128;
+        CUDABlocks = ceil((REAL)(multiQubit.numAmps>>1)/threadsPerCUDABlock);
+        controlledCompactUnitaryKernel<<<CUDABlocks, threadsPerCUDABlock>>>(multiQubit, controlQubit, targetQubit, alpha, beta);
+}
+
+__global__ void unitaryKernel(MultiQubit multiQubit, const int targetQubit, ComplexMatrix2 u){
+// ----- sizes
+        long long int sizeBlock,                                           // size of blocks
+        sizeHalfBlock;                                       // size of blocks halved
+        // ----- indices
+        long long int thisBlock,                                           // current block
+             indexUp,indexLo;                                     // current index and corresponding index in lower half block
+
+        // ----- temp variables
+        REAL   stateRealUp,stateRealLo,                             // storage for previous state values
+                 stateImagUp,stateImagLo;                             // (used in updates)
+        // ----- temp variables
+        long long int thisTask;                                   // task based approach for expose loop with small granularity
+        const long long int numTasks=multiQubit.numAmps>>1;
+
+        sizeHalfBlock = 1LL << targetQubit;                               // size of blocks halved
+        sizeBlock     = 2LL * sizeHalfBlock;                           // size of blocks
+
+        // ---------------------------------------------------------------- //
+        //            rotate                                                //
+        // ---------------------------------------------------------------- //
+
+	//! fix -- no necessary for GPU version
+        REAL *stateVecReal = multiQubit.deviceStateVec.real;
+        REAL *stateVecImag = multiQubit.deviceStateVec.imag;
+
+	thisTask = blockIdx.x*blockDim.x + threadIdx.x;
+	if (thisTask>=numTasks) return;
+
+	thisBlock   = thisTask / sizeHalfBlock;
+	indexUp     = thisBlock*sizeBlock + thisTask%sizeHalfBlock;
+	indexLo     = indexUp + sizeHalfBlock;
+
+	// store current state vector values in temp variables
+	stateRealUp = stateVecReal[indexUp];
+	stateImagUp = stateVecImag[indexUp];
+
+	stateRealLo = stateVecReal[indexLo];
+	stateImagLo = stateVecImag[indexLo];
+
+    // state[indexUp] = u00 * state[indexUp] + u01 * state[indexLo]
+    stateVecReal[indexUp] = u.r0c0.real*stateRealUp - u.r0c0.imag*stateImagUp 
+        + u.r0c1.real*stateRealLo - u.r0c1.imag*stateImagLo;
+    stateVecImag[indexUp] = u.r0c0.real*stateImagUp + u.r0c0.imag*stateRealUp 
+        + u.r0c1.real*stateImagLo + u.r0c1.imag*stateRealLo;
+
+    // state[indexLo] = u10  * state[indexUp] + u11 * state[indexLo]
+    stateVecReal[indexLo] = u.r1c0.real*stateRealUp  - u.r1c0.imag*stateImagUp 
+        + u.r1c1.real*stateRealLo  -  u.r1c1.imag*stateImagLo;
+    stateVecImag[indexLo] = u.r1c0.real*stateImagUp + u.r1c0.imag*stateRealUp 
+        + u.r1c1.real*stateImagLo + u.r1c1.imag*stateRealLo;
+}
+
+void unitary(MultiQubit multiQubit, const int targetQubit, ComplexMatrix2 u)
+{
+        int threadsPerCUDABlock, CUDABlocks;
+        threadsPerCUDABlock = 128;
+        CUDABlocks = ceil((REAL)(multiQubit.numAmps>>1)/threadsPerCUDABlock);
+        unitaryKernel<<<CUDABlocks, threadsPerCUDABlock>>>(multiQubit, targetQubit, u);
+}
+
+__global__ void controlledUnitaryKernel(MultiQubit multiQubit, const int controlQubit, const int targetQubit, ComplexMatrix2 u){
+// ----- sizes
+        long long int sizeBlock,                                           // size of blocks
+        sizeHalfBlock;                                       // size of blocks halved
+        // ----- indices
+        long long int thisBlock,                                           // current block
+             indexUp,indexLo;                                     // current index and corresponding index in lower half block
+
+        // ----- temp variables
+        REAL   stateRealUp,stateRealLo,                             // storage for previous state values
+                 stateImagUp,stateImagLo;                             // (used in updates)
+        // ----- temp variables
+        long long int thisTask;                                   // task based approach for expose loop with small granularity
+        const long long int numTasks=multiQubit.numAmps>>1;
+
+        int controlBit;
+
+        sizeHalfBlock = 1LL << targetQubit;                               // size of blocks halved
+        sizeBlock     = 2LL * sizeHalfBlock;                           // size of blocks
+
+        // ---------------------------------------------------------------- //
+        //            rotate                                                //
+        // ---------------------------------------------------------------- //
+
+	//! fix -- no necessary for GPU version
+        REAL *stateVecReal = multiQubit.deviceStateVec.real;
+        REAL *stateVecImag = multiQubit.deviceStateVec.imag;
+
+	thisTask = blockIdx.x*blockDim.x + threadIdx.x;
+	if (thisTask>=numTasks) return;
+
+	thisBlock   = thisTask / sizeHalfBlock;
+	indexUp     = thisBlock*sizeBlock + thisTask%sizeHalfBlock;
+	indexLo     = indexUp + sizeHalfBlock;
+
+	// store current state vector values in temp variables
+	stateRealUp = stateVecReal[indexUp];
+	stateImagUp = stateVecImag[indexUp];
+
+	stateRealLo = stateVecReal[indexLo];
+	stateImagLo = stateVecImag[indexLo];
+
+    controlBit = extractBit(controlQubit, indexUp);
+    if (controlBit){
+        // state[indexUp] = u00 * state[indexUp] + u01 * state[indexLo]
+        stateVecReal[indexUp] = u.r0c0.real*stateRealUp - u.r0c0.imag*stateImagUp 
+            + u.r0c1.real*stateRealLo - u.r0c1.imag*stateImagLo;
+        stateVecImag[indexUp] = u.r0c0.real*stateImagUp + u.r0c0.imag*stateRealUp 
+            + u.r0c1.real*stateImagLo + u.r0c1.imag*stateRealLo;
+
+        // state[indexLo] = u10  * state[indexUp] + u11 * state[indexLo]
+        stateVecReal[indexLo] = u.r1c0.real*stateRealUp  - u.r1c0.imag*stateImagUp 
+            + u.r1c1.real*stateRealLo  -  u.r1c1.imag*stateImagLo;
+        stateVecImag[indexLo] = u.r1c0.real*stateImagUp + u.r1c0.imag*stateRealUp 
+            + u.r1c1.real*stateImagLo + u.r1c1.imag*stateRealLo;
+    }
+}
+
+void controlledUnitary(MultiQubit multiQubit, const int controlQubit, const int targetQubit, ComplexMatrix2 u)
+{
+        int threadsPerCUDABlock, CUDABlocks;
+        threadsPerCUDABlock = 128;
+        CUDABlocks = ceil((REAL)(multiQubit.numAmps>>1)/threadsPerCUDABlock);
+        controlledUnitaryKernel<<<CUDABlocks, threadsPerCUDABlock>>>(multiQubit, controlQubit, targetQubit, u);
+}
+
+__global__ void multiControlledUnitaryKernel(MultiQubit multiQubit, long long int mask, const int targetQubit, ComplexMatrix2 u){
+// ----- sizes
+        long long int sizeBlock,                                           // size of blocks
+        sizeHalfBlock;                                       // size of blocks halved
+        // ----- indices
+        long long int thisBlock,                                           // current block
+             indexUp,indexLo;                                     // current index and corresponding index in lower half block
+
+        // ----- temp variables
+        REAL   stateRealUp,stateRealLo,                             // storage for previous state values
+                 stateImagUp,stateImagLo;                             // (used in updates)
+        // ----- temp variables
+        long long int thisTask;                                   // task based approach for expose loop with small granularity
+        const long long int numTasks=multiQubit.numAmps>>1;
+
+
+        sizeHalfBlock = 1LL << targetQubit;                               // size of blocks halved
+        sizeBlock     = 2LL * sizeHalfBlock;                           // size of blocks
+
+        // ---------------------------------------------------------------- //
+        //            rotate                                                //
+        // ---------------------------------------------------------------- //
+
+	//! fix -- no necessary for GPU version
+        REAL *stateVecReal = multiQubit.deviceStateVec.real;
+        REAL *stateVecImag = multiQubit.deviceStateVec.imag;
+
+	thisTask = blockIdx.x*blockDim.x + threadIdx.x;
+	if (thisTask>=numTasks) return;
+
+	thisBlock   = thisTask / sizeHalfBlock;
+	indexUp     = thisBlock*sizeBlock + thisTask%sizeHalfBlock;
+	indexLo     = indexUp + sizeHalfBlock;
+
+    if (mask == (mask & indexUp) ){
+        // store current state vector values in temp variables
+        stateRealUp = stateVecReal[indexUp];
+        stateImagUp = stateVecImag[indexUp];
+
+        stateRealLo = stateVecReal[indexLo];
+        stateImagLo = stateVecImag[indexLo];
+
+        // state[indexUp] = u00 * state[indexUp] + u01 * state[indexLo]
+        stateVecReal[indexUp] = u.r0c0.real*stateRealUp - u.r0c0.imag*stateImagUp 
+            + u.r0c1.real*stateRealLo - u.r0c1.imag*stateImagLo;
+        stateVecImag[indexUp] = u.r0c0.real*stateImagUp + u.r0c0.imag*stateRealUp 
+            + u.r0c1.real*stateImagLo + u.r0c1.imag*stateRealLo;
+
+        // state[indexLo] = u10  * state[indexUp] + u11 * state[indexLo]
+        stateVecReal[indexLo] = u.r1c0.real*stateRealUp  - u.r1c0.imag*stateImagUp 
+            + u.r1c1.real*stateRealLo  -  u.r1c1.imag*stateImagLo;
+        stateVecImag[indexLo] = u.r1c0.real*stateImagUp + u.r1c0.imag*stateRealUp 
+            + u.r1c1.real*stateImagLo + u.r1c1.imag*stateRealLo;
+    }
+}
+
+void multiControlledUnitary(MultiQubit multiQubit, int *controlQubits, int numControlQubits, const int targetQubit, ComplexMatrix2 u)
+{
+        int threadsPerCUDABlock, CUDABlocks;
+        long long int mask=0;
+        for (int i=0; i<numControlQubits; i++) mask = mask | (1LL<<controlQubits[i]);
+        threadsPerCUDABlock = 128;
+        CUDABlocks = ceil((REAL)(multiQubit.numAmps>>1)/threadsPerCUDABlock);
+
+        multiControlledUnitaryKernel<<<CUDABlocks, threadsPerCUDABlock>>>(multiQubit, mask, targetQubit, u);
+}
+
 __global__ void sigmaXKernel(MultiQubit multiQubit, const int targetQubit){
 // ----- sizes
         long long int sizeBlock,                                           // size of blocks
@@ -542,8 +803,8 @@ __global__ void phaseGateKernel(MultiQubit multiQubit, const int targetQubit, en
              indexUp,indexLo;                                     // current index and corresponding index in lower half block
 
         // ----- temp variables
-        REAL   stateRealUp,stateRealLo,                             // storage for previous state values
-                 stateImagUp,stateImagLo;                             // (used in updates)
+        REAL   stateRealLo,                             // storage for previous state values
+                 stateImagLo;                             // (used in updates)
         // ----- temp variables
         long long int thisTask;                                   // task based approach for expose loop with small granularity
         const long long int numTasks=multiQubit.numAmps>>1;
@@ -621,6 +882,92 @@ void controlledPhaseGate(MultiQubit multiQubit, const int idQubit1, const int id
         threadsPerCUDABlock = 128;
         CUDABlocks = ceil((REAL)(multiQubit.numAmps)/threadsPerCUDABlock);
         controlledPhaseGateKernel<<<CUDABlocks, threadsPerCUDABlock>>>(multiQubit, idQubit1, idQubit2);
+}
+
+__global__ void multiControlledPhaseGateKernel(MultiQubit multiQubit, long long int mask)
+{
+        long long int index;
+        long long int stateVecSize;
+
+        stateVecSize = multiQubit.numAmps;
+        REAL *stateVecReal = multiQubit.deviceStateVec.real;
+        REAL *stateVecImag = multiQubit.deviceStateVec.imag;
+
+	index = blockIdx.x*blockDim.x + threadIdx.x;
+	if (index>=stateVecSize) return;
+
+    if (mask == (mask & index) ){
+		stateVecReal [index] = - stateVecReal [index];
+		stateVecImag [index] = - stateVecImag [index];
+	}
+}
+
+void multiControlledPhaseGate(MultiQubit multiQubit, int *controlQubits, int numControlQubits)
+{
+        int threadsPerCUDABlock, CUDABlocks;
+        long long int mask=0;
+        for (int i=0; i<numControlQubits; i++) mask = mask | (1LL<<controlQubits[i]);
+        threadsPerCUDABlock = 128;
+        CUDABlocks = ceil((REAL)(multiQubit.numAmps)/threadsPerCUDABlock);
+        multiControlledPhaseGateKernel<<<CUDABlocks, threadsPerCUDABlock>>>(multiQubit, mask);
+}
+
+
+__global__ void hadamardKernel (MultiQubit multiQubit, const int targetQubit){
+// ----- sizes
+        long long int sizeBlock,                                           // size of blocks
+        sizeHalfBlock;                                       // size of blocks halved
+        // ----- indices
+        long long int thisBlock,                                           // current block
+             indexUp,indexLo;                                     // current index and corresponding index in lower half block
+
+        // ----- temp variables
+        REAL   stateRealUp,stateRealLo,                             // storage for previous state values
+                 stateImagUp,stateImagLo;                             // (used in updates)
+        // ----- temp variables
+        long long int thisTask;                                   // task based approach for expose loop with small granularity
+        const long long int numTasks=multiQubit.numAmps>>1;
+
+        sizeHalfBlock = 1LL << targetQubit;                               // size of blocks halved
+        sizeBlock     = 2LL * sizeHalfBlock;                           // size of blocks
+
+        // ---------------------------------------------------------------- //
+        //            rotate                                                //
+        // ---------------------------------------------------------------- //
+
+	//! fix -- no necessary for GPU version
+        REAL *stateVecReal = multiQubit.deviceStateVec.real;
+        REAL *stateVecImag = multiQubit.deviceStateVec.imag;
+
+    REAL recRoot2 = 1.0/sqrt(2.0);
+
+	thisTask = blockIdx.x*blockDim.x + threadIdx.x;
+	if (thisTask>=numTasks) return;
+
+	thisBlock   = thisTask / sizeHalfBlock;
+	indexUp     = thisBlock*sizeBlock + thisTask%sizeHalfBlock;
+	indexLo     = indexUp + sizeHalfBlock;
+
+	// store current state vector values in temp variables
+	stateRealUp = stateVecReal[indexUp];
+	stateImagUp = stateVecImag[indexUp];
+
+	stateRealLo = stateVecReal[indexLo];
+	stateImagLo = stateVecImag[indexLo];
+
+    stateVecReal[indexUp] = recRoot2*(stateRealUp + stateRealLo);
+    stateVecImag[indexUp] = recRoot2*(stateImagUp + stateImagLo);
+
+    stateVecReal[indexLo] = recRoot2*(stateRealUp - stateRealLo);
+    stateVecImag[indexLo] = recRoot2*(stateImagUp - stateImagLo);
+}
+
+void hadamard(MultiQubit multiQubit, const int targetQubit) 
+{
+        int threadsPerCUDABlock, CUDABlocks;
+        threadsPerCUDABlock = 128;
+        CUDABlocks = ceil((REAL)(multiQubit.numAmps>>1)/threadsPerCUDABlock);
+        hadamardKernel<<<CUDABlocks, threadsPerCUDABlock>>>(multiQubit, targetQubit);
 }
 
 __global__ void controlledNotKernel(MultiQubit multiQubit, const int controlQubit, const int targetQubit)
