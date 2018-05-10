@@ -77,51 +77,66 @@ void reportMultiQubitParams(MultiQubit multiQubit){
     }
 }
 
-/** Rotate a single qubit a certain angle about an axis
-@remarks Qubits are zero-based and the                     
-the first qubit is the rightmost                  
-@param[in,out] multiQubit object representing the set of qubits
-@param[in] rotQubit qubit to rotate
-@param[in] angle angle by which to rotate in radians
-@param[in] unitAxis unit vector pointing along the axis about which to rotate
-*/
-void rotateAroundAxis(MultiQubit multiQubit, const int rotQubit, REAL angle, Vector unitAxis){
+void rotateAroundAxis(MultiQubit multiQubit, const int rotQubit, REAL angle, Vector axis){
+
+    double mag = sqrt(pow(axis.x,2) + pow(axis.y,2) + pow(axis.z,2));
+    Vector unitAxis = {axis.x/mag, axis.y/mag, axis.z/mag};
+
     Complex alpha, beta;
     alpha.real = cos(angle/2.0);
     alpha.imag = -sin(angle/2.0)*unitAxis.z;    
-    beta.real = 0;
-    beta.imag = -sin(angle/2.0)*(unitAxis.x + unitAxis.y);
+    beta.real = sin(angle/2.0)*unitAxis.y;
+    beta.imag = -sin(angle/2.0)*unitAxis.x;
     compactUnitary(multiQubit, rotQubit, alpha, beta);
 }
 
 void rotateX(MultiQubit multiQubit, const int rotQubit, REAL angle){
-    Complex alpha, beta;
+
     Vector unitAxis = {1, 0, 0};
-    alpha.real = cos(angle/2.0);
-    alpha.imag = -sin(angle/2.0)*unitAxis.z;    
-    beta.real = 0;
-    beta.imag = -sin(angle/2.0)*(unitAxis.x + unitAxis.y);
-    compactUnitary(multiQubit, rotQubit, alpha, beta);
+    rotateAroundAxis(multiQubit, rotQubit, angle, unitAxis);
 }
 
 void rotateY(MultiQubit multiQubit, const int rotQubit, REAL angle){
-    Complex alpha, beta;
+
     Vector unitAxis = {0, 1, 0};
-    alpha.real = cos(angle/2.0);
-    alpha.imag = -sin(angle/2.0)*unitAxis.z;    
-    beta.real = 0;
-    beta.imag = -sin(angle/2.0)*(unitAxis.x + unitAxis.y);
-    compactUnitary(multiQubit, rotQubit, alpha, beta);
+    rotateAroundAxis(multiQubit, rotQubit, angle, unitAxis);
 }
 
 void rotateZ(MultiQubit multiQubit, const int rotQubit, REAL angle){
-    Complex alpha, beta;
+
     Vector unitAxis = {0, 0, 1};
+    rotateAroundAxis(multiQubit, rotQubit, angle, unitAxis);
+}
+
+void controlledRotateAroundAxis(MultiQubit multiQubit, const int controlQubit, const int targetQubit, REAL angle, Vector axis){
+
+    double mag = sqrt(pow(axis.x,2) + pow(axis.y,2) + pow(axis.z,2));
+    Vector unitAxis = {axis.x/mag, axis.y/mag, axis.z/mag};
+
+    Complex alpha, beta;
     alpha.real = cos(angle/2.0);
     alpha.imag = -sin(angle/2.0)*unitAxis.z;    
-    beta.real = 0;
-    beta.imag = -sin(angle/2.0)*(unitAxis.x + unitAxis.y);
-    compactUnitary(multiQubit, rotQubit, alpha, beta);
+    beta.real = sin(angle/2.0)*unitAxis.y;
+    beta.imag = -sin(angle/2.0)*unitAxis.x;
+    controlledCompactUnitary(multiQubit, controlQubit, targetQubit, alpha, beta);
+}
+
+void controlledRotateX(MultiQubit multiQubit, const int controlQubit, const int targetQubit, REAL angle){
+
+    Vector unitAxis = {1, 0, 0};
+    controlledRotateAroundAxis(multiQubit, controlQubit, targetQubit, angle, unitAxis);
+}
+
+void controlledRotateY(MultiQubit multiQubit, const int controlQubit, const int targetQubit, REAL angle){
+
+    Vector unitAxis = {0, 1, 0};
+    controlledRotateAroundAxis(multiQubit, controlQubit, targetQubit, angle, unitAxis);
+}
+
+void controlledRotateZ(MultiQubit multiQubit, const int controlQubit, const int targetQubit, REAL angle){
+
+    Vector unitAxis = {0, 0, 1};
+    controlledRotateAroundAxis(multiQubit, controlQubit, targetQubit, angle, unitAxis);
 }
 
 void sigmaZ(MultiQubit multiQubit, const int targetQubit)
