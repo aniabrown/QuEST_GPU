@@ -23,7 +23,7 @@ CLFLAGS	   = -O2 -arch=compute_30 -code=sm_30 -lineinfo
 #
 # --- targets
 #
-OBJ = $(MY_FILE_NAME).o qubits.o qubits_env_localGPU.o
+OBJ = $(MY_FILE_NAME).o qubits.o qubits_env_localGPU.o mt19937ar.o
 
 #
 # --- rules

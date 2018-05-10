@@ -12,6 +12,8 @@
 # include "precision.h"
 # include "qubits_internal.h"
 
+# include "mt19937ar.h" // MT random number generation
+
 # define REDUCE_SHARED_SIZE 512
 # define DEBUG 0
 
@@ -1336,6 +1338,39 @@ REAL measureInZero(MultiQubit multiQubit, const int measureQubit)
     return stateProb;
 }
 
+int measure(MultiQubit multiQubit, int measureQubit){
+    QuESTAssert(measureQubit >= 0 && measureQubit < multiQubit.numQubits, 2, __func__);
+    REAL stateProb;
+    return measureWithStats(multiQubit, measureQubit, &stateProb);
+}
+
+int measureWithStats(MultiQubit multiQubit, int measureQubit, REAL *stateProb){
+    QuESTAssert(measureQubit >= 0 && measureQubit < multiQubit.numQubits, 2, __func__);
+
+    int outcome;
+    // find probability of qubit being in state 1
+    REAL stateProbInternal = findProbabilityOfOutcome(multiQubit, measureQubit, 1);
+
+    // we can't collapse to a state that has a probability too close to zero
+    if (stateProbInternal<REAL_EPS) outcome=0;
+    else if (1-stateProbInternal<REAL_EPS) outcome=1;
+    else {
+        // ok. both P(0) and P(1) are large enough to resolve
+        // generate random float on [0,1]
+        float randNum = genrand_real1();
+        if (randNum<=stateProbInternal) outcome = 1;
+        else outcome = 0;
+    } 
+    if (outcome==0) stateProbInternal = 1-stateProbInternal;
+
+    int threadsPerCUDABlock, CUDABlocks;
+    threadsPerCUDABlock = 128;
+    CUDABlocks = ceil((REAL)(multiQubit.numAmps>>1)/threadsPerCUDABlock);
+    collapseToOutcomeKernel<<<CUDABlocks, threadsPerCUDABlock>>>(multiQubit, measureQubit, stateProbInternal, outcome);
+
+    *stateProb = stateProbInternal;
+    return outcome;
+}
 
 void exitWithError(int errorCode, const char* func){
     printf("!!!\n");
