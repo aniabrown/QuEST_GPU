@@ -1,132 +1,191 @@
-\hypertarget{structMultiQubit}{
-\subsection{MultiQubit Struct Reference}
-\label{structMultiQubit}\index{MultiQubit@{MultiQubit}}
-}
+\hypertarget{structMultiQubit}{}\subsection{Multi\+Qubit Struct Reference}
+\label{structMultiQubit}\index{Multi\+Qubit@{Multi\+Qubit}}
 
 
 Represents a system of qubits.  
 
 
-{\ttfamily \#include $<$qubits.h$>$}\subsubsection*{Data Fields}
+
+
+{\ttfamily \#include $<$qubits.\+h$>$}
+
+\subsubsection*{Data Fields}
 \begin{DoxyCompactItemize}
 \item 
-\hyperlink{structComplexArray}{ComplexArray} \hyperlink{structMultiQubit_a45483190d6b01ef6b2f98f2bec9ab94f}{stateVec}
-\begin{DoxyCompactList}\small\item\em Probablilty amplitudes for the multi qubit state. \item\end{DoxyCompactList}\item 
-\hyperlink{structComplexArray}{ComplexArray} \hyperlink{structMultiQubit_a76f7db4eab52d2b30f58f973ada809c5}{pairStateVec}
-\begin{DoxyCompactList}\small\item\em Temporary storage for a chunk of the state vector received from another process in the MPI version. \item\end{DoxyCompactList}\item 
-\hyperlink{structComplexArray}{ComplexArray} \hyperlink{structMultiQubit_a59ac613486a41b8c9a4b6e79cc8d2cc3}{deviceStateVec}
-\begin{DoxyCompactList}\small\item\em Storage for probability amplitudes for the multi qubit state on GPU. \item\end{DoxyCompactList}\item 
-REAL $\ast$ \hyperlink{structMultiQubit_a4e0088b41adab0a40b7a31e528ed42b5}{firstLevelReduction}
-\begin{DoxyCompactList}\small\item\em Storage for reduction of probabilities on GPU. \item\end{DoxyCompactList}\item 
-REAL $\ast$ \hyperlink{structMultiQubit_a3e859cefa146ec7b30464ab3d897930b}{secondLevelReduction}
+\mbox{\hyperlink{structComplexArray}{Complex\+Array}} \mbox{\hyperlink{structMultiQubit_a45483190d6b01ef6b2f98f2bec9ab94f}{state\+Vec}}
+\begin{DoxyCompactList}\small\item\em Probablilty amplitudes for the multi qubit state. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{structComplexArray}{Complex\+Array}} \mbox{\hyperlink{structMultiQubit_a76f7db4eab52d2b30f58f973ada809c5}{pair\+State\+Vec}}
+\begin{DoxyCompactList}\small\item\em Temporary storage for a chunk of the state vector received from another process in the M\+PI version. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{structComplexArray}{Complex\+Array}} \mbox{\hyperlink{structMultiQubit_a59ac613486a41b8c9a4b6e79cc8d2cc3}{device\+State\+Vec}}
+\begin{DoxyCompactList}\small\item\em Storage for probability amplitudes for the multi qubit state on G\+PU. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{precision_8h_a4b654506f18b8bfd61ad2a29a7e38c25}{R\+E\+AL}} $\ast$ \mbox{\hyperlink{structMultiQubit_a4e0088b41adab0a40b7a31e528ed42b5}{first\+Level\+Reduction}}
+\begin{DoxyCompactList}\small\item\em Storage for reduction of probabilities on G\+PU. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{precision_8h_a4b654506f18b8bfd61ad2a29a7e38c25}{R\+E\+AL}} $\ast$ \mbox{\hyperlink{structMultiQubit_a3e859cefa146ec7b30464ab3d897930b}{second\+Level\+Reduction}}
 \item 
-int \hyperlink{structMultiQubit_ab5b9795bdc6fb5855e1974dcbbaeb36f}{numQubits}
-\begin{DoxyCompactList}\small\item\em Number of qubits in the state. \item\end{DoxyCompactList}\item 
-long long int \hyperlink{structMultiQubit_ae16f47d8b725c914fb7f66b6498d79db}{numAmps}
-\begin{DoxyCompactList}\small\item\em Number of probability amplitudes held in stateVec by this process In the non-\/MPI version, this is the total number of amplitudes. \item\end{DoxyCompactList}\item 
-int \hyperlink{structMultiQubit_ab10c88249fa3825d6227ceec01d37e37}{chunkId}
-\begin{DoxyCompactList}\small\item\em The position of the chunk of the state vector held by this process in the full state vector. \item\end{DoxyCompactList}\item 
-int \hyperlink{structMultiQubit_acd43f2f57991709c9e94f73662c972b2}{numChunks}
-\begin{DoxyCompactList}\small\item\em Number of chunks the state vector is broken up into -\/-\/ the number of MPI processes used. \item\end{DoxyCompactList}\end{DoxyCompactItemize}
+int \mbox{\hyperlink{structMultiQubit_ab5b9795bdc6fb5855e1974dcbbaeb36f}{num\+Qubits}}
+\begin{DoxyCompactList}\small\item\em Number of qubits in the state. \end{DoxyCompactList}\item 
+long long int \mbox{\hyperlink{structMultiQubit_ae16f47d8b725c914fb7f66b6498d79db}{num\+Amps}}
+\begin{DoxyCompactList}\small\item\em Number of probability amplitudes held in state\+Vec by this process In the non-\/\+M\+PI version, this is the total number of amplitudes. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{structMultiQubit_ab10c88249fa3825d6227ceec01d37e37}{chunk\+Id}}
+\begin{DoxyCompactList}\small\item\em The position of the chunk of the state vector held by this process in the full state vector. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{structMultiQubit_acd43f2f57991709c9e94f73662c972b2}{num\+Chunks}}
+\begin{DoxyCompactList}\small\item\em Number of chunks the state vector is broken up into -- the number of M\+PI processes used. \end{DoxyCompactList}\end{DoxyCompactItemize}
 
 
 \subsubsection{Detailed Description}
-Represents a system of qubits. Qubits are zero-\/based and the the first qubit is the rightmost 
+Represents a system of qubits. 
 
-Definition at line 34 of file qubits.h.
+Qubits are zero-\/based and the the first qubit is the rightmost 
+
+Definition at line 44 of file qubits.\+h.
+
+
 
 \subsubsection{Field Documentation}
-\hypertarget{structMultiQubit_ab10c88249fa3825d6227ceec01d37e37}{
-\index{MultiQubit@{MultiQubit}!chunkId@{chunkId}}
-\index{chunkId@{chunkId}!MultiQubit@{MultiQubit}}
-\paragraph[{chunkId}]{\setlength{\rightskip}{0pt plus 5cm}int {\bf MultiQubit::chunkId}}\hfill}
-\label{structMultiQubit_ab10c88249fa3825d6227ceec01d37e37}
+\mbox{\Hypertarget{structMultiQubit_ab10c88249fa3825d6227ceec01d37e37}\label{structMultiQubit_ab10c88249fa3825d6227ceec01d37e37}} 
+\index{Multi\+Qubit@{Multi\+Qubit}!chunk\+Id@{chunk\+Id}}
+\index{chunk\+Id@{chunk\+Id}!Multi\+Qubit@{Multi\+Qubit}}
+\paragraph{\texorpdfstring{chunk\+Id}{chunkId}}
+{\footnotesize\ttfamily int Multi\+Qubit\+::chunk\+Id}
+
 
 
 The position of the chunk of the state vector held by this process in the full state vector. 
 
-Definition at line 50 of file qubits.h.
-
-Referenced by reportMultiQubitParams(), and reportState().\hypertarget{structMultiQubit_a59ac613486a41b8c9a4b6e79cc8d2cc3}{
-\index{MultiQubit@{MultiQubit}!deviceStateVec@{deviceStateVec}}
-\index{deviceStateVec@{deviceStateVec}!MultiQubit@{MultiQubit}}
-\paragraph[{deviceStateVec}]{\setlength{\rightskip}{0pt plus 5cm}{\bf ComplexArray} {\bf MultiQubit::deviceStateVec}}\hfill}
-\label{structMultiQubit_a59ac613486a41b8c9a4b6e79cc8d2cc3}
 
 
-Storage for probability amplitudes for the multi qubit state on GPU. 
-
-Definition at line 41 of file qubits.h.\hypertarget{structMultiQubit_a4e0088b41adab0a40b7a31e528ed42b5}{
-\index{MultiQubit@{MultiQubit}!firstLevelReduction@{firstLevelReduction}}
-\index{firstLevelReduction@{firstLevelReduction}!MultiQubit@{MultiQubit}}
-\paragraph[{firstLevelReduction}]{\setlength{\rightskip}{0pt plus 5cm}REAL$\ast$ {\bf MultiQubit::firstLevelReduction}}\hfill}
-\label{structMultiQubit_a4e0088b41adab0a40b7a31e528ed42b5}
+Definition at line 60 of file qubits.\+h.
 
 
-Storage for reduction of probabilities on GPU. 
 
-Definition at line 43 of file qubits.h.\hypertarget{structMultiQubit_ae16f47d8b725c914fb7f66b6498d79db}{
-\index{MultiQubit@{MultiQubit}!numAmps@{numAmps}}
-\index{numAmps@{numAmps}!MultiQubit@{MultiQubit}}
-\paragraph[{numAmps}]{\setlength{\rightskip}{0pt plus 5cm}long long int {\bf MultiQubit::numAmps}}\hfill}
-\label{structMultiQubit_ae16f47d8b725c914fb7f66b6498d79db}
+Referenced by report\+Multi\+Qubit\+Params(), and report\+State().
 
-
-Number of probability amplitudes held in stateVec by this process In the non-\/MPI version, this is the total number of amplitudes. 
-
-Definition at line 48 of file qubits.h.
-
-Referenced by reportState().\hypertarget{structMultiQubit_acd43f2f57991709c9e94f73662c972b2}{
-\index{MultiQubit@{MultiQubit}!numChunks@{numChunks}}
-\index{numChunks@{numChunks}!MultiQubit@{MultiQubit}}
-\paragraph[{numChunks}]{\setlength{\rightskip}{0pt plus 5cm}int {\bf MultiQubit::numChunks}}\hfill}
-\label{structMultiQubit_acd43f2f57991709c9e94f73662c972b2}
+\mbox{\Hypertarget{structMultiQubit_a59ac613486a41b8c9a4b6e79cc8d2cc3}\label{structMultiQubit_a59ac613486a41b8c9a4b6e79cc8d2cc3}} 
+\index{Multi\+Qubit@{Multi\+Qubit}!device\+State\+Vec@{device\+State\+Vec}}
+\index{device\+State\+Vec@{device\+State\+Vec}!Multi\+Qubit@{Multi\+Qubit}}
+\paragraph{\texorpdfstring{device\+State\+Vec}{deviceStateVec}}
+{\footnotesize\ttfamily \mbox{\hyperlink{structComplexArray}{Complex\+Array}} Multi\+Qubit\+::device\+State\+Vec}
 
 
-Number of chunks the state vector is broken up into -\/-\/ the number of MPI processes used. 
 
-Definition at line 52 of file qubits.h.
+Storage for probability amplitudes for the multi qubit state on G\+PU. 
 
-Referenced by reportMultiQubitParams().\hypertarget{structMultiQubit_ab5b9795bdc6fb5855e1974dcbbaeb36f}{
-\index{MultiQubit@{MultiQubit}!numQubits@{numQubits}}
-\index{numQubits@{numQubits}!MultiQubit@{MultiQubit}}
-\paragraph[{numQubits}]{\setlength{\rightskip}{0pt plus 5cm}int {\bf MultiQubit::numQubits}}\hfill}
-\label{structMultiQubit_ab5b9795bdc6fb5855e1974dcbbaeb36f}
+
+
+Definition at line 51 of file qubits.\+h.
+
+\mbox{\Hypertarget{structMultiQubit_a4e0088b41adab0a40b7a31e528ed42b5}\label{structMultiQubit_a4e0088b41adab0a40b7a31e528ed42b5}} 
+\index{Multi\+Qubit@{Multi\+Qubit}!first\+Level\+Reduction@{first\+Level\+Reduction}}
+\index{first\+Level\+Reduction@{first\+Level\+Reduction}!Multi\+Qubit@{Multi\+Qubit}}
+\paragraph{\texorpdfstring{first\+Level\+Reduction}{firstLevelReduction}}
+{\footnotesize\ttfamily \mbox{\hyperlink{precision_8h_a4b654506f18b8bfd61ad2a29a7e38c25}{R\+E\+AL}}$\ast$ Multi\+Qubit\+::first\+Level\+Reduction}
+
+
+
+Storage for reduction of probabilities on G\+PU. 
+
+
+
+Definition at line 53 of file qubits.\+h.
+
+\mbox{\Hypertarget{structMultiQubit_ae16f47d8b725c914fb7f66b6498d79db}\label{structMultiQubit_ae16f47d8b725c914fb7f66b6498d79db}} 
+\index{Multi\+Qubit@{Multi\+Qubit}!num\+Amps@{num\+Amps}}
+\index{num\+Amps@{num\+Amps}!Multi\+Qubit@{Multi\+Qubit}}
+\paragraph{\texorpdfstring{num\+Amps}{numAmps}}
+{\footnotesize\ttfamily long long int Multi\+Qubit\+::num\+Amps}
+
+
+
+Number of probability amplitudes held in state\+Vec by this process In the non-\/\+M\+PI version, this is the total number of amplitudes. 
+
+
+
+Definition at line 58 of file qubits.\+h.
+
+
+
+Referenced by report\+State().
+
+\mbox{\Hypertarget{structMultiQubit_acd43f2f57991709c9e94f73662c972b2}\label{structMultiQubit_acd43f2f57991709c9e94f73662c972b2}} 
+\index{Multi\+Qubit@{Multi\+Qubit}!num\+Chunks@{num\+Chunks}}
+\index{num\+Chunks@{num\+Chunks}!Multi\+Qubit@{Multi\+Qubit}}
+\paragraph{\texorpdfstring{num\+Chunks}{numChunks}}
+{\footnotesize\ttfamily int Multi\+Qubit\+::num\+Chunks}
+
+
+
+Number of chunks the state vector is broken up into -- the number of M\+PI processes used. 
+
+
+
+Definition at line 62 of file qubits.\+h.
+
+
+
+Referenced by report\+Multi\+Qubit\+Params().
+
+\mbox{\Hypertarget{structMultiQubit_ab5b9795bdc6fb5855e1974dcbbaeb36f}\label{structMultiQubit_ab5b9795bdc6fb5855e1974dcbbaeb36f}} 
+\index{Multi\+Qubit@{Multi\+Qubit}!num\+Qubits@{num\+Qubits}}
+\index{num\+Qubits@{num\+Qubits}!Multi\+Qubit@{Multi\+Qubit}}
+\paragraph{\texorpdfstring{num\+Qubits}{numQubits}}
+{\footnotesize\ttfamily int Multi\+Qubit\+::num\+Qubits}
+
 
 
 Number of qubits in the state. 
 
-Definition at line 45 of file qubits.h.
-
-Referenced by reportMultiQubitParams().\hypertarget{structMultiQubit_a76f7db4eab52d2b30f58f973ada809c5}{
-\index{MultiQubit@{MultiQubit}!pairStateVec@{pairStateVec}}
-\index{pairStateVec@{pairStateVec}!MultiQubit@{MultiQubit}}
-\paragraph[{pairStateVec}]{\setlength{\rightskip}{0pt plus 5cm}{\bf ComplexArray} {\bf MultiQubit::pairStateVec}}\hfill}
-\label{structMultiQubit_a76f7db4eab52d2b30f58f973ada809c5}
 
 
-Temporary storage for a chunk of the state vector received from another process in the MPI version. 
-
-Definition at line 39 of file qubits.h.\hypertarget{structMultiQubit_a3e859cefa146ec7b30464ab3d897930b}{
-\index{MultiQubit@{MultiQubit}!secondLevelReduction@{secondLevelReduction}}
-\index{secondLevelReduction@{secondLevelReduction}!MultiQubit@{MultiQubit}}
-\paragraph[{secondLevelReduction}]{\setlength{\rightskip}{0pt plus 5cm}REAL $\ast$ {\bf MultiQubit::secondLevelReduction}}\hfill}
-\label{structMultiQubit_a3e859cefa146ec7b30464ab3d897930b}
+Definition at line 55 of file qubits.\+h.
 
 
-Definition at line 43 of file qubits.h.\hypertarget{structMultiQubit_a45483190d6b01ef6b2f98f2bec9ab94f}{
-\index{MultiQubit@{MultiQubit}!stateVec@{stateVec}}
-\index{stateVec@{stateVec}!MultiQubit@{MultiQubit}}
-\paragraph[{stateVec}]{\setlength{\rightskip}{0pt plus 5cm}{\bf ComplexArray} {\bf MultiQubit::stateVec}}\hfill}
-\label{structMultiQubit_a45483190d6b01ef6b2f98f2bec9ab94f}
+
+Referenced by report\+Multi\+Qubit\+Params().
+
+\mbox{\Hypertarget{structMultiQubit_a76f7db4eab52d2b30f58f973ada809c5}\label{structMultiQubit_a76f7db4eab52d2b30f58f973ada809c5}} 
+\index{Multi\+Qubit@{Multi\+Qubit}!pair\+State\+Vec@{pair\+State\+Vec}}
+\index{pair\+State\+Vec@{pair\+State\+Vec}!Multi\+Qubit@{Multi\+Qubit}}
+\paragraph{\texorpdfstring{pair\+State\+Vec}{pairStateVec}}
+{\footnotesize\ttfamily \mbox{\hyperlink{structComplexArray}{Complex\+Array}} Multi\+Qubit\+::pair\+State\+Vec}
+
+
+
+Temporary storage for a chunk of the state vector received from another process in the M\+PI version. 
+
+
+
+Definition at line 49 of file qubits.\+h.
+
+\mbox{\Hypertarget{structMultiQubit_a3e859cefa146ec7b30464ab3d897930b}\label{structMultiQubit_a3e859cefa146ec7b30464ab3d897930b}} 
+\index{Multi\+Qubit@{Multi\+Qubit}!second\+Level\+Reduction@{second\+Level\+Reduction}}
+\index{second\+Level\+Reduction@{second\+Level\+Reduction}!Multi\+Qubit@{Multi\+Qubit}}
+\paragraph{\texorpdfstring{second\+Level\+Reduction}{secondLevelReduction}}
+{\footnotesize\ttfamily \mbox{\hyperlink{precision_8h_a4b654506f18b8bfd61ad2a29a7e38c25}{R\+E\+AL}} $\ast$ Multi\+Qubit\+::second\+Level\+Reduction}
+
+
+
+Definition at line 53 of file qubits.\+h.
+
+\mbox{\Hypertarget{structMultiQubit_a45483190d6b01ef6b2f98f2bec9ab94f}\label{structMultiQubit_a45483190d6b01ef6b2f98f2bec9ab94f}} 
+\index{Multi\+Qubit@{Multi\+Qubit}!state\+Vec@{state\+Vec}}
+\index{state\+Vec@{state\+Vec}!Multi\+Qubit@{Multi\+Qubit}}
+\paragraph{\texorpdfstring{state\+Vec}{stateVec}}
+{\footnotesize\ttfamily \mbox{\hyperlink{structComplexArray}{Complex\+Array}} Multi\+Qubit\+::state\+Vec}
+
 
 
 Probablilty amplitudes for the multi qubit state. 
 
-Definition at line 37 of file qubits.h.
 
-Referenced by reportState().
 
-The documentation for this struct was generated from the following file:\begin{DoxyCompactItemize}
+Definition at line 47 of file qubits.\+h.
+
+
+
+Referenced by report\+State().
+
+
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
 \item 
-\hyperlink{qubits_8h}{qubits.h}\end{DoxyCompactItemize}
+\mbox{\hyperlink{qubits_8h}{qubits.\+h}}\end{DoxyCompactItemize}

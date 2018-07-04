@@ -1,60 +1,230 @@
-\hypertarget{qubits__internal_8h}{
-\subsection{qubits\_\-internal.h File Reference}
-\label{qubits__internal_8h}\index{qubits\_\-internal.h@{qubits\_\-internal.h}}
-}
+\hypertarget{qubits__internal_8h}{}\subsection{qubits\+\_\+internal.\+h File Reference}
+\label{qubits__internal_8h}\index{qubits\+\_\+internal.\+h@{qubits\+\_\+internal.\+h}}
 
 
-Internal functions used to implement the public facing API in \hyperlink{qubits_8h}{qubits.h}.  
+Internal functions used to implement the public facing A\+PI in \mbox{\hyperlink{qubits_8h}{qubits.\+h}}.  
+
+
 \subsubsection*{Functions}
 \begin{DoxyCompactItemize}
 \item 
-void \hyperlink{qubits__internal_8h_aae7a8a7f1ccbddb7f76b6c52b746bb43}{phaseGate} (\hyperlink{structMultiQubit}{MultiQubit} multiQubit, const int targetQubit, enum \hyperlink{qubits_8h_a5739021c733cecc49647956b2f7338ea}{phaseGateType} type)
+void \mbox{\hyperlink{qubits__internal_8h_aae7a8a7f1ccbddb7f76b6c52b746bb43}{phase\+Gate}} (\mbox{\hyperlink{structMultiQubit}{Multi\+Qubit}} multi\+Qubit, const int target\+Qubit, enum \mbox{\hyperlink{qubits_8h_a5739021c733cecc49647956b2f7338ea}{phase\+Gate\+Type}} type)
 \item 
-REAL \hyperlink{qubits__internal_8h_a2e4cedb70bd181d250b3abb945cc108e}{findProbabilityOfZero} (\hyperlink{structMultiQubit}{MultiQubit} multiQubit, const int measureQubit)
-\begin{DoxyCompactList}\small\item\em Measure the probability of a specified qubit being in the zero state. \item\end{DoxyCompactList}\item 
-REAL \hyperlink{qubits__internal_8h_a21094de735f3cb48488a184cfa4d8d41}{measureInZero} (\hyperlink{structMultiQubit}{MultiQubit} multiQubit, const int measureQubit)
-\begin{DoxyCompactList}\small\item\em Update the state vector to be consistent with measuring measureQubit=0. \item\end{DoxyCompactList}\end{DoxyCompactItemize}
+\mbox{\hyperlink{precision_8h_a4b654506f18b8bfd61ad2a29a7e38c25}{R\+E\+AL}} \mbox{\hyperlink{qubits__internal_8h_a2e4cedb70bd181d250b3abb945cc108e}{find\+Probability\+Of\+Zero}} (\mbox{\hyperlink{structMultiQubit}{Multi\+Qubit}} multi\+Qubit, const int measure\+Qubit)
+\begin{DoxyCompactList}\small\item\em Measure the probability of a specified qubit being in the zero state. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{precision_8h_a4b654506f18b8bfd61ad2a29a7e38c25}{R\+E\+AL}} \mbox{\hyperlink{qubits__internal_8h_a21094de735f3cb48488a184cfa4d8d41}{measure\+In\+Zero}} (\mbox{\hyperlink{structMultiQubit}{Multi\+Qubit}} multi\+Qubit, const int measure\+Qubit)
+\begin{DoxyCompactList}\small\item\em Update the state vector to be consistent with measuring measure\+Qubit=0. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{qubits__internal_8h_ae4fea133d1a8f09ff8da03038100adb2}{validate\+Matrix\+Is\+Unitary}} (\mbox{\hyperlink{structComplexMatrix2}{Complex\+Matrix2}} u)
+\item 
+int \mbox{\hyperlink{qubits__internal_8h_ae2b2c14a07dd7d50ff86032a3ca101d7}{validate\+Alpha\+Beta}} (\mbox{\hyperlink{structComplex}{Complex}} alpha, \mbox{\hyperlink{structComplex}{Complex}} beta)
+\item 
+int \mbox{\hyperlink{qubits__internal_8h_a71c14976f63cfcda70026fa20ee531fe}{validate\+Unit\+Vector}} (\mbox{\hyperlink{precision_8h_a4b654506f18b8bfd61ad2a29a7e38c25}{R\+E\+AL}} ux, \mbox{\hyperlink{precision_8h_a4b654506f18b8bfd61ad2a29a7e38c25}{R\+E\+AL}} uy, \mbox{\hyperlink{precision_8h_a4b654506f18b8bfd61ad2a29a7e38c25}{R\+E\+AL}} uz)
+\item 
+void \mbox{\hyperlink{qubits__internal_8h_ae5f9019826f35e8b51b1716cfe397b45}{exit\+With\+Error}} (int error\+Code, const char $\ast$func)
+\item 
+void \mbox{\hyperlink{qubits__internal_8h_a3587b9d533e633ccf1abf9ad2ce45d8d}{Qu\+E\+S\+T\+Assert}} (int is\+Valid, int error\+Code, const char $\ast$func)
+\item 
+unsigned long int \mbox{\hyperlink{qubits__internal_8h_ab76254cfde16f0808476649507a1a2fc}{hash\+String}} (char $\ast$str)
+\end{DoxyCompactItemize}
+\subsubsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+const char $\ast$ \mbox{\hyperlink{qubits__internal_8h_aac1637696885c75b73a1ecf381cea713}{error\+Codes}} \mbox{[}$\,$\mbox{]}
+\end{DoxyCompactItemize}
 
 
 \subsubsection{Detailed Description}
-Internal functions used to implement the public facing API in \hyperlink{qubits_8h}{qubits.h}. Do not call these functions directly. 
+Internal functions used to implement the public facing A\+PI in \mbox{\hyperlink{qubits_8h}{qubits.\+h}}. 
 
-Definition in file \hyperlink{qubits__internal_8h_source}{qubits\_\-internal.h}.
+Do not call these functions directly. 
 
 \subsubsection{Function Documentation}
-\hypertarget{qubits__internal_8h_a2e4cedb70bd181d250b3abb945cc108e}{
-\index{qubits\_\-internal.h@{qubits\_\-internal.h}!findProbabilityOfZero@{findProbabilityOfZero}}
-\index{findProbabilityOfZero@{findProbabilityOfZero}!qubits_internal.h@{qubits\_\-internal.h}}
-\paragraph[{findProbabilityOfZero}]{\setlength{\rightskip}{0pt plus 5cm}REAL findProbabilityOfZero ({\bf MultiQubit} {\em multiQubit}, \/  const int {\em measureQubit})}\hfill}
-\label{qubits__internal_8h_a2e4cedb70bd181d250b3abb945cc108e}
+\mbox{\Hypertarget{qubits__internal_8h_ae5f9019826f35e8b51b1716cfe397b45}\label{qubits__internal_8h_ae5f9019826f35e8b51b1716cfe397b45}} 
+\index{qubits\+\_\+internal.\+h@{qubits\+\_\+internal.\+h}!exit\+With\+Error@{exit\+With\+Error}}
+\index{exit\+With\+Error@{exit\+With\+Error}!qubits\+\_\+internal.\+h@{qubits\+\_\+internal.\+h}}
+\paragraph{\texorpdfstring{exit\+With\+Error()}{exitWithError()}}
+{\footnotesize\ttfamily void exit\+With\+Error (\begin{DoxyParamCaption}\item[{int}]{error\+Code,  }\item[{const char $\ast$}]{func }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{qubits__internal_8h_a2e4cedb70bd181d250b3abb945cc108e}\label{qubits__internal_8h_a2e4cedb70bd181d250b3abb945cc108e}} 
+\index{qubits\+\_\+internal.\+h@{qubits\+\_\+internal.\+h}!find\+Probability\+Of\+Zero@{find\+Probability\+Of\+Zero}}
+\index{find\+Probability\+Of\+Zero@{find\+Probability\+Of\+Zero}!qubits\+\_\+internal.\+h@{qubits\+\_\+internal.\+h}}
+\paragraph{\texorpdfstring{find\+Probability\+Of\+Zero()}{findProbabilityOfZero()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{precision_8h_a4b654506f18b8bfd61ad2a29a7e38c25}{R\+E\+AL}} find\+Probability\+Of\+Zero (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structMultiQubit}{Multi\+Qubit}}}]{multi\+Qubit,  }\item[{const int}]{measure\+Qubit }\end{DoxyParamCaption})}
+
 
 
 Measure the probability of a specified qubit being in the zero state. 
-\begin{DoxyParams}{Parameters}
-\item[\mbox{$\leftarrow$} {\em multiQubit}]object representing the set of qubits \item[\mbox{$\leftarrow$} {\em measureQubit}]qubit to measure \end{DoxyParams}
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em multi\+Qubit} & object representing the set of qubits \\
+\hline
+\mbox{\tt in}  & {\em measure\+Qubit} & qubit to measure \\
+\hline
+\end{DoxyParams}
 \begin{DoxyReturn}{Returns}
-probability of qubit measureQubit being zero 
+probability of qubit measure\+Qubit being zero 
 \end{DoxyReturn}
-\hypertarget{qubits__internal_8h_a21094de735f3cb48488a184cfa4d8d41}{
-\index{qubits\_\-internal.h@{qubits\_\-internal.h}!measureInZero@{measureInZero}}
-\index{measureInZero@{measureInZero}!qubits_internal.h@{qubits\_\-internal.h}}
-\paragraph[{measureInZero}]{\setlength{\rightskip}{0pt plus 5cm}REAL measureInZero ({\bf MultiQubit} {\em multiQubit}, \/  const int {\em measureQubit})}\hfill}
-\label{qubits__internal_8h_a21094de735f3cb48488a184cfa4d8d41}
+\mbox{\Hypertarget{qubits__internal_8h_ab76254cfde16f0808476649507a1a2fc}\label{qubits__internal_8h_ab76254cfde16f0808476649507a1a2fc}} 
+\index{qubits\+\_\+internal.\+h@{qubits\+\_\+internal.\+h}!hash\+String@{hash\+String}}
+\index{hash\+String@{hash\+String}!qubits\+\_\+internal.\+h@{qubits\+\_\+internal.\+h}}
+\paragraph{\texorpdfstring{hash\+String()}{hashString()}}
+{\footnotesize\ttfamily unsigned long int hash\+String (\begin{DoxyParamCaption}\item[{char $\ast$}]{str }\end{DoxyParamCaption})}
 
 
-Update the state vector to be consistent with measuring measureQubit=0. Measure in Zero performs an irreversible change to the state vector: it updates the vector according to the event that a zero have been measured on the qubit indicated by measureQubit (where his label starts from 0, of course). It achieves this by setting all inconsistent amplitudes to 0 and then renormalising based on the total probability of measuring measureQubit=0. It then returns the probability of making this measurement.
+
+Definition at line 235 of file qubits.\+cpp.
 
 
-\begin{DoxyParams}{Parameters}
-\item[\mbox{$\leftrightarrow$} {\em multiQubit}]object representing the set of qubits \item[\mbox{$\leftarrow$} {\em measureQubit}]qubit to measure \end{DoxyParams}
+
+Referenced by Qu\+E\+S\+T\+Seed\+Random\+Default().
+
+
+\begin{DoxyCode}
+235                                        \{
+236     \textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{long} \textcolor{keywordtype}{int} hash = 5381;
+237     \textcolor{keywordtype}{int} c;
+238 
+239     \textcolor{keywordflow}{while} ((c = *str++))
+240         hash = ((hash << 5) + hash) + c; \textcolor{comment}{/* hash * 33 + c */}
+241 
+242     \textcolor{keywordflow}{return} hash;    
+243 \}
+\end{DoxyCode}
+\mbox{\Hypertarget{qubits__internal_8h_a21094de735f3cb48488a184cfa4d8d41}\label{qubits__internal_8h_a21094de735f3cb48488a184cfa4d8d41}} 
+\index{qubits\+\_\+internal.\+h@{qubits\+\_\+internal.\+h}!measure\+In\+Zero@{measure\+In\+Zero}}
+\index{measure\+In\+Zero@{measure\+In\+Zero}!qubits\+\_\+internal.\+h@{qubits\+\_\+internal.\+h}}
+\paragraph{\texorpdfstring{measure\+In\+Zero()}{measureInZero()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{precision_8h_a4b654506f18b8bfd61ad2a29a7e38c25}{R\+E\+AL}} measure\+In\+Zero (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structMultiQubit}{Multi\+Qubit}}}]{multi\+Qubit,  }\item[{const int}]{measure\+Qubit }\end{DoxyParamCaption})}
+
+
+
+Update the state vector to be consistent with measuring measure\+Qubit=0. 
+
+Measure in Zero performs an irreversible change to the state vector\+: it updates the vector according to the event that a zero have been measured on the qubit indicated by measure\+Qubit (where his label starts from 0, of course). It achieves this by setting all inconsistent amplitudes to 0 and then renormalising based on the total probability of measuring measure\+Qubit=0. It then returns the probability of making this measurement.
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in,out}  & {\em multi\+Qubit} & object representing the set of qubits \\
+\hline
+\mbox{\tt in}  & {\em measure\+Qubit} & qubit to measure \\
+\hline
+\end{DoxyParams}
 \begin{DoxyReturn}{Returns}
-probability of qubit measureQubit being zero 
+probability of qubit measure\+Qubit being zero 
 \end{DoxyReturn}
-\hypertarget{qubits__internal_8h_aae7a8a7f1ccbddb7f76b6c52b746bb43}{
-\index{qubits\_\-internal.h@{qubits\_\-internal.h}!phaseGate@{phaseGate}}
-\index{phaseGate@{phaseGate}!qubits_internal.h@{qubits\_\-internal.h}}
-\paragraph[{phaseGate}]{\setlength{\rightskip}{0pt plus 5cm}void phaseGate ({\bf MultiQubit} {\em multiQubit}, \/  const int {\em targetQubit}, \/  enum {\bf phaseGateType} {\em type})}\hfill}
-\label{qubits__internal_8h_aae7a8a7f1ccbddb7f76b6c52b746bb43}
+\mbox{\Hypertarget{qubits__internal_8h_aae7a8a7f1ccbddb7f76b6c52b746bb43}\label{qubits__internal_8h_aae7a8a7f1ccbddb7f76b6c52b746bb43}} 
+\index{qubits\+\_\+internal.\+h@{qubits\+\_\+internal.\+h}!phase\+Gate@{phase\+Gate}}
+\index{phase\+Gate@{phase\+Gate}!qubits\+\_\+internal.\+h@{qubits\+\_\+internal.\+h}}
+\paragraph{\texorpdfstring{phase\+Gate()}{phaseGate()}}
+{\footnotesize\ttfamily void phase\+Gate (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structMultiQubit}{Multi\+Qubit}}}]{multi\+Qubit,  }\item[{const int}]{target\+Qubit,  }\item[{enum \mbox{\hyperlink{qubits_8h_a5739021c733cecc49647956b2f7338ea}{phase\+Gate\+Type}}}]{type }\end{DoxyParamCaption})}
 
 
-Referenced by sGate(), sigmaZ(), and tGate().
+
+Referenced by s\+Gate(), sigma\+Z(), and t\+Gate().
+
+\mbox{\Hypertarget{qubits__internal_8h_a3587b9d533e633ccf1abf9ad2ce45d8d}\label{qubits__internal_8h_a3587b9d533e633ccf1abf9ad2ce45d8d}} 
+\index{qubits\+\_\+internal.\+h@{qubits\+\_\+internal.\+h}!Qu\+E\+S\+T\+Assert@{Qu\+E\+S\+T\+Assert}}
+\index{Qu\+E\+S\+T\+Assert@{Qu\+E\+S\+T\+Assert}!qubits\+\_\+internal.\+h@{qubits\+\_\+internal.\+h}}
+\paragraph{\texorpdfstring{Qu\+E\+S\+T\+Assert()}{QuESTAssert()}}
+{\footnotesize\ttfamily void Qu\+E\+S\+T\+Assert (\begin{DoxyParamCaption}\item[{int}]{is\+Valid,  }\item[{int}]{error\+Code,  }\item[{const char $\ast$}]{func }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{qubits__internal_8h_ae2b2c14a07dd7d50ff86032a3ca101d7}\label{qubits__internal_8h_ae2b2c14a07dd7d50ff86032a3ca101d7}} 
+\index{qubits\+\_\+internal.\+h@{qubits\+\_\+internal.\+h}!validate\+Alpha\+Beta@{validate\+Alpha\+Beta}}
+\index{validate\+Alpha\+Beta@{validate\+Alpha\+Beta}!qubits\+\_\+internal.\+h@{qubits\+\_\+internal.\+h}}
+\paragraph{\texorpdfstring{validate\+Alpha\+Beta()}{validateAlphaBeta()}}
+{\footnotesize\ttfamily int validate\+Alpha\+Beta (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structComplex}{Complex}}}]{alpha,  }\item[{\mbox{\hyperlink{structComplex}{Complex}}}]{beta }\end{DoxyParamCaption})}
+
+
+
+Definition at line 190 of file qubits.\+cpp.
+
+
+
+References Complex\+::imag, Complex\+::real, and R\+E\+A\+L\+\_\+\+E\+PS.
+
+
+\begin{DoxyCode}
+190                                                   \{
+191     \textcolor{keywordflow}{if} ( fabs(alpha.\mbox{\hyperlink{structComplex_a479ad939835457595fcca3ca55c06283}{real}}*alpha.\mbox{\hyperlink{structComplex_a479ad939835457595fcca3ca55c06283}{real}} 
+192         + alpha.\mbox{\hyperlink{structComplex_a1151948284b21c0052f203f23ab931d9}{imag}}*alpha.\mbox{\hyperlink{structComplex_a1151948284b21c0052f203f23ab931d9}{imag}}
+193         + beta.\mbox{\hyperlink{structComplex_a479ad939835457595fcca3ca55c06283}{real}}*beta.\mbox{\hyperlink{structComplex_a479ad939835457595fcca3ca55c06283}{real}} 
+194         + beta.\mbox{\hyperlink{structComplex_a1151948284b21c0052f203f23ab931d9}{imag}}*beta.\mbox{\hyperlink{structComplex_a1151948284b21c0052f203f23ab931d9}{imag}} - 1) > \mbox{\hyperlink{precision_8h_aebb5e6716e06431296af4d1a71744dec}{REAL\_EPS}} ) \textcolor{keywordflow}{return} 0;
+195     \textcolor{keywordflow}{else} \textcolor{keywordflow}{return} 1;
+196 \}
+\end{DoxyCode}
+\mbox{\Hypertarget{qubits__internal_8h_ae4fea133d1a8f09ff8da03038100adb2}\label{qubits__internal_8h_ae4fea133d1a8f09ff8da03038100adb2}} 
+\index{qubits\+\_\+internal.\+h@{qubits\+\_\+internal.\+h}!validate\+Matrix\+Is\+Unitary@{validate\+Matrix\+Is\+Unitary}}
+\index{validate\+Matrix\+Is\+Unitary@{validate\+Matrix\+Is\+Unitary}!qubits\+\_\+internal.\+h@{qubits\+\_\+internal.\+h}}
+\paragraph{\texorpdfstring{validate\+Matrix\+Is\+Unitary()}{validateMatrixIsUnitary()}}
+{\footnotesize\ttfamily int validate\+Matrix\+Is\+Unitary (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structComplexMatrix2}{Complex\+Matrix2}}}]{u }\end{DoxyParamCaption})}
+
+
+
+Definition at line 165 of file qubits.\+cpp.
+
+
+
+References Complex\+::imag, Complex\+Matrix2\+::r0c0, Complex\+Matrix2\+::r0c1, Complex\+Matrix2\+::r1c0, Complex\+Matrix2\+::r1c1, Complex\+::real, and R\+E\+A\+L\+\_\+\+E\+PS.
+
+
+\begin{DoxyCode}
+165                                              \{
+166 
+167     \textcolor{keywordflow}{if} ( fabs(u.\mbox{\hyperlink{structComplexMatrix2_ae72b4458233b077a636beee1892e81ff}{r0c0}}.\mbox{\hyperlink{structComplex_a479ad939835457595fcca3ca55c06283}{real}}*u.\mbox{\hyperlink{structComplexMatrix2_ae72b4458233b077a636beee1892e81ff}{r0c0}}.\mbox{\hyperlink{structComplex_a479ad939835457595fcca3ca55c06283}{real}} 
+168         + u.\mbox{\hyperlink{structComplexMatrix2_ae72b4458233b077a636beee1892e81ff}{r0c0}}.\mbox{\hyperlink{structComplex_a1151948284b21c0052f203f23ab931d9}{imag}}*u.\mbox{\hyperlink{structComplexMatrix2_ae72b4458233b077a636beee1892e81ff}{r0c0}}.\mbox{\hyperlink{structComplex_a1151948284b21c0052f203f23ab931d9}{imag}}
+169         + u.\mbox{\hyperlink{structComplexMatrix2_ab98282015ed2065e53fbc9638e2583ab}{r1c0}}.\mbox{\hyperlink{structComplex_a479ad939835457595fcca3ca55c06283}{real}}*u.\mbox{\hyperlink{structComplexMatrix2_ab98282015ed2065e53fbc9638e2583ab}{r1c0}}.\mbox{\hyperlink{structComplex_a479ad939835457595fcca3ca55c06283}{real}}
+170         + u.\mbox{\hyperlink{structComplexMatrix2_ab98282015ed2065e53fbc9638e2583ab}{r1c0}}.\mbox{\hyperlink{structComplex_a1151948284b21c0052f203f23ab931d9}{imag}}*u.\mbox{\hyperlink{structComplexMatrix2_ab98282015ed2065e53fbc9638e2583ab}{r1c0}}.\mbox{\hyperlink{structComplex_a1151948284b21c0052f203f23ab931d9}{imag}} - 1) > \mbox{\hyperlink{precision_8h_aebb5e6716e06431296af4d1a71744dec}{REAL\_EPS}} ) \textcolor{keywordflow}{return} 0;
+171     \textcolor{comment}{// check}
+172     \textcolor{keywordflow}{if} ( fabs(u.\mbox{\hyperlink{structComplexMatrix2_a0f3932f055a8b05cef361bce25d51172}{r0c1}}.\mbox{\hyperlink{structComplex_a479ad939835457595fcca3ca55c06283}{real}}*u.\mbox{\hyperlink{structComplexMatrix2_a0f3932f055a8b05cef361bce25d51172}{r0c1}}.\mbox{\hyperlink{structComplex_a479ad939835457595fcca3ca55c06283}{real}} 
+173         + u.\mbox{\hyperlink{structComplexMatrix2_a0f3932f055a8b05cef361bce25d51172}{r0c1}}.\mbox{\hyperlink{structComplex_a1151948284b21c0052f203f23ab931d9}{imag}}*u.\mbox{\hyperlink{structComplexMatrix2_a0f3932f055a8b05cef361bce25d51172}{r0c1}}.\mbox{\hyperlink{structComplex_a1151948284b21c0052f203f23ab931d9}{imag}}
+174         + u.\mbox{\hyperlink{structComplexMatrix2_a763007c3070802373549ba0350f83c8a}{r1c1}}.\mbox{\hyperlink{structComplex_a479ad939835457595fcca3ca55c06283}{real}}*u.\mbox{\hyperlink{structComplexMatrix2_a763007c3070802373549ba0350f83c8a}{r1c1}}.\mbox{\hyperlink{structComplex_a479ad939835457595fcca3ca55c06283}{real}}
+175         + u.\mbox{\hyperlink{structComplexMatrix2_a763007c3070802373549ba0350f83c8a}{r1c1}}.\mbox{\hyperlink{structComplex_a1151948284b21c0052f203f23ab931d9}{imag}}*u.\mbox{\hyperlink{structComplexMatrix2_a763007c3070802373549ba0350f83c8a}{r1c1}}.\mbox{\hyperlink{structComplex_a1151948284b21c0052f203f23ab931d9}{imag}} - 1) > \mbox{\hyperlink{precision_8h_aebb5e6716e06431296af4d1a71744dec}{REAL\_EPS}} ) \textcolor{keywordflow}{return} 0;
+176 
+177     \textcolor{keywordflow}{if} ( fabs(u.\mbox{\hyperlink{structComplexMatrix2_ae72b4458233b077a636beee1892e81ff}{r0c0}}.\mbox{\hyperlink{structComplex_a479ad939835457595fcca3ca55c06283}{real}}*u.\mbox{\hyperlink{structComplexMatrix2_a0f3932f055a8b05cef361bce25d51172}{r0c1}}.\mbox{\hyperlink{structComplex_a479ad939835457595fcca3ca55c06283}{real}} 
+178         + u.\mbox{\hyperlink{structComplexMatrix2_ae72b4458233b077a636beee1892e81ff}{r0c0}}.\mbox{\hyperlink{structComplex_a1151948284b21c0052f203f23ab931d9}{imag}}*u.\mbox{\hyperlink{structComplexMatrix2_a0f3932f055a8b05cef361bce25d51172}{r0c1}}.\mbox{\hyperlink{structComplex_a1151948284b21c0052f203f23ab931d9}{imag}}
+179         + u.\mbox{\hyperlink{structComplexMatrix2_ab98282015ed2065e53fbc9638e2583ab}{r1c0}}.\mbox{\hyperlink{structComplex_a479ad939835457595fcca3ca55c06283}{real}}*u.\mbox{\hyperlink{structComplexMatrix2_a763007c3070802373549ba0350f83c8a}{r1c1}}.\mbox{\hyperlink{structComplex_a479ad939835457595fcca3ca55c06283}{real}}
+180         + u.\mbox{\hyperlink{structComplexMatrix2_ab98282015ed2065e53fbc9638e2583ab}{r1c0}}.\mbox{\hyperlink{structComplex_a1151948284b21c0052f203f23ab931d9}{imag}}*u.\mbox{\hyperlink{structComplexMatrix2_a763007c3070802373549ba0350f83c8a}{r1c1}}.\mbox{\hyperlink{structComplex_a1151948284b21c0052f203f23ab931d9}{imag}}) > \mbox{\hyperlink{precision_8h_aebb5e6716e06431296af4d1a71744dec}{REAL\_EPS}} ) \textcolor{keywordflow}{return} 0;
+181 
+182     \textcolor{keywordflow}{if} ( fabs(u.\mbox{\hyperlink{structComplexMatrix2_a0f3932f055a8b05cef361bce25d51172}{r0c1}}.\mbox{\hyperlink{structComplex_a479ad939835457595fcca3ca55c06283}{real}}*u.\mbox{\hyperlink{structComplexMatrix2_ae72b4458233b077a636beee1892e81ff}{r0c0}}.\mbox{\hyperlink{structComplex_a1151948284b21c0052f203f23ab931d9}{imag}}
+183         - u.\mbox{\hyperlink{structComplexMatrix2_ae72b4458233b077a636beee1892e81ff}{r0c0}}.\mbox{\hyperlink{structComplex_a479ad939835457595fcca3ca55c06283}{real}}*u.\mbox{\hyperlink{structComplexMatrix2_a0f3932f055a8b05cef361bce25d51172}{r0c1}}.\mbox{\hyperlink{structComplex_a1151948284b21c0052f203f23ab931d9}{imag}}
+184         + u.\mbox{\hyperlink{structComplexMatrix2_a763007c3070802373549ba0350f83c8a}{r1c1}}.\mbox{\hyperlink{structComplex_a479ad939835457595fcca3ca55c06283}{real}}*u.\mbox{\hyperlink{structComplexMatrix2_ab98282015ed2065e53fbc9638e2583ab}{r1c0}}.\mbox{\hyperlink{structComplex_a1151948284b21c0052f203f23ab931d9}{imag}}
+185         - u.\mbox{\hyperlink{structComplexMatrix2_ab98282015ed2065e53fbc9638e2583ab}{r1c0}}.\mbox{\hyperlink{structComplex_a479ad939835457595fcca3ca55c06283}{real}}*u.\mbox{\hyperlink{structComplexMatrix2_a763007c3070802373549ba0350f83c8a}{r1c1}}.\mbox{\hyperlink{structComplex_a1151948284b21c0052f203f23ab931d9}{imag}}) > \mbox{\hyperlink{precision_8h_aebb5e6716e06431296af4d1a71744dec}{REAL\_EPS}} ) \textcolor{keywordflow}{return} 0;
+186 
+187     \textcolor{keywordflow}{return} 1;
+188 \}
+\end{DoxyCode}
+\mbox{\Hypertarget{qubits__internal_8h_a71c14976f63cfcda70026fa20ee531fe}\label{qubits__internal_8h_a71c14976f63cfcda70026fa20ee531fe}} 
+\index{qubits\+\_\+internal.\+h@{qubits\+\_\+internal.\+h}!validate\+Unit\+Vector@{validate\+Unit\+Vector}}
+\index{validate\+Unit\+Vector@{validate\+Unit\+Vector}!qubits\+\_\+internal.\+h@{qubits\+\_\+internal.\+h}}
+\paragraph{\texorpdfstring{validate\+Unit\+Vector()}{validateUnitVector()}}
+{\footnotesize\ttfamily int validate\+Unit\+Vector (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{precision_8h_a4b654506f18b8bfd61ad2a29a7e38c25}{R\+E\+AL}}}]{ux,  }\item[{\mbox{\hyperlink{precision_8h_a4b654506f18b8bfd61ad2a29a7e38c25}{R\+E\+AL}}}]{uy,  }\item[{\mbox{\hyperlink{precision_8h_a4b654506f18b8bfd61ad2a29a7e38c25}{R\+E\+AL}}}]{uz }\end{DoxyParamCaption})}
+
+
+
+Definition at line 198 of file qubits.\+cpp.
+
+
+
+References R\+E\+A\+L\+\_\+\+E\+PS.
+
+
+\begin{DoxyCode}
+198                                                  \{
+199     \textcolor{keywordflow}{if} ( fabs(sqrt(ux*ux + uy*uy + uz*uz) - 1) > \mbox{\hyperlink{precision_8h_aebb5e6716e06431296af4d1a71744dec}{REAL\_EPS}} ) \textcolor{keywordflow}{return} 0;
+200     \textcolor{keywordflow}{else} \textcolor{keywordflow}{return} 1;
+201 \}
+\end{DoxyCode}
+
+
+\subsubsection{Variable Documentation}
+\mbox{\Hypertarget{qubits__internal_8h_aac1637696885c75b73a1ecf381cea713}\label{qubits__internal_8h_aac1637696885c75b73a1ecf381cea713}} 
+\index{qubits\+\_\+internal.\+h@{qubits\+\_\+internal.\+h}!error\+Codes@{error\+Codes}}
+\index{error\+Codes@{error\+Codes}!qubits\+\_\+internal.\+h@{qubits\+\_\+internal.\+h}}
+\paragraph{\texorpdfstring{error\+Codes}{errorCodes}}
+{\footnotesize\ttfamily const char$\ast$ error\+Codes\mbox{[}$\,$\mbox{]}}
+
+
+
+Definition at line 25 of file qubits.\+cpp.
+
