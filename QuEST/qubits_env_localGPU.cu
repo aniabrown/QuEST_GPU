@@ -296,7 +296,7 @@ void initializeStateFromSingleFile(MultiQubit *multiQubit, char filename[200], Q
             int chunkId = totalIndex/chunkSize;
             if (chunkId==multiQubit->chunkId){
                 //! fix -- hacky
-                if (P==1){
+                if (PREC==1){
                     sscanf(line, "%f, %f", &(stateVecReal[indexInChunk]),
                             &(stateVecImag[indexInChunk]));
                 } else {
