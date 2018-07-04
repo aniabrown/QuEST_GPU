@@ -186,6 +186,7 @@ void reportStateToScreen(MultiQubit multiQubit, QuESTEnv env, int reportRank){
         }
     }
 }
+
 void __global__ initStateZeroKernel(long long int stateVecSize, REAL *stateVecReal, REAL *stateVecImag){
     long long int index;
 
@@ -229,6 +230,31 @@ void initStatePlus(MultiQubit *multiQubit)
     CUDABlocks = ceil((REAL)(multiQubit->numAmps)/threadsPerCUDABlock);
     initStatePlusKernel<<<CUDABlocks, threadsPerCUDABlock>>>(multiQubit->numAmps, multiQubit->deviceStateVec.real, 
             multiQubit->deviceStateVec.imag);
+}
+
+/* Tyson Jones, 4th July 2018 8pm */
+void __global__ initClassicalStateKernel(long long int stateVecSize, REAL *stateVecReal, REAL *stateVecImag, long long int stateInd){
+    long long int index;
+
+    // initialise the state to |stateInd>
+    index = blockIdx.x*blockDim.x + threadIdx.x;
+    if (index>=stateVecSize) return;
+    stateVecReal[index] = 0.0;
+    stateVecImag[index] = 0.0;
+
+    if (index==stateInd){
+        // classical state has probability 1
+        stateVecReal[0] = 1.0;
+        stateVecImag[0] = 0.0;
+    }
+}
+void initClassicalState(MultiQubit *multiQubit, long long int stateInd)
+{
+    int threadsPerCUDABlock, CUDABlocks;
+    threadsPerCUDABlock = 128;
+    CUDABlocks = ceil((REAL)(multiQubit->numAmps)/threadsPerCUDABlock);
+    initClassicalStateKernel<<<CUDABlocks, threadsPerCUDABlock>>>(multiQubit->numAmps, multiQubit->deviceStateVec.real, 
+            multiQubit->deviceStateVec.imag, stateInd);
 }
 
 void __global__ initStateDebugKernel(long long int stateVecSize, REAL *stateVecReal, REAL *stateVecImag){
