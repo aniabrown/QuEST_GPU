@@ -54,3 +54,7 @@
 \form#53:$|-\rangle$
 \form#54:\[ \frac{1}{\sqrt{2}} \begin{pmatrix} 1 & 1 \\ 1 & -1 \end{pmatrix} \]
 \form#55:\[ \setlength{\fboxrule}{0.01pt} \fbox{ \begin{tikzpicture}[scale=.5] \node[draw=none] at (-3.5, 0) {target}; \draw (-2,0) -- (-1, 0); \draw (1, 0) -- (2, 0); \draw (-1,-1)--(-1,1)--(1,1)--(1,-1)--cycle; \node[draw=none] at (0, 0) {H}; \end{tikzpicture} } \]
+\form#56:$ | 00 \dots 00 \rangle $
+\form#57:$ | 00 \dots 01 \rangle $
+\form#58:$ | 11 \dots 11 \rangle $
+\form#59:$ 2^N - 1 $

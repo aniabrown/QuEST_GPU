@@ -89,6 +89,8 @@ void \mbox{\hyperlink{qubits_8h_acb5b2eff794339090004d29f02a70d9a}{init\+State\+
 \begin{DoxyCompactList}\small\item\em Initialise a set of $ N $ qubits to the classical zero state $ {| 0 \rangle}^{\otimes N} $. \end{DoxyCompactList}\item 
 void \mbox{\hyperlink{qubits_8h_a43bcb279fc9717fbd06a19cdef48b9d8}{init\+State\+Plus}} (\mbox{\hyperlink{structMultiQubit}{Multi\+Qubit}} $\ast$multi\+Qubit)
 \begin{DoxyCompactList}\small\item\em Initialise a set of $ N $ qubits to the plus state $ {| + \rangle}^{\otimes N} = \frac{1}{\sqrt{2^N}} (| 0 \rangle + | 1 \rangle)^{\otimes N} $. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{qubits_8h_aea34d45aaea9e64ad3f7786bfb412d0c}{init\+Classical\+State}} (\mbox{\hyperlink{structMultiQubit}{Multi\+Qubit}} $\ast$multi\+Qubit, long long int state\+Ind)
+\begin{DoxyCompactList}\small\item\em Initialise a set of $ N $ qubits to the classical state with index {\ttfamily state\+Ind}. \end{DoxyCompactList}\item 
 void \mbox{\hyperlink{qubits_8h_ad84a3ce68d1ca02b4e3f741ea45b6054}{init\+Qu\+E\+S\+T\+Env}} (\mbox{\hyperlink{structQuESTEnv}{Qu\+E\+S\+T\+Env}} $\ast$env)
 \begin{DoxyCompactList}\small\item\em Initialize Qu\+E\+ST environment. \end{DoxyCompactList}\item 
 void \mbox{\hyperlink{qubits_8h_abd4bc926cd3f9b65610bb228d0c59fe0}{close\+Qu\+E\+S\+T\+Env}} (\mbox{\hyperlink{structQuESTEnv}{Qu\+E\+S\+T\+Env}} env)
@@ -332,7 +334,7 @@ Valid $\alpha$, $\beta$ satisfy $|\alpha|^2 + |\beta|^2 = 1$.
 \end{DoxyExceptions}
 
 
-Referenced by main(), and rotate\+Around\+Axis().
+Referenced by rotate\+Around\+Axis().
 
 \mbox{\Hypertarget{qubits_8h_ab4812953bc457405b3aa05a4c2f64f4a}\label{qubits_8h_ab4812953bc457405b3aa05a4c2f64f4a}} 
 \index{qubits.\+h@{qubits.\+h}!controlled\+Compact\+Unitary@{controlled\+Compact\+Unitary}}
@@ -396,10 +398,6 @@ This applies sigmaX to the target qubit if the control qubit has value 1. This e
 {\em exit\+With\+Error} & if either {\ttfamily control\+Qubit} or {\ttfamily target\+Qubit} are outside \mbox{[}0, {\ttfamily multi\+Qubit.\+num\+Qubits}), or are equal. \\
 \hline
 \end{DoxyExceptions}
-
-
-Referenced by main().
-
 \mbox{\Hypertarget{qubits_8h_a11a96159191cbf1b01a1080e7f045aac}\label{qubits_8h_a11a96159191cbf1b01a1080e7f045aac}} 
 \index{qubits.\+h@{qubits.\+h}!controlled\+Phase\+Gate@{controlled\+Phase\+Gate}}
 \index{controlled\+Phase\+Gate@{controlled\+Phase\+Gate}!qubits.\+h@{qubits.\+h}}
@@ -570,10 +568,6 @@ Definition at line 138 of file qubits.\+cpp.
 
 
 References controlled\+Rotate\+Around\+Axis().
-
-
-
-Referenced by main().
 
 
 \begin{DoxyCode}
@@ -780,6 +774,25 @@ This takes $|0\rangle$ to $|+\rangle$ and $|1\rangle$ to $|-\rangle$, and is equ
 
 Referenced by main().
 
+\mbox{\Hypertarget{qubits_8h_aea34d45aaea9e64ad3f7786bfb412d0c}\label{qubits_8h_aea34d45aaea9e64ad3f7786bfb412d0c}} 
+\index{qubits.\+h@{qubits.\+h}!init\+Classical\+State@{init\+Classical\+State}}
+\index{init\+Classical\+State@{init\+Classical\+State}!qubits.\+h@{qubits.\+h}}
+\paragraph{\texorpdfstring{init\+Classical\+State()}{initClassicalState()}}
+{\footnotesize\ttfamily void init\+Classical\+State (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structMultiQubit}{Multi\+Qubit}} $\ast$}]{multi\+Qubit,  }\item[{long long int}]{state\+Ind }\end{DoxyParamCaption})}
+
+
+
+Initialise a set of $ N $ qubits to the classical state with index {\ttfamily state\+Ind}. 
+
+Note $ | 00 \dots 00 \rangle $ has {\ttfamily state\+Ind} 0, $ | 00 \dots 01 \rangle $ has {\ttfamily state\+Ind} 1, $ | 11 \dots 11 \rangle $ has {\ttfamily state\+Ind} $ 2^N - 1 $, etc. Subsequent calls to get\+Prob\+El will yield 0 for all indices except {\ttfamily state\+Ind}.
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in,out}  & {\em multi\+Qubit} & a pointer to the object representing the set of qubits to be initialised \\
+\hline
+\mbox{\tt in}  & {\em state\+Ind} & the index (0 to the number of amplitudes, exclusive) of the state to give probability 1 \\
+\hline
+\end{DoxyParams}
 \mbox{\Hypertarget{qubits_8h_ad84a3ce68d1ca02b4e3f741ea45b6054}\label{qubits_8h_ad84a3ce68d1ca02b4e3f741ea45b6054}} 
 \index{qubits.\+h@{qubits.\+h}!init\+Qu\+E\+S\+T\+Env@{init\+Qu\+E\+S\+T\+Env}}
 \index{init\+Qu\+E\+S\+T\+Env@{init\+Qu\+E\+S\+T\+Env}!qubits.\+h@{qubits.\+h}}
@@ -1059,10 +1072,6 @@ Definition at line 77 of file qubits.\+cpp.
 References Multi\+Qubit\+::chunk\+Id, Multi\+Qubit\+::num\+Chunks, and Multi\+Qubit\+::num\+Qubits.
 
 
-
-Referenced by main().
-
-
 \begin{DoxyCode}
 77                                                   \{
 78         \textcolor{keywordtype}{long} \textcolor{keywordtype}{long} \textcolor{keywordtype}{int} numAmps = 1L << multiQubit.\mbox{\hyperlink{structMultiQubit_ab5b9795bdc6fb5855e1974dcbbaeb36f}{numQubits}};
@@ -1090,10 +1099,6 @@ Report information about the Qu\+E\+ST environment.
 \mbox{\tt in}  & {\em env} & object representing the execution environment. A single instance is used for each program \\
 \hline
 \end{DoxyParams}
-
-
-Referenced by main().
-
 \mbox{\Hypertarget{qubits_8h_a96f4de9ce7fefc7680a44d601fc3d894}\label{qubits_8h_a96f4de9ce7fefc7680a44d601fc3d894}} 
 \index{qubits.\+h@{qubits.\+h}!report\+State@{report\+State}}
 \index{report\+State@{report\+State}!qubits.\+h@{qubits.\+h}}
@@ -1197,7 +1202,7 @@ References compact\+Unitary(), Complex\+::imag, Complex\+::real, Vector\+::x, Ve
 
 
 
-Referenced by main(), rotate\+X(), rotate\+Y(), and rotate\+Z().
+Referenced by rotate\+X(), rotate\+Y(), and rotate\+Z().
 
 
 \begin{DoxyCode}
