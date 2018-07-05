@@ -22,6 +22,10 @@ static __device__ int extractBit (int locationOfBitFromRight, long long int theE
     return (theEncodedNumber & ( 1LL << locationOfBitFromRight )) >> locationOfBitFromRight;
 }
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 void createMultiQubit(MultiQubit *multiQubit, int numQubits, QuESTEnv env)
 {
     QuESTAssert(numQubits>0, 9, __func__);
@@ -1409,3 +1413,7 @@ void exitWithError(int errorCode, const char* func){
 void QuESTAssert(int isValid, int errorCode, const char* func){
     if (!isValid) exitWithError(errorCode, func);
 }
+
+#ifdef __cplusplus
+}
+#endif

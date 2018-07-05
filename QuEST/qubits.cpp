@@ -36,6 +36,10 @@ const char* errorCodes[] = {
     "Invalid measurement outcome -- must be either 0 or 1." // 10
 };
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /** Print the current state vector of probability amplitudes for a set of qubits to file.
  * File format:
  * @verbatim
@@ -242,3 +246,6 @@ unsigned long int hashString(char *str){
     return hash;    
 }
 
+#ifdef __cplusplus
+}
+#endif

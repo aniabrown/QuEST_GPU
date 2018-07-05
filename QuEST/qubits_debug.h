@@ -5,6 +5,10 @@
 
 # include "precision.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /** @file
  * Developer functions used for unit testing and debugging. Not part of the public API. May contain
  * functions that are incomplete or untested.
@@ -23,5 +27,9 @@ int compareStates(MultiQubit mq1, MultiQubit mq2, REAL precision);
  * @param[in] env object representing the execution environment. A single instance is used for each program
  * */
 void reportNodeList(QuESTEnv env);
+
+#ifdef __cplusplus
+}
+#endif
 
 # endif
