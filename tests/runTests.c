@@ -4,11 +4,10 @@
 # include <math.h>
 # include <unistd.h>
 # include <string.h>
-# include <omp.h>
 
-# include "QuEST/qubits.h"
-# include "QuEST/precision.h"
-# include "QuEST/qubits_debug.h"
+# include "QuEST.h"
+# include "QuEST_precision.h"
+# include "QuEST_debug.h"
 
 # define NUM_TESTS 20
 # define COMPARE_PRECISION 10e-13

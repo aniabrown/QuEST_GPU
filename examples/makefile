@@ -84,7 +84,7 @@ QuEST_CPPLFLAGS      = -O2 -arch=compute_$(GPU_COMPUTE_CAPABILITY) -code=sm_$(GP
 # --- targets
 #
 USER_OBJ = $(addsuffix .o, $(MY_C_SOURCES))
-OBJ = qubits.o qubits_env_localGPU.o mt19937ar.o
+OBJ = QuEST.o QuEST_env_localGPU.o mt19937ar.o
 OBJ += $(USER_OBJ)
 
 all: $(OBJ)

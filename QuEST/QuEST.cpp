@@ -1,19 +1,18 @@
 // Distributed under MIT licence. See https://github.com/aniabrown/QuEST_GPU/blob/master/LICENCE.txt for details
 
-/** @file qubits.c
+/** @file QuEST.cpp
  * The core of the QuEST Library.
  */
 
-# include <math.h>  //SCB new line
+# include <math.h> 
 # include <stdio.h>
 # include <stdlib.h>
 # include <assert.h>
-# include "precision.h"
-# include "qubits.h"
-# include "qubits_internal.h"
+# include "QuEST_precision.h"
+# include "QuEST.h"
+# include "QuEST_internal.h"
 
-# include "mt19937ar.h" // MT random number generation
-// for seeding random numbers
+# include "mt19937ar.h" // MT random number generation for random measurement seeding
 # include <sys/param.h>
 # include <unistd.h>
 

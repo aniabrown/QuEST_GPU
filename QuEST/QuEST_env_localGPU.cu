@@ -7,9 +7,9 @@
 # include <stdlib.h>
 # include <stdio.h>
 # include <math.h>
-# include "qubits.h"
-# include "precision.h"
-# include "qubits_internal.h"
+# include "QuEST.h"
+# include "QuEST_precision.h"
+# include "QuEST_internal.h"
 
 # include "mt19937ar.h" // MT random number generation
 

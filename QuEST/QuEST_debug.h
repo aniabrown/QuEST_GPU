@@ -1,9 +1,9 @@
 // Distributed under MIT licence. See https://github.com/aniabrown/QuEST_GPU/blob/master/LICENCE.txt for details
 
-# ifndef QUBITS_DEBUG
-# define QUBITS_DEBUG
+# ifndef QuEST_DEBUG
+# define QuEST_DEBUG
 
-# include "precision.h"
+# include "QuEST_precision.h"
 
 #ifdef __cplusplus
 extern "C" {

@@ -1,12 +1,14 @@
 // Distributed under MIT licence. See https://github.com/aniabrown/QuEST_GPU/blob/master/LICENCE.txt for details
 
-# ifndef QUBITS_INTERNAL
-# define QUBITS_INTERNAL
+# ifndef QuEST_INTERNAL
+# define QuEST_INTERNAL
 
 /** @file
  * Internal functions used to implement the public facing API in qubits.h. Do not call these functions
  * directly. 
  */
+
+#include "QuEST_precision.h"
 
 extern const char* errorCodes[];
 
