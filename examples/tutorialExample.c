@@ -49,7 +49,7 @@ int main (int narg, char *varg[]) {
     printf("\nCircuit output:\n");
 
     REAL prob = findProbabilityOfOutcome(qubits, 2, 1);
-    printf("Probability of qubit 2 being in state 1: %f\n", prob);
+    printf("Probability of qubit 2 being in state 1: %lf\n", prob);
 
 
     /*
