@@ -244,8 +244,8 @@ void __global__ initClassicalStateKernel(long long int stateVecSize, REAL *state
 
     if (index==stateInd){
         // classical state has probability 1
-        stateVecReal[0] = 1.0;
-        stateVecImag[0] = 0.0;
+        stateVecReal[stateInd] = 1.0;
+        stateVecImag[stateInd] = 0.0;
     }
 }
 void initClassicalState(MultiQubit *multiQubit, long long int stateInd)
