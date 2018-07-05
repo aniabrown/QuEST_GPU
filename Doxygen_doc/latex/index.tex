@@ -13,35 +13,35 @@ The {\bfseries Quantum Exact Simulation Toolkit} is a high performance simulator
 
 Qu\+E\+ST has a simple interface, independent of its run environment (on C\+P\+Us, G\+P\+Us or over networks), 
 \begin{DoxyCode}
-\mbox{\hyperlink{qubits_8h_aa09b5dd93de6df1384b8f2c0041749ab}{hadamard}}(qubits, 0);
+\mbox{\hyperlink{QuEST_8h_aa09b5dd93de6df1384b8f2c0041749ab}{hadamard}}(qubits, 0);
 
-\mbox{\hyperlink{qubits_8h_a67576895bbc65463481a8ea24d9b1e22}{controlledNot}}(qubits, 0, 1);
+\mbox{\hyperlink{QuEST_8h_a67576895bbc65463481a8ea24d9b1e22}{controlledNot}}(qubits, 0, 1);
 
-\mbox{\hyperlink{qubits_8cpp_ace0d3592d38a990e81a434c4e9681500}{rotateY}}(qubits, 0, .1);
+\mbox{\hyperlink{QuEST_8cpp_ace0d3592d38a990e81a434c4e9681500}{rotateY}}(qubits, 0, .1);
 \end{DoxyCode}
  though is flexible 
 \begin{DoxyCode}
 \mbox{\hyperlink{structVector}{Vector}} v;
 v.\mbox{\hyperlink{structVector_aac7abe171ba4bada50ed72acba6259fc}{x}} = 1; v.\mbox{\hyperlink{structVector_a375ca805d4c808a53d7c4e0c737ae3de}{y}} = 0; v.\mbox{\hyperlink{structVector_ad4e863651be7d6b7e2b28cd7445a0ccf}{z}} = 0;
-\mbox{\hyperlink{qubits_8cpp_a8810423457803005fecd415f4299f40d}{rotateAroundAxis}}(qubits, 0, 3.14/2, v);
+\mbox{\hyperlink{QuEST_8cpp_a8810423457803005fecd415f4299f40d}{rotateAroundAxis}}(qubits, 0, 3.14/2, v);
 \end{DoxyCode}
  and powerful 
 \begin{DoxyCode}
 \mbox{\hyperlink{structComplexMatrix2}{ComplexMatrix2}} u;
-u.\mbox{\hyperlink{structComplexMatrix2_ae72b4458233b077a636beee1892e81ff}{r0c0}} = (\mbox{\hyperlink{qubits_8h_ad59c9e471673c07782e6c403277ffd8d}{Complex}}) \{.\mbox{\hyperlink{structComplex_a479ad939835457595fcca3ca55c06283}{real}}=.5, .imag= .5\};
-u.\mbox{\hyperlink{structComplexMatrix2_a0f3932f055a8b05cef361bce25d51172}{r0c1}} = (\mbox{\hyperlink{qubits_8h_ad59c9e471673c07782e6c403277ffd8d}{Complex}}) \{.\mbox{\hyperlink{structComplex_a479ad939835457595fcca3ca55c06283}{real}}=.5, .imag=-.5\}; 
-u.\mbox{\hyperlink{structComplexMatrix2_ab98282015ed2065e53fbc9638e2583ab}{r1c0}} = (\mbox{\hyperlink{qubits_8h_ad59c9e471673c07782e6c403277ffd8d}{Complex}}) \{.\mbox{\hyperlink{structComplex_a479ad939835457595fcca3ca55c06283}{real}}=.5, .imag=-.5\};
-u.\mbox{\hyperlink{structComplexMatrix2_a763007c3070802373549ba0350f83c8a}{r1c1}} = (\mbox{\hyperlink{qubits_8h_ad59c9e471673c07782e6c403277ffd8d}{Complex}}) \{.\mbox{\hyperlink{structComplex_a479ad939835457595fcca3ca55c06283}{real}}=.5, .imag= .5\};
-\mbox{\hyperlink{qubits_8h_a7a0877e33700f6bad48adb51b7b3fb67}{unitary}}(qubits, 0, u);
+u.\mbox{\hyperlink{structComplexMatrix2_ae72b4458233b077a636beee1892e81ff}{r0c0}} = (\mbox{\hyperlink{QuEST_8h_ad59c9e471673c07782e6c403277ffd8d}{Complex}}) \{.\mbox{\hyperlink{structComplex_a479ad939835457595fcca3ca55c06283}{real}}=.5, .imag= .5\};
+u.\mbox{\hyperlink{structComplexMatrix2_a0f3932f055a8b05cef361bce25d51172}{r0c1}} = (\mbox{\hyperlink{QuEST_8h_ad59c9e471673c07782e6c403277ffd8d}{Complex}}) \{.\mbox{\hyperlink{structComplex_a479ad939835457595fcca3ca55c06283}{real}}=.5, .imag=-.5\}; 
+u.\mbox{\hyperlink{structComplexMatrix2_ab98282015ed2065e53fbc9638e2583ab}{r1c0}} = (\mbox{\hyperlink{QuEST_8h_ad59c9e471673c07782e6c403277ffd8d}{Complex}}) \{.\mbox{\hyperlink{structComplex_a479ad939835457595fcca3ca55c06283}{real}}=.5, .imag=-.5\};
+u.\mbox{\hyperlink{structComplexMatrix2_a763007c3070802373549ba0350f83c8a}{r1c1}} = (\mbox{\hyperlink{QuEST_8h_ad59c9e471673c07782e6c403277ffd8d}{Complex}}) \{.\mbox{\hyperlink{structComplex_a479ad939835457595fcca3ca55c06283}{real}}=.5, .imag= .5\};
+\mbox{\hyperlink{QuEST_8h_a7a0877e33700f6bad48adb51b7b3fb67}{unitary}}(qubits, 0, u);
 
 \textcolor{keywordtype}{int}[] controls = \{1, 2, 3, 4, 5\};
-\mbox{\hyperlink{qubits_8h_ae395a79690283ed81106afadd7a8cd8a}{multiControlledUnitary}}(qureg, controls, 5, 0, u);
+\mbox{\hyperlink{QuEST_8h_ae395a79690283ed81106afadd7a8cd8a}{multiControlledUnitary}}(qureg, controls, 5, 0, u);
 \end{DoxyCode}
 
 
 \subsubsection*{Getting started}
 
-Qu\+E\+ST is contained entirely in the {\ttfamily .c} and {\ttfamily .h} files in the {\ttfamily Qu\+E\+S\+T/} folder. To use Qu\+E\+ST, copy these files to your computer and include {\ttfamily \mbox{\hyperlink{qubits_8h}{qubits.\+h}}} in your C code. We include make files for compiling Qu\+E\+ST, and submission scripts for using Qu\+E\+ST with S\+L\+U\+RM and P\+BS. See /examples/tutorial.md \char`\"{}examples/tutorial.\+md\char`\"{} for an introduction. Clone or download this entire repository to include all examples as well as tests and documentation.
+Qu\+E\+ST is contained entirely in the {\ttfamily .c} and {\ttfamily .h} files in the {\ttfamily Qu\+E\+S\+T/} folder. To use Qu\+E\+ST, copy these files to your computer and include {\ttfamily qubits.\+h} in your C code. We include make files for compiling Qu\+E\+ST, and submission scripts for using Qu\+E\+ST with S\+L\+U\+RM and P\+BS. See /examples/tutorial.md \char`\"{}examples/tutorial.\+md\char`\"{} for an introduction. Clone or download this entire repository to include all examples as well as tests and documentation.
 
 \subsubsection*{A\+PI Documentation}
 

@@ -6,7 +6,7 @@ QuEST is currently in prerelease and may be unstable.
 
 Latest version: [0.7.0](https://github.com/aniabrown/QuEST_GPU/releases/tag/v0.7.0) 
 
-This is the repository for the GPU version of the code. The CPU version is available [here](https://github.com/aniabrown/QuEST). The GPU version is behind the CPU version -- the full API is listed [here](https://aniabrown.github.io/QuEST/qubits_8h.html) and the subset of this implemented for the GPU is listed [here](https://aniabrown.github.io/QuEST_GPU/qubits_8h.html).
+This is the repository for the GPU version of the code. The CPU version is available [here](https://github.com/aniabrown/QuEST). The GPU version is behind the CPU version -- the full API is listed [here](https://aniabrown.github.io/QuEST/QuEST_8h.html) and the subset of this implemented for the GPU is listed [here](https://aniabrown.github.io/QuEST_GPU/QuEST_8h.html).
 
 Please report errors or feedback to anna.brown@oerc.ox.ac.uk 
 
@@ -43,7 +43,7 @@ multiControlledUnitary(qureg, controls, 5, 0, u);
 
 ## Getting started
 
-QuEST is contained entirely in the `.c` and `.h` files in the `QuEST/` folder. To use QuEST, copy these files to your computer and include `qubits.h` in your C code. We include make files for compiling QuEST, and submission scripts for using QuEST with SLURM and PBS. See [examples/tutorial.md](/examples/tutorial.md) for an introduction. Clone or download this entire repository to include all examples as well as tests and documentation. 
+QuEST is contained entirely in the `.c` and `.h` files in the `QuEST/` folder. To use QuEST, copy these files to your computer and include `QuEST.h` in your C code. We include make files for compiling QuEST, and submission scripts for using QuEST with SLURM and PBS. See [examples/tutorial.md](/examples/tutorial.md) for an introduction. Clone or download this entire repository to include all examples as well as tests and documentation. 
 
 ## API Documentation
 

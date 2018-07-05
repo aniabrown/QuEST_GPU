@@ -7,7 +7,7 @@ Represents a system of qubits.
 
 
 
-{\ttfamily \#include $<$qubits.\+h$>$}
+{\ttfamily \#include $<$Qu\+E\+S\+T.\+h$>$}
 
 \subsubsection*{Data Fields}
 \begin{DoxyCompactItemize}
@@ -18,9 +18,9 @@ Represents a system of qubits.
 \begin{DoxyCompactList}\small\item\em Temporary storage for a chunk of the state vector received from another process in the M\+PI version. \end{DoxyCompactList}\item 
 \mbox{\hyperlink{structComplexArray}{Complex\+Array}} \mbox{\hyperlink{structMultiQubit_a59ac613486a41b8c9a4b6e79cc8d2cc3}{device\+State\+Vec}}
 \begin{DoxyCompactList}\small\item\em Storage for probability amplitudes for the multi qubit state on G\+PU. \end{DoxyCompactList}\item 
-\mbox{\hyperlink{precision_8h_a4b654506f18b8bfd61ad2a29a7e38c25}{R\+E\+AL}} $\ast$ \mbox{\hyperlink{structMultiQubit_a4e0088b41adab0a40b7a31e528ed42b5}{first\+Level\+Reduction}}
+\mbox{\hyperlink{QuEST__precision_8h_a4b654506f18b8bfd61ad2a29a7e38c25}{R\+E\+AL}} $\ast$ \mbox{\hyperlink{structMultiQubit_a4e0088b41adab0a40b7a31e528ed42b5}{first\+Level\+Reduction}}
 \begin{DoxyCompactList}\small\item\em Storage for reduction of probabilities on G\+PU. \end{DoxyCompactList}\item 
-\mbox{\hyperlink{precision_8h_a4b654506f18b8bfd61ad2a29a7e38c25}{R\+E\+AL}} $\ast$ \mbox{\hyperlink{structMultiQubit_a3e859cefa146ec7b30464ab3d897930b}{second\+Level\+Reduction}}
+\mbox{\hyperlink{QuEST__precision_8h_a4b654506f18b8bfd61ad2a29a7e38c25}{R\+E\+AL}} $\ast$ \mbox{\hyperlink{structMultiQubit_a3e859cefa146ec7b30464ab3d897930b}{second\+Level\+Reduction}}
 \item 
 int \mbox{\hyperlink{structMultiQubit_ab5b9795bdc6fb5855e1974dcbbaeb36f}{num\+Qubits}}
 \begin{DoxyCompactList}\small\item\em Number of qubits in the state. \end{DoxyCompactList}\item 
@@ -37,7 +37,7 @@ Represents a system of qubits.
 
 Qubits are zero-\/based and the the first qubit is the rightmost 
 
-Definition at line 44 of file qubits.\+h.
+Definition at line 48 of file Qu\+E\+S\+T.\+h.
 
 
 
@@ -54,7 +54,7 @@ The position of the chunk of the state vector held by this process in the full s
 
 
 
-Definition at line 60 of file qubits.\+h.
+Definition at line 64 of file Qu\+E\+S\+T.\+h.
 
 
 
@@ -72,13 +72,13 @@ Storage for probability amplitudes for the multi qubit state on G\+PU.
 
 
 
-Definition at line 51 of file qubits.\+h.
+Definition at line 55 of file Qu\+E\+S\+T.\+h.
 
 \mbox{\Hypertarget{structMultiQubit_a4e0088b41adab0a40b7a31e528ed42b5}\label{structMultiQubit_a4e0088b41adab0a40b7a31e528ed42b5}} 
 \index{Multi\+Qubit@{Multi\+Qubit}!first\+Level\+Reduction@{first\+Level\+Reduction}}
 \index{first\+Level\+Reduction@{first\+Level\+Reduction}!Multi\+Qubit@{Multi\+Qubit}}
 \paragraph{\texorpdfstring{first\+Level\+Reduction}{firstLevelReduction}}
-{\footnotesize\ttfamily \mbox{\hyperlink{precision_8h_a4b654506f18b8bfd61ad2a29a7e38c25}{R\+E\+AL}}$\ast$ Multi\+Qubit\+::first\+Level\+Reduction}
+{\footnotesize\ttfamily \mbox{\hyperlink{QuEST__precision_8h_a4b654506f18b8bfd61ad2a29a7e38c25}{R\+E\+AL}}$\ast$ Multi\+Qubit\+::first\+Level\+Reduction}
 
 
 
@@ -86,7 +86,7 @@ Storage for reduction of probabilities on G\+PU.
 
 
 
-Definition at line 53 of file qubits.\+h.
+Definition at line 57 of file Qu\+E\+S\+T.\+h.
 
 \mbox{\Hypertarget{structMultiQubit_ae16f47d8b725c914fb7f66b6498d79db}\label{structMultiQubit_ae16f47d8b725c914fb7f66b6498d79db}} 
 \index{Multi\+Qubit@{Multi\+Qubit}!num\+Amps@{num\+Amps}}
@@ -100,7 +100,7 @@ Number of probability amplitudes held in state\+Vec by this process In the non-\
 
 
 
-Definition at line 58 of file qubits.\+h.
+Definition at line 62 of file Qu\+E\+S\+T.\+h.
 
 
 
@@ -118,7 +118,7 @@ Number of chunks the state vector is broken up into -- the number of M\+PI proce
 
 
 
-Definition at line 62 of file qubits.\+h.
+Definition at line 66 of file Qu\+E\+S\+T.\+h.
 
 
 
@@ -136,7 +136,7 @@ Number of qubits in the state.
 
 
 
-Definition at line 55 of file qubits.\+h.
+Definition at line 59 of file Qu\+E\+S\+T.\+h.
 
 
 
@@ -154,17 +154,17 @@ Temporary storage for a chunk of the state vector received from another process 
 
 
 
-Definition at line 49 of file qubits.\+h.
+Definition at line 53 of file Qu\+E\+S\+T.\+h.
 
 \mbox{\Hypertarget{structMultiQubit_a3e859cefa146ec7b30464ab3d897930b}\label{structMultiQubit_a3e859cefa146ec7b30464ab3d897930b}} 
 \index{Multi\+Qubit@{Multi\+Qubit}!second\+Level\+Reduction@{second\+Level\+Reduction}}
 \index{second\+Level\+Reduction@{second\+Level\+Reduction}!Multi\+Qubit@{Multi\+Qubit}}
 \paragraph{\texorpdfstring{second\+Level\+Reduction}{secondLevelReduction}}
-{\footnotesize\ttfamily \mbox{\hyperlink{precision_8h_a4b654506f18b8bfd61ad2a29a7e38c25}{R\+E\+AL}} $\ast$ Multi\+Qubit\+::second\+Level\+Reduction}
+{\footnotesize\ttfamily \mbox{\hyperlink{QuEST__precision_8h_a4b654506f18b8bfd61ad2a29a7e38c25}{R\+E\+AL}} $\ast$ Multi\+Qubit\+::second\+Level\+Reduction}
 
 
 
-Definition at line 53 of file qubits.\+h.
+Definition at line 57 of file Qu\+E\+S\+T.\+h.
 
 \mbox{\Hypertarget{structMultiQubit_a45483190d6b01ef6b2f98f2bec9ab94f}\label{structMultiQubit_a45483190d6b01ef6b2f98f2bec9ab94f}} 
 \index{Multi\+Qubit@{Multi\+Qubit}!state\+Vec@{state\+Vec}}
@@ -178,7 +178,7 @@ Probablilty amplitudes for the multi qubit state.
 
 
 
-Definition at line 47 of file qubits.\+h.
+Definition at line 51 of file Qu\+E\+S\+T.\+h.
 
 
 
@@ -188,4 +188,4 @@ Referenced by report\+State().
 
 The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
 \item 
-\mbox{\hyperlink{qubits_8h}{qubits.\+h}}\end{DoxyCompactItemize}
+\mbox{\hyperlink{QuEST_8h}{Qu\+E\+S\+T.\+h}}\end{DoxyCompactItemize}
