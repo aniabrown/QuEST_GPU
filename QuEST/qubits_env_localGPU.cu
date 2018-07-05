@@ -6,7 +6,6 @@
 
 # include <stdlib.h>
 # include <stdio.h>
-# include <omp.h>
 # include <math.h>
 # include "qubits.h"
 # include "precision.h"
