@@ -19,7 +19,7 @@ EXE = demo
 # This makefile expects all user sources to be in the root directory.
 # If using more than one source, separate by spaces eg 
 # MY_C_SOURCES = tutorialExample helperFunctions
-MY_C_SOURCES = runTests
+MY_C_SOURCES = tutorialExample
 
 # GPU architecture dependent. To find the compute capability for your
 # device see https://developer.nvidia.com/cuda-gpus
@@ -64,10 +64,10 @@ endif
 
 ifeq ($(COMPILER), GNU)
 	# GCC compilers
-	QuEST_CFLAGS     = -O2 -std=c99 -mavx -Wall
+	QuEST_CFLAGS     = -x c -O2 -std=c99 -mavx -Wall
 else ifeq ($(COMPILER), INTEL)
 	# Intel compilers
-	QuEST_CFLAGS     = -O2 -std=c99 -fprotect-parens -Wall -xAVX -axCORE-AVX2 -diag-disable cpu-dispatch
+	QuEST_CFLAGS     = -x c -O2 -std=c99 -fprotect-parens -Wall -xAVX -axCORE-AVX2 -diag-disable cpu-dispatch
 else 
 	$(error " *** error: invalid compiler")
 endif
@@ -77,8 +77,8 @@ endif
 #
 
 QuEST_CPP 		   = nvcc
-QuEST_CPPFLAGS       = -dc -O2 -arch=compute_$(GPU_COMPUTE_CAPABILITY) -code=sm_$(GPU_COMPUTE_CAPABILITY)
-QuEST_CPPLFLAGS      = -O2 -arch=compute_$(GPU_COMPUTE_CAPABILITY) -code=sm_$(GPU_COMPUTE_CAPABILITY) -lineinfo
+QuEST_CPPFLAGS       = -dc -O2 -arch=compute_$(GPU_COMPUTE_CAPABILITY) -code=sm_$(GPU_COMPUTE_CAPABILITY) -ccbin $(QuEST_CC)
+QuEST_CPPLFLAGS      = -O2 -arch=compute_$(GPU_COMPUTE_CAPABILITY) -code=sm_$(GPU_COMPUTE_CAPABILITY) -lineinfo -ccbin $(QuEST_CC)
 
 #
 # --- targets
