@@ -1,6 +1,6 @@
 #======================================================================#
 #                                                                      #
-#      Makefile														   # 
+#      Makefile                                                        # 
 #      -- build the QuEST function library and link user sources       #
 #                                                                      #
 #======================================================================#
@@ -35,7 +35,7 @@ QUEST_DIR = QuEST
 
 #======================================================================#
 #                                                                      #
-#      Makefile execution 											   #
+#      Makefile execution 					       #
 #                                                                      #
 #======================================================================#
 
@@ -95,9 +95,9 @@ all: $(OBJ)
 	$(QuEST_CC) $(INCLUDE) $(QuEST_CFLAGS) -c $<
 
 %.o: %.cu
-	$(QuEST_CPP) $(QuEST_CPPFLAGS) $<
+	$(QuEST_CPP) $(INCLUDE) $(QuEST_CPPFLAGS) $<
 %.o: %.cpp
-	$(QuEST_CPP) $(QuEST_CPPFLAGS) $<
+	$(QuEST_CPP) $(INCLUDE) $(QuEST_CPPFLAGS) $<
 
 %.o: $(QUEST_DIR)/%.cu
 	$(QuEST_CPP) $(QuEST_CPPFLAGS) $<
