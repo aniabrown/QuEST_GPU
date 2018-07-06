@@ -67,7 +67,7 @@ ifeq ($(COMPILER), GNU)
 	QuEST_CFLAGS     = -x c -O2 -std=c99 -mavx -Wall
 else ifeq ($(COMPILER), INTEL)
 	# Intel compilers
-	QuEST_CFLAGS     = -x c -O2 -std=c99 -fprotect-parens -Wall -xAVX -axCORE-AVX2 -diag-disable cpu-dispatch
+	QuEST_CFLAGS     = -O2 -std=c99 -fprotect-parens -Wall -xAVX -axCORE-AVX2 -diag-disable cpu-dispatch
 else 
 	$(error " *** error: invalid compiler")
 endif
