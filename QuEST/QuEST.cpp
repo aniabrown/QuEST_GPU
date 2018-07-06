@@ -67,7 +67,7 @@ void reportState(MultiQubit multiQubit){
 	state = fopen(filename, "w");
 	if (multiQubit.chunkId==0) fprintf(state, "real, imag\n");
 
-	for(index=0; index<multiQubit.numAmps; index++){
+	for(index=0; index<multiQubit.numAmpsDividedByNumChunks; index++){
 		fprintf(state, "%.12f, %.12f\n", multiQubit.stateVec.real[index], multiQubit.stateVec.imag[index]);
 	}
 	fclose(state);
@@ -86,6 +86,14 @@ void reportMultiQubitParams(MultiQubit multiQubit){
                 printf("Number of amps is %lld.\n", numAmps);
 		printf("Number of amps per rank is %lld.\n", numAmpsPerRank);
     }
+}
+
+int getNumQubits(MultiQubit multiQubit){
+    return multiQubit.numQubits;
+}
+
+int getNumAmps(MultiQubit multiQubit){
+    return multiQubit.numAmpsDividedByNumChunks*multiQubit.numChunks;
 }
 
 void rotateAroundAxis(MultiQubit multiQubit, const int rotQubit, REAL angle, Vector axis){

@@ -59,7 +59,7 @@ typedef struct MultiQubit
 	int numQubits;
 	//! Number of probability amplitudes held in stateVec by this process
 	//! In the non-MPI version, this is the total number of amplitudes
-	long long int numAmps;
+	long long int numAmpsDividedByNumChunks;
 	//! The position of the chunk of the state vector held by this process in the full state vector
 	int chunkId;
 	//! Number of chunks the state vector is broken up into -- the number of MPI processes used
@@ -119,6 +119,16 @@ void reportMultiQubitParams(MultiQubit multiQubit);
  * 		if \p rotQubit is outside [0, \p multiQubit.numQubits),
  * 		or if \p axis is the zero vector
  */
+
+/** Get the number of qubits in a multiQubit object
+ */
+int getNumQubits(MultiQubit multiQubit);
+
+/** Get the number of probability amplitudes in a multiQubit object, given by 2^numQubits
+ */
+int getNumAmps(MultiQubit multiQubit);
+
+
 void rotateAroundAxis(MultiQubit multiQubit, const int rotQubit, REAL angle, Vector unitAxis);
 
 /** Rotate a single qubit by a given angle around the X-axis of the Bloch-sphere. For angle \f$\theta\f$, applies
