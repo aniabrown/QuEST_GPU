@@ -9,7 +9,7 @@
 # include "QuEST_precision.h"
 # include "QuEST_debug.h"
 
-# define NUM_TESTS 20
+# define NUM_TESTS 23
 # define COMPARE_PRECISION 10e-13
 # define PATH_TO_TESTS "tests/unit/"
 # define VERBOSE 0
@@ -45,6 +45,7 @@ int test_initStateZero(char testName[200]){
     initializeStateFromSingleFile(&mqVerif, filename, env);
 
     passed = compareStates(mq, mqVerif, COMPARE_PRECISION);
+
     destroyMultiQubit(mq, env);
     destroyMultiQubit(mqVerif, env);
 
@@ -852,6 +853,72 @@ int test_measureWithStats(char testName[200]){
     return passed;
 }
 
+int test_getRealAmpEl(char testName[200]){
+    char filename[200];
+    int passed=1;
+
+    int numQubits=5;
+    REAL ampEl=0, ampElVerif=0;
+
+    MultiQubit mq; 
+    createMultiQubit(&mq, numQubits, env);
+    initStateDebug(&mq);
+
+    for (int i=0; i<getNumAmps(mq); i++){
+        ampElVerif = (i*2.0)/10.0;
+        ampEl = getRealAmpEl(mq, i);
+        if (passed) passed = (ampElVerif==ampEl);
+    }
+    destroyMultiQubit(mq, env);
+
+    return passed;
+}
+
+int test_getImagAmpEl(char testName[200]){
+    char filename[200];
+    int passed=1;
+
+    int numQubits=5;
+    REAL ampEl=0, ampElVerif=0;
+
+    MultiQubit mq; 
+    createMultiQubit(&mq, numQubits, env);
+
+    initStateDebug(&mq);
+    for (int i=0; i<getNumAmps(mq); i++){
+        ampElVerif = (i*2.0+1)/10.0;
+        ampEl = getImagAmpEl(mq, i);
+        if (passed) passed = (ampElVerif==ampEl);
+    }
+    destroyMultiQubit(mq, env);
+
+    return passed;
+}
+
+int test_getProbEl(char testName[200]){
+    char filename[200];
+    int passed=1;
+
+    int numQubits=5;
+    REAL ampEl=0, ampElVerif=0;
+    REAL realEl, imagEl;
+
+    MultiQubit mq; 
+    createMultiQubit(&mq, numQubits, env);
+
+    initStateDebug(&mq);
+    for (int i=0; i<getNumAmps(mq); i++){
+        realEl = (i*2.0)/10.0;
+        imagEl = (i*2.0+1)/10.0;
+        ampElVerif = realEl*realEl + imagEl*imagEl;
+        ampEl = getProbEl(mq, i);
+        if (passed) passed = (ampElVerif==ampEl);
+    }
+    destroyMultiQubit(mq, env);
+
+    return passed;
+}
+
 int main (int narg, char** varg) {
     initQuESTEnv(&env);
     reportQuESTEnv(env);
@@ -877,6 +944,9 @@ int main (int narg, char** varg) {
         test_collapseToOutcome,
         test_measure,
         test_measureWithStats,
+        test_getRealAmpEl,
+        test_getImagAmpEl,
+        test_getProbEl
     };
 
     char testNames[NUM_TESTS][200] = {
@@ -899,7 +969,10 @@ int main (int narg, char** varg) {
         "findProbabilityOfOutcome",
         "collapseToOutcome",
         "measure",
-        "measureWithStats"
+        "measureWithStats",
+        "getRealAmpEl",
+        "getImagAmpEl",
+        "getProbEl"
     };
     int passed=0;
     if (env.rank==0) printf("\nRunning unit tests\n");

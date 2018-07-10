@@ -128,6 +128,37 @@ int getNumQubits(MultiQubit multiQubit);
  */
 int getNumAmps(MultiQubit multiQubit);
 
+/** Get the real component of the complex probability amplitude at an index in the state vector.
+ * For debugging purposes.
+ *
+ * @param[in] multiQubit object representing a set of qubits
+ * @param[in] index index in state vector of probability amplitudes
+ * @return real component at that index
+ * @throws exitWithError
+ *      if \p index is outside [0, \f$2^{N}\f$) where \f$N = \f$ \p multiQubit.numQubits
+ */
+REAL getRealAmpEl(MultiQubit multiQubit, long long int index);
+
+/** Get the imaginary component of the complex probability amplitude at an index in the state vector.
+ * For debugging purposes.
+ *
+ * @param[in] multiQubit object representing a set of qubits
+ * @param[in] index index in state vector of probability amplitudes
+ * @return imaginary component at that index
+ * @throws exitWithError
+ *      if \p index is outside [0, \f$2^{N}\f$) where \f$N = \f$ \p multiQubit.numQubits
+ */
+REAL getImagAmpEl(MultiQubit multiQubit, long long int index);
+
+/** Get the probability of the state at an index in the full state vector.
+ *
+ * @param[in] multiQubit object representing a set of qubits
+ * @param[in] index index in state vector of probability amplitudes
+ * @return realEl*realEl + imagEl*imagEl
+ * @throws exitWithError
+ *      if \p index is outside [0, \f$2^{N}\f$) where \f$N = \f$ \p multiQubit.numQubits
+ */
+REAL getProbEl(MultiQubit multiQubit, long long int index);
 
 void rotateAroundAxis(MultiQubit multiQubit, const int rotQubit, REAL angle, Vector unitAxis);
 
